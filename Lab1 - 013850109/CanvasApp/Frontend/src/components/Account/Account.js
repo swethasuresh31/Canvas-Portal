@@ -192,14 +192,13 @@ export default class Account extends Component {
       if (this.state.isEditing === "true") {
         return (
           <div>
-            <div className="row">
-              <div className="col col-sm-2">
-                <Navbar selected="account" />
-              </ div>
-              <div className="col col-lg-8">
-                <div className="row">
-
-                  <div className="col">
+          <div className="row">
+            <div className="col col-md-1">
+              <Navbar selected="account" />
+            </ div>
+            <div className="col">
+              <div className="row">
+                <div className="col pb-3">
                     <br />
                     <Heading theme={{ borderPadding: "1rem" }} border="bottom">{this.state.name}'s Profile
                   <span style={{ float: "right" }}><button type="button" class="btn btn-secondary btn" onClick={() => { this.setState({ isEditing: "false" }) }}><IconEditLine /> Cancel Edit</button>

@@ -8,6 +8,7 @@ var cors = require('cors');
 app.set('view engine', 'ejs');
 var connection = require('./db/connection')
 const bcrypt = require('bcrypt');
+var async = require('async');
 
 //use cors to allow cross origin resource sharing
 app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
@@ -177,16 +178,30 @@ app.get('/usercourse/:user', function (req, res) {
 
 //Route to get all course term information when student searches for courses
 app.get('/searchCourse/term', function (req, res) {
-    console.log("Inside course term get handler");
-    connection.query('select course_term from course group by course_term;', function (error, results, fields) {
-        if (error) {
-            res.status(500).send(error);
-        } else {
-            console.log(JSON.stringify(results));
-            res.send(JSON.stringify(results));
+    console.log("Inside course initial details get handler");
+    async.parallel([
+        function(callback){
+            connection.query('select course_term from course group by course_term;', function (error, result1) {
+                callback(error,result1)
+            });
+        },
+        function(callback){
+            connection.query('select course_dept from course group by course_dept;', function (error, result2) {
+                callback(error,result2)
+            });
         }
-    });
-})
+
+        ],function(err,results){
+            if(err){
+                res.json({"status": "failed", "message": error.message})
+            }else{
+                res.send(JSON.stringify(results));
+            }
+        });
+});
+
+
+
 
 
 //start your server on port 3001

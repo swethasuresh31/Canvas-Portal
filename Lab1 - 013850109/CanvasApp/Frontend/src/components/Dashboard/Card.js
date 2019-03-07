@@ -23,7 +23,7 @@ export default class Card extends Component {
         </div>
         <div class="card-body">
           <p class="card-title"><a href="#" class="card-link font-weight-bold">{this.props.course.course_dept}-{this.props.course.course_id}</a></p>
-          <p class="card-subtitle"> {this.props.course.course_name}</p>
+          <p class="card-subtitle"> {this.props.course.course_name}<br />{this.props.course.course_term}</p>
           <div class="d-flex justify-content-around pt-4" style={{ fontSize: "20px" }}>
             <a href="#" class="card-link text-dark"><IconAnnouncementLine /></a>
             <a href="#" class="card-link text-dark"><IconAssignmentLine /></a>

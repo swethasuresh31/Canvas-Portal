@@ -34,16 +34,18 @@ export default class Card extends Component {
             backgroundColor: '#0055a2',
           }}
         >
+        <div class="py-3" style={{backgroundColor:"#FFFFFF"}}>
           <NavigationItem
             selected={this.props.selected === "icon"}
             icon={<Img src={logo}> </Img>}
             label={<ScreenReaderContent>Home</ScreenReaderContent>}
             href="/"
             theme={{
-              backgroundColor: '#0055a2',
-              hoverBackgroundColor: '#0055a2'
+              backgroundColor: '#FFFFFF',
+              hoverBackgroundColor: '#FFFFFF'
             }}
           />
+          </div>
           <NavigationItem
             selected={this.props.selected === "account"}
             // icon={<Avatar name={this.props.name} size="x-small" />}

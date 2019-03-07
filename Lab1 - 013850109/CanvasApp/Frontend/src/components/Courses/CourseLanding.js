@@ -26,13 +26,16 @@ export default class CourseDetails extends Component {
 
     componentDidMount() {
         let role = '';
+        let user = '';
         if (cookie.load('cookieS')) {
             role = 'student';
-        } else if (cookie.load('cookieS')) {
+            user = cookies.get('cookieS')
+
+        } else if (cookie.load('cookieF')) {
             role = 'faculty';
+            user = cookies.get('cookieF')
         }
         if (role !== '') {
-            let user = cookies.get('cookieS')
             axios.get('http://localhost:3001/usercourse/' + encodeURI(user) + '?role=' + role)
                 .then((response) => {
                     console.log(response);
