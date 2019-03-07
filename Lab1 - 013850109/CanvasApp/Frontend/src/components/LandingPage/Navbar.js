@@ -4,7 +4,7 @@ import { Img } from '@instructure/ui-elements'
 import { Avatar, Text } from '@instructure/ui-elements'
 import { ScreenReaderContent } from '@instructure/ui-a11y'
 import logo from '../../img/sjsu-header-logo-alt.png'
-import { IconUserLine, IconDashboardLine, IconCoursesLine } from '@instructure/ui-icons'
+import { IconUserLine, IconDashboardLine, IconCoursesLine, IconDeactivateUserLine } from '@instructure/ui-icons'
 import cookie from 'react-cookies';
 
 export default class Card extends Component {
@@ -17,8 +17,8 @@ export default class Card extends Component {
   }
 
   handleLogout = () => {
-    alert("clearing cookies")
-    cookie.remove('cookie', { path: '/' })
+    cookie.remove('cookieS', { path: '/' })
+    cookie.remove('cookieF', { path: '/' })
   }
 
   render() {
@@ -80,9 +80,9 @@ export default class Card extends Component {
           />
           <NavigationItem
             selected={this.props.selected === "logout"}
-            icon={<IconCoursesLine />}
+            icon={<IconDeactivateUserLine />}
             label="Logout"
-            href="/logout"
+            href="/login"
             theme={{
               backgroundColor: '#0055a2',
               hoverBackgroundColor: '#FFFFFF'

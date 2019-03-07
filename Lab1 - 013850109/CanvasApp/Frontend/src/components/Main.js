@@ -5,6 +5,7 @@ import Account from './Account/Account';
 import Courses from './Courses/Courses';
 import CourseDetails from './Courses/CourseDetails';
 import CourseHome from './Courses/CourseLanding';
+import SearchCourse from './Courses/SearchCourse';
 import Signup from './Signup/Signup';
 
 import Dashboard from './Dashboard/Dashboard';
@@ -23,6 +24,7 @@ class Main extends Component {
                 <Route path="/coursehome" exact component={CourseHome} />
                 <Route path="/login" exact component={Login} />
                 <Route path="/signup" exact component={Signup} />
+                <Route path="/searchCourse" exact component={SearchCourse} />
             </div>
         )
     }

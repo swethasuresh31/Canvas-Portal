@@ -57,10 +57,7 @@ export default class CourseDetails extends Component {
                     <div className="row">
                         <div className="col col-sm-2">
                             <Navbar selected="account" />
-                        </ div>
-                        <div className="col col-lg-8">
-                            <div className="row">
-                                <div className="col">
+                            <div className="col">
                                     <SideNav
                                         defaultSelectedPath="1"
                                         theme={themeCourse}
@@ -71,6 +68,10 @@ export default class CourseDetails extends Component {
                                         <Nav id="2"><Link to="/coursePC">Generate Permission Code</Link></Nav>
                                     </SideNav>
                                 </div>
+                        </ div>
+                        <div className="col col-lg-8">
+                            <div className="row">
+                                
                                 <div className="col">
                                     <br />
                                     <Heading theme={{ borderPadding: "1rem" }} border="bottom">Faculty Courses</ Heading>

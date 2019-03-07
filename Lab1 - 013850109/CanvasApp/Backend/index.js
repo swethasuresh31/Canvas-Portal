@@ -47,8 +47,8 @@ app.post('/login', function (req, response) {
         if (results.length == 0) {
             response.status(404).send("Username does not exists!");
         } else {
-            bcrypt.compare(password, results[0].password, function(err, res) {
-                if(res){
+            bcrypt.compare(password, results[0].password, function (err, res) {
+                if (res) {
                     if (results[0].is_student) {
                         response.cookie('cookieS', username, { maxAge: 900000, httpOnly: false, path: '/' });
                         req.session.user = username;
@@ -65,12 +65,12 @@ app.post('/login', function (req, response) {
                         response.end("Faculty");
                     }
                 }
-                else{
+                else {
                     response.status(400).send("Incorrect Password!");
                 }
-        });
-    }
-});
+            });
+        }
+    });
 
 });
 
@@ -109,11 +109,11 @@ app.put('/account', function (req, res) {
     var hometown = req.body.hometown;
     var languages = req.body.languages;
     var gender = req.body.gender;
-    
+
     console.log("Inside account Information Put Request");
     console.log("Req Body : ", req.body);
-    connection.query('UPDATE user SET name = ?, phone_number = ?,about_me = ?, city = ?, country =?, company = ?, school =?, hometown =?, languages =?,gender =? WHERE email_id = ?;', 
-    [name, phoneNo, aboutMe, city, country, company, school, hometown, languages, gender, username], function (error, results, fields) {
+    connection.query('UPDATE user SET name = ?, phone_number = ?,about_me = ?, city = ?, country =?, company = ?, school =?, hometown =?, languages =?,gender =? WHERE email_id = ?;',
+        [name, phoneNo, aboutMe, city, country, company, school, hometown, languages, gender, username], function (error, results, fields) {
             console.log();
             if (error) {
                 res.status(500).send(error);
@@ -121,7 +121,7 @@ app.put('/account', function (req, res) {
                 res.status(200).send("Success");
             }
         });
-    });
+});
 
 
 //Route to get the account information when user visits the accounts Page
@@ -139,14 +139,46 @@ app.get('/account/:user', function (req, res) {
     });
 })
 
-//Route to get the account information when user visits the accounts Page
-app.get('/coursehome/:user', function (req, res) {
-    console.log("Inside account get handler");
+//Route to get all course information when a user visits the course Page
+app.get('/usercourse/:user', function (req, res) {
+    console.log("Inside usercourse "+ req.query.role +" handler");
+    if (req.query.role === 'student') {
+        var loggedInuser = req.params.user;
+        console.log(loggedInuser);
+        connection.query('select course.course_name, course.course_dept, course.course_id,course.course_term, ' +
+            'student_courses.isWaitlist from course join student_courses where course.course_uid = student_courses.course_uid ' +
+            'and student_courses.email_id = ?;', [loggedInuser], function (error, results, fields) {
+                if (error) {
+                    res.status(500).send(error);
+                } else {
+                    console.log(JSON.stringify(results));
+                    res.send(JSON.stringify(results));
+                }
+            });
+    } else if(req.query.role === 'faculty') {
     var loggedInuser = req.params.user;
     console.log(loggedInuser);
-    connection.query('select course.course_name, course.course_dept, course.course_id,course.course_term, '+
-    'student_courses.isWaitlist from course join student_courses where course.course_uid = student_courses.course_uid '+
-    'and student_courses.email_id = ?;', [loggedInuser], function (error, results, fields) {
+    connection.query('select course_name, course_dept, course_id, course_term, ' +
+        'total_enrollment, total_waitlist from course where created_by = ?;', [loggedInuser], function (error, results, fields) {
+            if (error) {
+                res.status(500).send(error);
+            } else {
+                console.log(JSON.stringify(results));
+                res.send(JSON.stringify(results));
+            }
+        });
+    } else {
+        console.log('No role specified');
+        res.status(400).send('Page is only accesible for student or professor');
+    }
+})
+
+
+
+//Route to get all course term information when student searches for courses
+app.get('/searchCourse/term', function (req, res) {
+    console.log("Inside course term get handler");
+    connection.query('select course_term from course group by course_term;', function (error, results, fields) {
         if (error) {
             res.status(500).send(error);
         } else {

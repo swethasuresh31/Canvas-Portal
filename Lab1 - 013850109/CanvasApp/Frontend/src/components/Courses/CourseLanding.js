@@ -8,6 +8,8 @@ import Heading from '@instructure/ui-elements/lib/components/Heading';
 import cookie from 'react-cookies';
 import Cookies from 'universal-cookie';
 import axios from 'axios';
+import StudentCourseLanding from './StudentCourseLanding';
+import FacultyCourseLanding from './FacultyCourseLanding';
 
 const cookies = new Cookies();
 
@@ -23,77 +25,38 @@ export default class CourseDetails extends Component {
     }
 
     componentDidMount() {
-        let user = cookies.get('cookieS') || cookies.get('cookieF');
-        console.log(user + "UserName")
-
-        axios.get('http://localhost:3001/coursehome/' + user)
-            .then((response) => {
-                console.log(response);
-                if (response !== undefined)
-                    this.setState({ coursework: response.data })
-            })
-
+        let role = '';
+        if (cookie.load('cookieS')) {
+            role = 'student';
+        } else if (cookie.load('cookieS')) {
+            role = 'faculty';
+        }
+        if (role !== '') {
+            let user = cookies.get('cookieS')
+            axios.get('http://localhost:3001/usercourse/' + encodeURI(user) + '?role=' + role)
+                .then((response) => {
+                    console.log(response);
+                    if (response !== undefined)
+                        this.setState({ coursework: response.data })
+                })
+        }
     }
+
 
     onItemSelection = arg => {
         this.setState({ selectedPath: arg.path });
     };
 
     render() {
-        let redirectVar = null;
         if (cookie.load('cookieF')) {
             //Return faculty page
             return (
-                <div>
-                    {redirectVar}
-
-                </div>
+                <FacultyCourseLanding coursework={this.state.coursework}></FacultyCourseLanding>
             );
         } else if (cookie.load('cookieS')) {
             //Return student page
             return (
-                <div className="container-fluid md-0 p-0">
-                    {redirectVar}
-                    <div className="row">
-                        <div className="col col-md-1">
-                            <Navbar selected="courses" />
-                        </ div>
-                        <div className="col">
-                            <div className="row">
-                                <div className="col">
-                                    <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">All Courses</ Heading></div>
-                            </div>
-                            <div className="row">
-                                <Table
-                                    layout="fixed"
-                                >
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Course</th>
-                                            <th scope="col">Term</th>
-                                            <th scope="col">Enrollment Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {
-                                            this.state.coursework.map(course => {
-                                                let enrollmentStatus = (course.isWaitlist !== 0) ? "Waitlist" : "Enrolled";
-                                                return (
-                                                    <tr>
-                                                        <td>{course.course_dept}-{course.course_id} - {course.course_name}</td>
-                                                        <td>{course.course_term}</td>
-                                                        <td>{enrollmentStatus}</td>
-                                                    </tr>
-                                                )
-                                            })
-                                        }
-                                    </tbody>
-                                </Table>
-                            </ div>
-                        </div>
-                    </div>
-                </div>
-
+                <StudentCourseLanding coursework={this.state.coursework}></StudentCourseLanding>
             );
         } else {
             return (<div><Redirect to="/login" /></div>);
