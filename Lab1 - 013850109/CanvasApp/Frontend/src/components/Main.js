@@ -5,7 +5,11 @@ import Account from './Account/Account';
 import Courses from './Courses/Courses';
 import CourseDetails from './Courses/CourseDetails';
 import CourseHome from './Courses/CourseLanding';
+import CourseStudent from './Courses/StudentCourseLanding';
+import CourseFaculty from './Courses/FacultyCourseLanding';
 import SearchCourse from './Courses/SearchCourse';
+import CreateCourse from './Courses/CreateCourse';
+import GeneratePermission from './Courses/GeneratePermission';
 import Signup from './Signup/Signup';
 
 import Dashboard from './Dashboard/Dashboard';
@@ -25,6 +29,10 @@ class Main extends Component {
                 <Route path="/login" exact component={Login} />
                 <Route path="/signup" exact component={Signup} />
                 <Route path="/searchCourse" exact component={SearchCourse} />
+                <Route path="/createCourse" exact component={CreateCourse} />
+                <Route path="/facultyCourse" exact component={CourseFaculty} />
+                <Route path="/studentCourse" exact component={CourseStudent} />
+                <Route path="/generatePermissionCode" exact component={GeneratePermission} />
             </div>
         )
     }

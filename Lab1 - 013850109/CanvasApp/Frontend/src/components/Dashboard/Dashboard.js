@@ -24,13 +24,16 @@ export default class Dashboard extends Component {
 
   componentDidMount() {
     let role = '';
+    let user = '';
     if (cookie.load('cookieS')) {
+      user = cookies.get('cookieS')
       role = 'student';
     } else if (cookie.load('cookieF')) {
+      user = cookies.get('cookieF')
       role = 'faculty';
     }
-    if (role !== '') {
-      let user = cookies.get('cookieS')
+    if (role !== '' && user !== '') {
+     
       axios.get('http://localhost:3001/usercourse/' + encodeURI(user) + '?role=' + role)
         .then((response) => {
           console.log(response);

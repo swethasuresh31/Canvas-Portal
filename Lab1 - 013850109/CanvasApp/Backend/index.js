@@ -126,7 +126,7 @@ app.put('/account', function (req, res) {
 
 
 //Route to get the account information when user visits the accounts Page
-app.get('/account/:user', function (req, res) {
+app.get('/user/:user', function (req, res) {
     console.log("Inside account get handler");
     var loggedInuser = req.params.user;
     console.log(loggedInuser);
@@ -140,14 +140,13 @@ app.get('/account/:user', function (req, res) {
     });
 })
 
-//Route to get all course information when a user visits the course Page
+//Route to get enrolled/created course information when a user visits the course Page
 app.get('/usercourse/:user', function (req, res) {
-    console.log("Inside usercourse "+ req.query.role +" handler");
+    console.log("Inside usercourse " + req.query.role + " handler");
     if (req.query.role === 'student') {
         var loggedInuser = req.params.user;
         console.log(loggedInuser);
-        connection.query('select course.course_name, course.course_dept, course.course_id,course.course_term, ' +
-            'student_courses.isWaitlist from course join student_courses where course.course_uid = student_courses.course_uid ' +
+        connection.query('select * from course join student_courses where course.course_uid = student_courses.course_uid ' +
             'and student_courses.email_id = ?;', [loggedInuser], function (error, results, fields) {
                 if (error) {
                     res.status(500).send(error);
@@ -156,18 +155,17 @@ app.get('/usercourse/:user', function (req, res) {
                     res.send(JSON.stringify(results));
                 }
             });
-    } else if(req.query.role === 'faculty') {
-    var loggedInuser = req.params.user;
-    console.log(loggedInuser);
-    connection.query('select course_name, course_dept, course_id, course_term, ' +
-        'total_enrollment, total_waitlist from course where created_by = ?;', [loggedInuser], function (error, results, fields) {
-            if (error) {
-                res.status(500).send(error);
-            } else {
-                console.log(JSON.stringify(results));
-                res.send(JSON.stringify(results));
-            }
-        });
+    } else if (req.query.role === 'faculty') {
+        var loggedInuser = req.params.user;
+        console.log(loggedInuser);
+        connection.query('select * from course where created_by = ?;', [loggedInuser], function (error, results, fields) {
+                if (error) {
+                    res.status(500).send(error);
+                } else {
+                    console.log(JSON.stringify(results));
+                    res.send(JSON.stringify(results));
+                }
+            });
     } else {
         console.log('No role specified');
         res.status(400).send('Page is only accesible for student or professor');
@@ -176,31 +174,129 @@ app.get('/usercourse/:user', function (req, res) {
 
 
 
-//Route to get all course term information when student searches for courses
-app.get('/searchCourse/term', function (req, res) {
+//Route to get course term and department information before student searches for courses
+app.get('/searchcourse', function (req, res) {
     console.log("Inside course initial details get handler");
     async.parallel([
-        function(callback){
+        function (callback) {
             connection.query('select course_term from course group by course_term;', function (error, result1) {
-                callback(error,result1)
+                callback(error, result1)
             });
         },
-        function(callback){
-            connection.query('select course_dept from course group by course_dept;', function (error, result2) {
-                callback(error,result2)
+        function (callback) {
+            connection.query('select course_dept_code from course group by course_dept_code;', function (error, result2) {
+                callback(error, result2)
             });
         }
 
-        ],function(err,results){
-            if(err){
-                res.json({"status": "failed", "message": error.message})
-            }else{
-                res.send(JSON.stringify(results));
-            }
-        });
+    ], function (err, results) {
+        if (err) {
+            res.json({ "status": "failed", "message": error.message })
+        } else {
+            res.send(JSON.stringify(results));
+        }
+    });
 });
 
+//Route to get all course information when a student searches for courses
+app.get('/course', function (req, res) {
+    console.log("Inside course search handler");
+    let queryString = '';
+    console.log("course_term: " + req.query.term);
+    console.log("course_dept_code: " + req.query.department);
+    console.log("course_id: " + req.query.courseId);
+    console.log("course_id_operator: " + req.query.operator);
+    console.log("course_name: " + req.query.name);
+    if (req.query.term !== '') {
+        queryString += ' course_term= \'' + req.query.term + '\' AND';
+    }
+    if (req.query.department !== '') {
+        queryString += ' course_dept_code= \'' + req.query.department + '\' AND';
+    }
+    if (req.query.name !== '') {
+        queryString += ' course_name= \'' + req.query.name + '\' AND';
+    }
+    if (req.query.operator !== '' && req.query.courseId !== '') {
+        queryString += ' course_id';
+        if (req.query.operator === 'EQ') {
+            queryString += ' = ' + req.query.courseId + ' AND';
+        } else if (req.query.operator === 'CON') {
+            queryString += ' CONTAINS \'%' + req.query.courseId + '%\' AND';
+        } else if (req.query.operator === 'LTE') {
+            queryString += ' <= ' + req.query.courseId + ' AND';
+        } else if (req.query.operator === 'GTE') {
+            queryString += ' >=' + req.query.courseId + ' AND';
+        }
+    }
+    if (queryString !== '') {
+        if (queryString.slice(-4) === ' AND') {
+            queryString = queryString.slice(0, -4);
+            queryString = ' WHERE' + queryString + ';';
+        }
+    }
+    console.log(queryString);
+    connection.query('select * from course' + queryString, function (error, results, fields) {
+        if (error) {
+            res.status(500).send(error);
+        } else {
+            console.log(JSON.stringify(results));
+            res.send(JSON.stringify(results));
+        }
+    });
+})
 
+
+// app.put('/usercourse', function (req, res) {
+//     console.log("Inside usercourse put handler");
+//     var loggedInuser = req.body.user;
+//     var courseId = req.body.courseId;
+
+//     connection.query('SELECT * from course where course_uid=?', [loggedInuser], function (error, results, fields) {
+//         if (error) {
+//             res.status(500).send(error);
+//         } else {
+//             console.log(JSON.stringify(results));
+//             res.send(JSON.stringify(results));
+//         }
+//     });
+
+
+//     console.log(loggedInuser);
+//     connection.query('INSERT INTO student_courses (course_uid, email_id , isWaitlist) VALUES (?,?,?,?);', [username, name, password, role], function (error, results, fields) {
+//         console.log();
+//         if (error) {
+//             res.status(500).send(error);
+//         } else {
+//             res.status(200).send("Success");
+//         }
+//     });
+// })
+app.post('/course/:user', function (req, res) {
+    console.log("Inside create course handler");
+    var loggedInuser = req.params.user;
+    let course_id = req.body.courseId;
+    let course_term = req.body.courseTerm;
+    let course_name = req.body.courseName;
+    let course_deptcode = req.body.courseDeptCode;
+    let course_dept = req.body.courseDept;
+    let course_desc = req.body.courseDesc;
+    let course_room = req.body.courseRoom;
+    let course_capacity = req.body.courseCapacity;
+    let waitlist_capacity = req.body.waitlistCapacity;
+    
+    console.log(loggedInuser);
+    connection.query('INSERT INTO course(course_id,course_term,course_name,course_dept,course_dept_code, ' +
+    'course_desc,course_room,course_capacity,waitlist_capacity,created_by) ' + 
+    'VALUES (?,?,?,?,?,?,?,?,?,?,?,?);', [course_id,course_term,course_name,course_deptcode,course_dept,course_desc,course_room,course_capacity,waitlist_capacity,loggedInuser], function (error, results, fields) {
+        console.log();
+        if (error) {
+            res.status(500).send(error);
+        } else {
+            res.status(200).send("Success");
+        }
+        });
+
+});
 
 
 

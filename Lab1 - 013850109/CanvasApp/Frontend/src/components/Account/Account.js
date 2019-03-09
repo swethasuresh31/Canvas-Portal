@@ -162,7 +162,7 @@ export default class Account extends Component {
     let user = cookies.get('cookieS') || cookies.get('cookieF');
     console.log(user + "UserName")
 
-    axios.get('http://localhost:3001/account/' + user)
+    axios.get('http://localhost:3001/user/' + user)
       .then((response) => {
         console.log(response);
         //update the state with the response data

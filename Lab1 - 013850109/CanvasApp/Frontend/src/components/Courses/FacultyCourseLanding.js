@@ -25,6 +25,7 @@ export default class StudentCourseLanding extends Component {
     render() {
         
             return (
+                <div id="wrapper" style={{ 'margin-left': 'auto', 'margin-right': 'auto', width: '100%', position: 'fixed' }}>
                 <div className="container-fluid md-0 p-0">
                     <div className="row">
                         <div className="col col-md-1">
@@ -36,12 +37,14 @@ export default class StudentCourseLanding extends Component {
                                     <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">All Courses</ Heading></div>
                             </div>
                             <div className="row">
-                            <div className="col">
-                            <div class="text-right">
-                            <br /><a href="/searchCourse" class="btn btn-primary btn-lg active" role="button" aria-pressed="true"><IconAddLine /> Search Course</a>
+                                <div className="col">
+                                    <div class="float-right">
+                                        <br /><a href="/generatePermissionCode" class="btn btn-primary btn-md active  mx-3 px-2"  style={{backgroundColor:'#0055a2'}} role="button" aria-pressed="true">Generate Permission Code</a>
+                                        <a href="/createCourse" class="btn btn-primary btn-md active  mx-3 px-2"  style={{backgroundColor:'#0055a2'}} role="button" aria-pressed="true"><IconAddLine /> Create Course</a>
+                                        </div>
+                                </div>
                             </div>
-                            </div>
-                            </div>
+                            <br /><br />
                             <div className="row">
                                 <Table
                                     layout="fixed"
@@ -59,7 +62,7 @@ export default class StudentCourseLanding extends Component {
                                             this.props.coursework.map(course => {
                                                 return (
                                                     <tr>
-                                                        <td>{course.course_dept}-{course.course_id} - {course.course_name}</td>
+                                                        <td>{course.course_dept_code}-{course.course_id} - {course.course_name}</td>
                                                         <td>{course.course_term}</td>
                                                         <td>{course.total_enrollment}</td>
                                                         <td>{course.total_waitlist}</td>
@@ -72,6 +75,7 @@ export default class StudentCourseLanding extends Component {
                             </ div>
                         </div>
                     </div>
+                </div>
                 </div>
 
             );

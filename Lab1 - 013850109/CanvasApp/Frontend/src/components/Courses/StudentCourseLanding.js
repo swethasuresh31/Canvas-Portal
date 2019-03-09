@@ -8,7 +8,7 @@ import Heading from '@instructure/ui-elements/lib/components/Heading';
 import cookie from 'react-cookies';
 import Cookies from 'universal-cookie';
 import axios from 'axios';
-import { IconSearchLine } from '@instructure/ui-icons'
+import { IconSearchLine, IconAddLine } from '@instructure/ui-icons'
 
 const cookies = new Cookies();
 
@@ -18,15 +18,16 @@ export default class StudentCourseLanding extends Component {
         super(props);
         // Don't call this.setState() here!
         this.state = {
-            
+
         };
     }
 
 
 
     render() {
-        
-            return (
+
+        return (
+            <div id="wrapper" style={{ 'margin-left': 'auto', 'margin-right': 'auto', width: '100%', position: 'fixed' }}>
                 <div className="container-fluid md-0 p-0">
                     <div className="row">
                         <div className="col col-md-1">
@@ -38,12 +39,14 @@ export default class StudentCourseLanding extends Component {
                                     <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">All Courses</ Heading></div>
                             </div>
                             <div className="row">
-                            <div className="col">
-                            <div class="text-right">
-                            <br /><a href="/searchCourse" class="btn btn-primary btn-lg active" role="button" aria-pressed="true"><IconSearchLine /> Search Course</a>
+                                <div className="col">
+                                    <div class="float-right">
+                                        <br /><a href="/enrollCourse" class="btn btn-primary btn-lg active  mx-3 px-2"  style={{backgroundColor:'#0055a2'}} role="button" aria-pressed="true"><IconAddLine /> Add Course</a>
+                                        <a href="/searchCourse" class="btn btn-primary btn-lg active  mx-3 px-2"  style={{backgroundColor:'#0055a2'}} role="button" aria-pressed="true"><IconSearchLine /> Search Course</a>
+                                        </div>
+                                </div>
                             </div>
-                            </div>
-                            </div>
+                            <br /><br />
                             <div className="row">
                                 <Table
                                     layout="fixed"
@@ -61,7 +64,7 @@ export default class StudentCourseLanding extends Component {
                                                 let enrollmentStatus = (course.isWaitlist !== 0) ? "Waitlist" : "Enrolled";
                                                 return (
                                                     <tr>
-                                                        <td>{course.course_dept}-{course.course_id} - {course.course_name}</td>
+                                                        <td>{course.course_dept_code}-{course.course_id} - {course.course_name}</td>
                                                         <td>{course.course_term}</td>
                                                         <td>{enrollmentStatus}</td>
                                                     </tr>
@@ -74,8 +77,8 @@ export default class StudentCourseLanding extends Component {
                         </div>
                     </div>
                 </div>
+            </div>
+        );
 
-            );
-        
     }
 }
