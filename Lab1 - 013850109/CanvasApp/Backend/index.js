@@ -163,7 +163,7 @@ app.get('/course', function (req, res) {
         if (req.query.operator === 'EQ') {
             queryString += ' = ' + req.query.courseId + ' AND';
         } else if (req.query.operator === 'CON') {
-            queryString += ' CONTAINS \'%' + req.query.courseId + '%\' AND';
+            queryString += ' LIKE \'%' + req.query.courseId + '%\' AND';
         } else if (req.query.operator === 'LTE') {
             queryString += ' <= ' + req.query.courseId + ' AND';
         } else if (req.query.operator === 'GTE') {

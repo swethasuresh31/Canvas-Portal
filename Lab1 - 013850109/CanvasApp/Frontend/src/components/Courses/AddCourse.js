@@ -225,7 +225,7 @@ export default class SearchCourse extends Component {
                                             </div>
                                             <div>{this.state.errorMsg}</div><br />
                                             <div class="row input-group mb-3 justify-content-center">
-                                                <button type="button" class="btn btn-primary btn-md mx-2" style={{ backgroundColor: '#0055a2' }} onClick={() => this.clearForm()}>Cancel</button>
+                                                <button type="button" class="btn btn-secondary btn-md mx-2 disabled" >Cancel</button>
                                                 <button type="button" class="btn btn-primary btn-md mx-2" style={{ backgroundColor: '#0055a2' }} onClick={this.onAdd} >Add</button>
                                             </ div>
                                         </div>
@@ -310,7 +310,7 @@ export default class SearchCourse extends Component {
                                             </div>
                                             <div>{this.state.errorMsg}</div><br />
                                             <div class="row input-group mb-3 justify-content-center">
-                                                <button type="button" class="btn btn-primary btn-md mx-2" style={{ backgroundColor: '#0055a2' }} onClick={() => this.clearForm()}>Cancel</button>
+                                                <button type="button" class="btn btn-secondary btn-md mx-2" onClick={() => this.clearForm()}>Clear</button>
                                                 <button type="button" class="btn btn-primary btn-md mx-2" style={{ backgroundColor: '#0055a2' }} onClick={this.onAdd} >Add</button>
                                             </ div>
                                         </div>
