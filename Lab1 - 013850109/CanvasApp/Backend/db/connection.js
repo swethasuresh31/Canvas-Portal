@@ -8,7 +8,8 @@ db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: 'adminuser',
-    database: 'canvas'
+    database: 'canvas',
+    multipleStatements: true
   });
   
   db.connect(function (err) {

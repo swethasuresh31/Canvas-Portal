@@ -8,7 +8,7 @@ import Heading from '@instructure/ui-elements/lib/components/Heading';
 import cookie from 'react-cookies';
 import Cookies from 'universal-cookie';
 import axios from 'axios';
-import { IconSearchLine, IconAddLine } from '@instructure/ui-icons'
+import { IconSearchLine, IconAddLine, IconTrashLine } from '@instructure/ui-icons'
 
 const cookies = new Cookies();
 
@@ -18,11 +18,28 @@ export default class StudentCourseLanding extends Component {
         super(props);
         // Don't call this.setState() here!
         this.state = {
-
+            user: cookies.get('cookieS')
         };
+        this.onDrop = this.onDrop.bind(this);
+
     }
 
+    onDrop(courseUid) {
+        console.log("validated");
+        console.log(this.state.searchOperand);
+        this.setState({ errorMsg: '' })
+        //drops the courses based on information entered
+        axios.delete('http://localhost:3001/usercourse?user=' + encodeURI(this.state.user) + '&courseUid=' + courseUid)
+            .then((response) => {
+                console.log(response);
+                if (response !== undefined)
+                    this.setState({
+                        searchResult: <CourseCard courses={response.data} />
+                    })
 
+            })
+
+    }
 
     render() {
 
@@ -56,6 +73,7 @@ export default class StudentCourseLanding extends Component {
                                             <th scope="col">Course</th>
                                             <th scope="col">Term</th>
                                             <th scope="col">Enrollment Status</th>
+                                            <th scope="col">Drop</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -67,6 +85,9 @@ export default class StudentCourseLanding extends Component {
                                                         <td>{course.course_dept_code}-{course.course_id} - {course.course_name}</td>
                                                         <td>{course.course_term}</td>
                                                         <td>{enrollmentStatus}</td>
+                                                        <td>
+                                            <button type="button" class="btn btn-danger mx-2" onClick={() => this.onDrop(course.course_uid)} ><IconTrashLine /> Drop</button>
+                                        </td>
                                                     </tr>
                                                 )
                                             })
