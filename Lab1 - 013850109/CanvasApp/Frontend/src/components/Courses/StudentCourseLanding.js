@@ -24,19 +24,16 @@ export default class StudentCourseLanding extends Component {
 
     }
 
-    onDrop(courseUid) {
+    onDrop(courseUid, enrollmentStatus) {
         console.log("validated");
         console.log(this.state.searchOperand);
         this.setState({ errorMsg: '' })
         //drops the courses based on information entered
-        axios.delete('http://localhost:3001/usercourse?user=' + encodeURI(this.state.user) + '&courseUid=' + courseUid)
+        axios.delete('http://localhost:3001/usercourse?user=' + encodeURI(this.state.user) + '&courseUid=' + courseUid + '&status=' + enrollmentStatus)
             .then((response) => {
                 console.log(response);
-                if (response !== undefined)
-                    this.setState({
-                        searchResult: <CourseCard courses={response.data} />
-                    })
-
+                if (response !== undefined && response.status === 200)
+                    this.props.removeCourseRow(courseUid)
             })
 
     }
@@ -86,7 +83,7 @@ export default class StudentCourseLanding extends Component {
                                                         <td>{course.course_term}</td>
                                                         <td>{enrollmentStatus}</td>
                                                         <td>
-                                            <button type="button" class="btn btn-danger mx-2" onClick={() => this.onDrop(course.course_uid)} ><IconTrashLine /> Drop</button>
+                                            <button type="button" class="btn btn-danger mx-2" onClick={() => this.onDrop(course.course_uid, enrollmentStatus)} ><IconTrashLine /> Drop</button>
                                         </td>
                                                     </tr>
                                                 )

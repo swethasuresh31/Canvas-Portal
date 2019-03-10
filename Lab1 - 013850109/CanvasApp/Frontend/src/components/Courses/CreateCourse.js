@@ -194,6 +194,8 @@ export default class CreateCourse extends Component {
         if (cookie.load('cookieF')) {
            var user = cookies.get('cookieF')
             const courseData = {
+                user: user,
+                courseInstructor: this.state.courseInstructor,
                 courseDeptCode: this.state.courseDeptCode,
                 courseId: this.state.courseId,
                 courseName: this.state.courseName,
@@ -207,7 +209,7 @@ export default class CreateCourse extends Component {
             }
 
             //post information into the course table
-            axios.post('http://localhost:3001/course/' + encodeURI(user), courseData)
+            axios.post('http://localhost:3001/course', courseData)
                 .then(response => {
                     console.log("Status Code : ", response.status);
                     if (response.status === 200) {
