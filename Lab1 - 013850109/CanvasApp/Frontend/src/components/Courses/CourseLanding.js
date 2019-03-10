@@ -22,6 +22,7 @@ export default class CourseDetails extends Component {
             selectedPath: "1",
             coursework: []
         };
+        this.removeCourseRow = this.removeCourseRow.bind(this);
     }
 
     componentDidMount() {
@@ -45,6 +46,12 @@ export default class CourseDetails extends Component {
         }
     }
 
+    removeCourseRow = (courseUid) => {
+        let index = this.state.coursework.findIndex(row => row.course_uid === courseUid)
+        var newCoursework = [...this.state.coursework]
+        newCoursework.splice(index,1);
+        this.setState({coursework: newCoursework});
+    }
 
     onItemSelection = arg => {
         this.setState({ selectedPath: arg.path });
@@ -59,7 +66,7 @@ export default class CourseDetails extends Component {
         } else if (cookie.load('cookieS')) {
             //Return student page
             return (
-                <StudentCourseLanding coursework={this.state.coursework}></StudentCourseLanding>
+                <StudentCourseLanding coursework={this.state.coursework} removeCourseRow={this.removeCourseRow}></StudentCourseLanding>
             );
         } else {
             return (<div><Redirect to="/login" /></div>);

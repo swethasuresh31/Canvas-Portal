@@ -17,7 +17,7 @@ router.get('/:user', function (req, res) {
                 }
             });
     } else if (req.query.role === 'faculty') {
-        var loggedInuser = req.params.user;
+        var loggedInuser = decodeURI(req.params.user);
         console.log(loggedInuser);
         connection.query('select * from course where created_by = ?;', [loggedInuser], function (error, results, fields) {
             if (error) {
@@ -33,9 +33,33 @@ router.get('/:user', function (req, res) {
     }
 })
 
+router.delete('/', function (req, res) {
+    let filledFieldName = (req.query.status === 'Waitlist') ? "total_waitlist" : "total_enrollment";
+
+    let queryString = 'START TRANSACTION; ' +
+        'UPDATE course SET ' + filledFieldName + '=' + filledFieldName + '-1 WHERE course_uid=' + req.query.courseUid +'; ' +
+        'DELETE from student_courses WHERE email_id=? AND course_uid=?; ' +
+        'COMMIT;';
+
+    console.log(queryString + "[" + decodeURI(req.query.user) + "," + req.query.courseUid + "," + req.query.status + "]");
+    connection.query(queryString, [decodeURI(req.query.user), req.query.courseUid], function (error, results, fields) {
+        if (error) {
+            console.log(error);
+            connection.query("ROLLBACK;")
+            res.status(500).send(error);
+        } else {
+            if(results[2].affectedRows !== 1) {
+                res.status(404).send("Not found");
+                connection.query("ROLLBACK;")
+            }
+            res.status(200).send("Success");
+        }
+    });
+})
+
 router.put('/', function (req, res) {
     console.log("Inside usercourse put handler: " + req.body.userId);
-    let loggedInuser = req.body.userId;
+    let loggedInuser = decodeURI(req.body.userId);
     let courseUid = req.body.courseUid;
     let permissionNumber = req.body.permissionNumber;
     let isWaitlist = false;
@@ -90,7 +114,7 @@ router.put('/', function (req, res) {
 isValidPN = (permissionNumber, courseUid, res) => {
     connection.query('SELECT * FROM permission_code WHERE permissionNumber=? AND course_uid=?', [permissionNumber, courseUid], function (error, results, fields) {
         console.log(results);
-        if(error) {
+        if (error) {
             res.status(500).send(error);
         }
         if (results.length === 0) {
@@ -103,17 +127,17 @@ isValidPN = (permissionNumber, courseUid, res) => {
 availability = (courseUid, res) => {
     connection.query('SELECT * FROM course WHERE course_uid=?', [courseUid], function (error, results, fields) {
         console.log(results);
-        if(error) {
+        if (error) {
             res.status(500).send(error);
         }
         if (results.length === 0) {
             res.status(404).send("Not found");
         }
-        if(results[0].total_enrollment < results[0].course_capacity) {
+        if (results[0].total_enrollment < results[0].course_capacity) {
             return 'available';
         }
 
-        if(results[0].total_waitlist < results[0].waitlist_capacity) {
+        if (results[0].total_waitlist < results[0].waitlist_capacity) {
             return 'waitlist'
         }
 

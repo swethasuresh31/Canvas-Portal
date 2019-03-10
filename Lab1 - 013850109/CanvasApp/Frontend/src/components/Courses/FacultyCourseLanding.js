@@ -64,8 +64,8 @@ export default class StudentCourseLanding extends Component {
                                                     <tr>
                                                         <td>{course.course_dept_code}-{course.course_id} - {course.course_name}</td>
                                                         <td>{course.course_term}</td>
-                                                        <td>{course.total_enrollment}</td>
-                                                        <td>{course.total_waitlist}</td>
+                                                        <td>{course.total_enrollment} out of {course.course_capacity}</td>
+                                                        <td>{course.total_waitlist} out of {course.waitlist_capacity}</td>
                                                     </tr>
                                                 )
                                             })
