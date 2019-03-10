@@ -7,6 +7,7 @@ import CourseDetails from './Courses/CourseDetails';
 import CourseHome from './Courses/CourseLanding';
 import CourseStudent from './Courses/StudentCourseLanding';
 import CourseFaculty from './Courses/FacultyCourseLanding';
+import AddCourse from './Courses/AddCourse';
 import SearchCourse from './Courses/SearchCourse';
 import CreateCourse from './Courses/CreateCourse';
 import GeneratePermission from './Courses/GeneratePermission';
@@ -28,6 +29,7 @@ class Main extends Component {
                 <Route path="/coursehome" exact component={CourseHome} />
                 <Route path="/login" exact component={Login} />
                 <Route path="/signup" exact component={Signup} />
+                <Route path="/enrollCourse" exact component={AddCourse} />
                 <Route path="/searchCourse" exact component={SearchCourse} />
                 <Route path="/createCourse" exact component={CreateCourse} />
                 <Route path="/facultyCourse" exact component={CourseFaculty} />

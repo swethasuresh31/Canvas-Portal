@@ -37,43 +37,15 @@ app.use(function (req, res, next) {
     next();
 });
 
+//Route to login
+var loginRouter = require('./routes/Login');
+app.use('/login', loginRouter);
 
-//Route to handle Post Request Call
-app.post('/login', function (req, response) {
-    var username = req.body.username;
-    var password = req.body.password;
-    console.log("Inside Login Post Request");
-    console.log("Req Body : ", req.body);
-    connection.query('SELECT password,is_student FROM user WHERE email_id = ?', [username], function (error, results, fields) {
-        if (results.length == 0) {
-            response.status(404).send("Username does not exists!");
-        } else {
-            bcrypt.compare(password, results[0].password, function (err, res) {
-                if (res) {
-                    if (results[0].is_student) {
-                        response.cookie('cookieS', username, { maxAge: 900000, httpOnly: false, path: '/' });
-                        req.session.user = username;
-                        response.writeHead(200, {
-                            'Content-Type': 'text/plain'
-                        })
-                        response.end("Student");
-                    } else {
-                        response.cookie('cookieF', username, { maxAge: 900000, httpOnly: false, path: '/' });
-                        req.session.user = username;
-                        response.writeHead(200, {
-                            'Content-Type': 'text/plain'
-                        })
-                        response.end("Faculty");
-                    }
-                }
-                else {
-                    response.status(400).send("Incorrect Password!");
-                }
-            });
-        }
-    });
+//Route to get enrolled/created course information when a user visits the course Page
+var userCourseRouter = require('./routes/UserCourse');
+app.use('/usercourse', userCourseRouter);
 
-});
+
 
 app.post('/signup', function (req, res) {
     var username = req.body.username;
@@ -140,37 +112,7 @@ app.get('/user/:user', function (req, res) {
     });
 })
 
-//Route to get enrolled/created course information when a user visits the course Page
-app.get('/usercourse/:user', function (req, res) {
-    console.log("Inside usercourse " + req.query.role + " handler");
-    if (req.query.role === 'student') {
-        var loggedInuser = req.params.user;
-        console.log(loggedInuser);
-        connection.query('select * from course join student_courses where course.course_uid = student_courses.course_uid ' +
-            'and student_courses.email_id = ?;', [loggedInuser], function (error, results, fields) {
-                if (error) {
-                    res.status(500).send(error);
-                } else {
-                    console.log(JSON.stringify(results));
-                    res.send(JSON.stringify(results));
-                }
-            });
-    } else if (req.query.role === 'faculty') {
-        var loggedInuser = req.params.user;
-        console.log(loggedInuser);
-        connection.query('select * from course where created_by = ?;', [loggedInuser], function (error, results, fields) {
-                if (error) {
-                    res.status(500).send(error);
-                } else {
-                    console.log(JSON.stringify(results));
-                    res.send(JSON.stringify(results));
-                }
-            });
-    } else {
-        console.log('No role specified');
-        res.status(400).send('Page is only accesible for student or professor');
-    }
-})
+
 
 
 
@@ -246,31 +188,8 @@ app.get('/course', function (req, res) {
 })
 
 
-// app.put('/usercourse', function (req, res) {
-//     console.log("Inside usercourse put handler");
-//     var loggedInuser = req.body.user;
-//     var courseId = req.body.courseId;
-
-//     connection.query('SELECT * from course where course_uid=?', [loggedInuser], function (error, results, fields) {
-//         if (error) {
-//             res.status(500).send(error);
-//         } else {
-//             console.log(JSON.stringify(results));
-//             res.send(JSON.stringify(results));
-//         }
-//     });
 
 
-//     console.log(loggedInuser);
-//     connection.query('INSERT INTO student_courses (course_uid, email_id , isWaitlist) VALUES (?,?,?,?);', [username, name, password, role], function (error, results, fields) {
-//         console.log();
-//         if (error) {
-//             res.status(500).send(error);
-//         } else {
-//             res.status(200).send("Success");
-//         }
-//     });
-// })
 app.post('/course/:user', function (req, res) {
     console.log("Inside create course handler");
     var loggedInuser = req.params.user;
