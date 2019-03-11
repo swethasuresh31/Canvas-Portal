@@ -50,7 +50,7 @@ export default class Dashboard extends Component {
       return (
         <div>
           <div className="row">
-            <div className="col col-md-1">
+          <div className="col pr-0 mr-0" style={{ maxWidth: "100px" }}>
               <Navbar selected="dashboard" />
             </ div>
             <div className="col">
@@ -61,7 +61,7 @@ export default class Dashboard extends Component {
                   <Heading theme={{ borderPadding: "1rem" }} border="bottom">Dashboard</ Heading>
                 </ div>
               </ div>
-              <div className="row">
+              <div className="row" style={{ marginLeft: "15px" }}>
                 <div className="card-deck d-flex flex-wrap">
                   {
                     this.state.coursework.map(course => {

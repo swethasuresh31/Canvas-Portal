@@ -45,7 +45,7 @@ export default class StudentCourseLanding extends Component {
             <div id="wrapper" style={{ 'margin-left': 'auto', 'margin-right': 'auto', width: '100%', position: 'fixed' }}>
                 <div className="container-fluid md-0 p-0">
                     <div className="row">
-                        <div className="col col-md-1">
+                    <div className="col pr-0 mr-0" style={{ maxWidth: "100px" }}>
                             <Navbar selected="courses" />
                         </ div>
                         <div className="col">

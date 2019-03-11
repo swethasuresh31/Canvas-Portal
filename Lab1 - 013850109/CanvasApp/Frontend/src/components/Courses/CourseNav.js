@@ -15,9 +15,8 @@ const AppContainer = styled(BaseAppContainer)`
 `;
 
 const themeCourse = {
-    hoverBgColor: "#f5f5f5",
-    selectionBgColor: "#f5f5f5",
-    selectionIconColor: "#03A9F4"
+    selectionBgColor: "#0055a2",
+    selectionColor: "#FFFFFF"
 };
 
 export default class CourseNav extends Component {
@@ -38,20 +37,19 @@ export default class CourseNav extends Component {
 
         return (
 
-            <div className="col">
+            <div className="col ml-0">
                 <SideNav
                     defaultSelectedPath="1"
                     theme={themeCourse}
                     onItemSelection={this.onItemSelection}
                 >
-                    <Nav id="1"><Link to="/coursehome" selected={this.props.selected === "home"}>Home</Link></Nav>
-                    <Nav id="2"><Link to="/cassignments">Assignments</Link></Nav>
-                    <Nav id="2"><Link to="/cannouncements">Announcements</Link></Nav>
-                    <Nav id="3"><Link to="/cgrades">Grades</Link></Nav>
-                    <Nav id="3"><Link to="/cpeople">People</Link></Nav>
-                    <Nav id="3"><Link to="/cfiles">Files</Link></Nav>
-                    <Nav id="3"><Link to="/cquizzes">Quizzes</Link></Nav>
-
+                    <Link to="/coursehome" selected={this.props.selected === "home"} style = {{textDecoration:'none'}}><Nav id="1">Home</Nav></Link>
+                    <Link to="/cassignments" selected={this.props.selected === "home"} style = {{textDecoration:'none'}}><Nav id="2">Assignments</Nav></Link>
+                    <Link to="/cannouncements" selected={this.props.selected === "home"} style = {{textDecoration:'none'}}><Nav id="3">Announcements</Nav></Link>
+                    <Link to="/cgrades" selected={this.props.selected === "home"} style = {{textDecoration:'none'}}><Nav id="4">Grades</Nav></Link>
+                    <Link to="/cpeople" selected={this.props.selected === "home"} style = {{textDecoration:'none'}}><Nav id="5">People</Nav></Link>
+                    <Link to="/cfiles" selected={this.props.selected === "home"} style = {{textDecoration:'none'}}><Nav id="6">Files</Nav></Link>
+                    <Link to="/cquizzes" selected={this.props.selected === "home"} style = {{textDecoration:'none'}}><Nav id="7">Quizzes</Nav></Link>
                 </SideNav>
             </div>
                          

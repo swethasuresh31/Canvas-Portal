@@ -181,7 +181,7 @@ export default class SearchCourse extends Component {
                     {this.state.redirectVar}
                     <div className="container-fluid md-0 p-0">
                         <div className="row">
-                            <div className="col col-md-1">
+                        <div className="col pr-0 mr-0" style={{ maxWidth: "100px" }}>
                                 <Navbar selected="courses" />
                             </ div>
                             <div className="col">
@@ -248,7 +248,7 @@ export default class SearchCourse extends Component {
                     {this.state.redirectVar}
                     <div className="container-fluid md-0 p-0">
                         <div className="row">
-                            <div className="col col-md-1">
+                        <div className="col pr-0 mr-0" style={{ maxWidth: "100px" }}>
                                 <Navbar selected="courses" />
                             </ div>
                             <div className="col">

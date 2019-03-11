@@ -45,6 +45,10 @@ app.use('/login', loginRouter);
 var userCourseRouter = require('./routes/UserCourse');
 app.use('/usercourse', userCourseRouter);
 
+//Route to get permission code
+var userCourseRouter = require('./routes/Permission');
+app.use('/permission', userCourseRouter);
+
 
 
 app.post('/signup', function (req, res) {

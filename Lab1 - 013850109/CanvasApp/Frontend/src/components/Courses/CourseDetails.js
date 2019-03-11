@@ -52,7 +52,7 @@ export default class CourseDetails extends Component {
                 <div className="container-fluid md-0 p-0">
                     {redirectVar}
                     <div className="row">
-                        <div className="col col-sm-1">
+                    <div className="col pr-0 mr-0" style={{ maxWidth: "100px" }}>
                             <Navbar selected="courses" />
                         </ div>
                         <div className="col">
@@ -79,7 +79,7 @@ export default class CourseDetails extends Component {
                 <div className="container-fluid md-0 p-0">
                     {redirectVar}
                     <div className="row">
-                        <div className="col col-sm-1">
+                        <div className="col pr-0 mr-0" style={{ maxWidth: "100px" }}>
                             <Navbar selected="courses" />
                         </ div>
                         <div className="col">
