@@ -16,33 +16,42 @@ export default class SearchCourse extends Component {
         super(props);
         // Don't call this.setState() here!
         this.state = {
-            
+            courses: [],
+            selectedCourse: '',
+            permissionCode: ''
         }
-        
+        this.onGenerate = this.onGenerate.bind(this);
+        this.onSelect = this.onSelect.bind(this);
+
 
     }
 
-    
+    componentWillMount() {
+        let user = cookies.get('cookieF');
+        axios.get('http://localhost:3001/usercourse/' + encodeURI(user) + '?role=faculty')
+            .then((response) => {
+                console.log(response);
+                if (response !== undefined)
+                    this.setState({ courses: response.data })
+            })
+    }
+
+    onSelect(e) {
+        this.setState({ selectedCourse: e.target.value, permissionCode: '' });
+    }
+
 
     onGenerate(e) {
-        e.preventDefault();
-        console.log("validating");
-        if (!this.validate()) return;
-        console.log("validated");
-        console.log(this.state.searchOperand);
         this.setState({ errorMsg: '' })
-        //retrieves the courses based on information entered
-        axios.get('http://localhost:3001/course?term=' + this.state.term + '&name=' + this.state.courseName + '&department=' +
-            this.state.department + '&courseId=' + this.state.courseId + '&operator=' + this.state.searchOperand)
+        //generate the permission code for the course
+        axios.get('http://localhost:3001/permission/'+this.state.selectedCourse)
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)
                     this.setState({
-                        searchResult: <CourseCard courses={response.data} />
+                        permissionCode: response.data.permissionCode
                     })
-
             })
-
     }
 
 
@@ -63,19 +72,38 @@ export default class SearchCourse extends Component {
                             <br /><br />
                             <div className="row d-flex justify-content-center">
                                 <form>
-                                <fieldset disabled>
-                                <div class="form-group">
-                                  <label for="disabledTextInput">Disabled input</label>
-                                  <input type="text" id="disabledTextInput" class="form-control" placeholder="Disabled input" />
-                                </div>
-                                <div class="form-check">
-                                <button type="submit" class="btn btn-primary">Generate Permission Code</button>
-                                </div>
-                              </fieldset>   
+                                    <div class="dropdown mb-3">
+                                        <div className="row input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <label class="input-group-text" for="inputGroupSelect01">Course</label>
+                                            </div>
+                                            <select class="custom-select" id="inputGroupSelect01" onChange={this.onSelect} value={this.state.selectedCourse} >
+                                                <option value="" selected></option>
+                                                {
+                                                    this.state.courses.map((course) => {
+                                                        let courseValue = course.course_dept_code + '-' + course.course_id + ' - ' + course.course_name + ' (' + course.course_term + ')';
+                                                        return (
+                                                            <option value={course.course_uid}>{courseValue}</option>
+                                                        )
+                                                    })
+                                                }
+                                            </select>
+                                        </div>
+                                        <div>{this.state.errorMsg}</div><br />
+                                        <div class="row input-group mb-3 justify-content-center">
+                                            <button type="button" class="btn btn-primary btn-md mx-2" style={{ backgroundColor: '#0055a2' }} onClick={this.onGenerate} >Generate Permission Code</button>
+                                        </div>
+                                        <br/><br/>
+                                        <div class="row input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <label class="input-group-text" for="inputGroupSelect05">Permission Code</label>
+                                            </div>
+                                            <input type="text" class="form-control" value={this.state.permissionCode} readonly="true" />
+                                        </div>
+                                    </div>
                                 </form>
 
                             </div>
-                           
                         </div>
                     </div>
 

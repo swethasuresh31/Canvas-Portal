@@ -193,12 +193,12 @@ export default class Account extends Component {
         return (
           <div>
           <div className="row">
-            <div className="col col-md-1">
+          <div className="col" style={{ maxWidth: "100px" }}>
               <Navbar selected="account" />
             </ div>
             <div className="col">
               <div className="row">
-                <div className="col pb-3">
+                <div className="col">
                     <br />
                     <Heading theme={{ borderPadding: "1rem" }} border="bottom">{this.state.name}'s Profile
                   <span style={{ float: "right" }}><button type="button" class="btn btn-secondary btn" onClick={() => { this.setState({ isEditing: "false" }) }}><IconEditLine /> Cancel Edit</button>
@@ -207,7 +207,7 @@ export default class Account extends Component {
                   </ div>
                 </ div>
                 <div className="row">
-                  <div className="col col-sm-2">
+                  <div className="col col-sm-1">
                     <br /><Avatar name={this.state.name} size="x-large" />
                   </ div>
                   <div className="col col-lg-5">
@@ -240,10 +240,10 @@ export default class Account extends Component {
         return (
           <div>
             <div className="row">
-              <div className="col col-sm-2">
+            <div className="col" style={{ maxWidth: "100px" }}>
                 <Navbar selected="account" />
               </ div>
-              <div className="col col-lg-8">
+              <div className="col">
                 <div className="row">
                   <div className="col">
                     <br />
@@ -254,7 +254,7 @@ export default class Account extends Component {
                   </ div>
                 </ div>
                 <div className="row">
-                  <div className="col col-sm-2">
+                  <div className="col col-sm-1">
                     <br /><Avatar name={this.state.name} size="x-large" />
                   </ div>
                   <div className="col col-lg-5">

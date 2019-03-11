@@ -36,59 +36,72 @@ router.get('/:user', function (req, res) {
 router.delete('/', function (req, res) {
     let filledFieldName = (req.query.status === 'Waitlist') ? "total_waitlist" : "total_enrollment";
 
+    startDrop(filledFieldName, req.query.courseUid, req.query.user, res);
+
+})
+
+startDrop = (filledFieldName, courseUid, user, res) => {
     let queryString = 'START TRANSACTION; ' +
-        'UPDATE course SET ' + filledFieldName + '=' + filledFieldName + '-1 WHERE course_uid=' + req.query.courseUid +'; ' +
+        'UPDATE course SET ' + filledFieldName + '=' + filledFieldName + '-1 WHERE course_uid=' + courseUid + '; ' +
         'DELETE from student_courses WHERE email_id=? AND course_uid=?; ';
-    
-    if(this.shouldUpdateWaitlist(courseUid)){
-        let studentId = fetchStudentToUpdate(courseUid);
-        if( studentId !== ''){
-            queryString += 'UPDATE student_courses SET isWaitlist=0 where course_uid=' + courseUid + ' AND email_id=' + studentId + '; ';
-            queryString += 'UPDATE course SET total_enrollment=total_enrollment+1,total_waitlist=total_waitlist-1 WHERE course_uid=' + req.query.courseUid + '; ';        }
-    }
-    queryString += 'COMMIT;'
-    console.log(queryString + "[" + decodeURI(req.query.user) + "," + req.query.courseUid + "," + req.query.status + "]");
-    connection.query(queryString, [decodeURI(req.query.user), req.query.courseUid], function (error, results, fields) {
+    connection.query(queryString, [decodeURI(user), courseUid], function (error, results, fields) {
         if (error) {
             console.log(error);
             connection.query("ROLLBACK;")
             res.status(500).send(error);
         } else {
-            if(results[2].affectedRows !== 1) {
+            if (results[2].affectedRows !== 1) {
                 res.status(404).send("Not found");
                 connection.query("ROLLBACK;")
+            } else {
+                shouldUpdateWaitlist(courseUid, res)
             }
-            res.status(200).send("Success");
         }
-    });
-})
-
-shouldUpdateWaitlist = (courseUid) => {
-    connection.query('SELECT * FROM course WHERE course_uid=?', [courseUid], function (error, results, fields) {
-        console.log(results);
-        if (error) {
-            throw error;
-        }
-        if (results[0].total_waitlist === 0) {
-            return false;
-        }
-        if(results[0].total_enrollment >= results[0].course_capacity){
-            return false;
-        }
-        return true;
     });
 }
 
-fetchStudentToUpdate = (courseUid) => {
+shouldUpdateWaitlist = (courseUid, res) => {
+    connection.query('SELECT * FROM course WHERE course_uid=?', [courseUid], function (error, results, fields) {
+        console.log(results);
+        if (error) {
+            console.log(error);
+            connection.query("ROLLBACK;")
+            res.status(500).send(error);
+        }
+        if (results[0].total_waitlist === 0 || results[0].total_enrollment >= results[0].course_capacity) {
+            connection.query("COMMIT;")
+            res.status(200).send("Success");
+        } else {
+            fetchStudentToUpdate(courseUid, res)
+        }
+    });
+}
+
+fetchStudentToUpdate = (courseUid, res) => {
     connection.query('SELECT * FROM student_courses WHERE course_uid=? AND isWaitlist=1 ORDER BY course_uid LIMIT 1', [courseUid], function (error, results, fields) {
         console.log(results);
         if (error) {
-            throw error;
+            console.log(error);
+            connection.query("ROLLBACK;")
+            res.status(500).send(error);
+        } else {
+            updateWaitlistForStudent(results[0].email_id, courseUid, res)
         }
-        if (results.length === 1){
-            return results[0].email_id;
+    });
+}
+
+updateWaitlistForStudent = (studentId, courseUid, res) => {
+    let queryString = 'UPDATE student_courses SET isWaitlist=0 where course_uid=' + courseUid + ' AND email_id=' + studentId + '; ';
+    queryString += 'UPDATE course SET total_enrollment=total_enrollment+1,total_waitlist=total_waitlist-1 WHERE course_uid=' + courseUid + '; ';
+    connection.query(queryString, function (error, results, fields) {
+        if (error) {
+            console.log(error);
+            connection.query("ROLLBACK;")
+            res.status(500).send(error);
+        } else {
+            connection.query("COMMIT;")
+            res.status(200).send("Success");
         }
-        return '';
     });
 }
 
@@ -98,117 +111,153 @@ router.put('/', function (req, res) {
     let loggedInuser = decodeURI(req.body.userId);
     let courseUid = req.body.courseUid;
     let permissionNumber = req.body.permissionNumber;
-    let isCourseWaitlist = false;
-    let queryString = 'START TRANSACTION;';
-    let forceInsert = false;
-    
-    try{
-    //check permission number
-    if (permissionNumber !== undefined && permissionNumber !== '') {
-        if (this.isValidPN(permissionNumber, courseUid, res)) {
-            forceInsert = true;
-            queryString += 'UPDATE permission_code SET isUsed=true WHERE permission_code=' + permissionNumber + "; "
-        }
+
+    try {
+        //kickoff add course flow
+        startAddCourse(loggedInuser, courseUid, permissionNumber, res)
+    }
+    catch (error) {
+        res.status(500).send(error);
     }
 
-    if (!forceInsert) {
+})
 
-        let availability = this.availability(courseUid, res);
-        //check availability
-        if (availability === 'none') {
-            res.status(403).send("Forbidden")
-            return;
-            //check waitlist
+startAddCourse = (loggedInuser, courseUid, permissionNumber, res) => {
+    connection.query("START TRANSACTION;", function (error, results, fields) {
+        console.log(results);
+        if (error) {
+            console.log(error);
+            connection.query("ROLLBACK;")
+            res.status(500).send(error);
+        } else if(permissionNumber === 'undefined') {
+            checkAvailability(loggedInuser, courseUid, permissionNumber, res)
         }
-
-        if (availability === 'waitlist') {
-            //check waitlist
-            isCourseWaitlist = true;
-            queryString += 'UPDATE course SET total_waitlist = total_waitlist+1 WHERE course_uid=' + courseUid + "; "
+        else {
+        checkPermissionNumber(loggedInuser, courseUid, permissionNumber, res)
         }
+    });
+}
 
-    }else{
-        //check student already wailisted
-        if(this.isStudentAlreadyWailisted(courseUid, loggedInuser, res)){
-            //decrement total_waitlist 
-            queryString += 'UPDATE course SET total_waitlist = total_waitlist-1 WHERE course_uid=' + courseUid + "; ";
-            queryString += 'DELETE FROM student_courses WHERE course_uid=' + courseUid+ 'AND email_id='+loggedInuser+ '; ';
+checkPermissionNumber = (loggedInuser, courseUid, permissionNumber, res) => {
+    connection.query('SELECT * FROM permission_code WHERE permission_code=? AND course_uid=? AND isUsed=0', [permissionNumber, courseUid], function (error, results, fields) {
+        console.log(results);
+        if (error) {
+            console.log(error);
+            connection.query("ROLLBACK;")
+            res.status(500).send(error);
+        } else if (results.length === 1) {
+            updatePermissionNumber(loggedInuser, courseUid, permissionNumber, res)
+        } else {
+            checkAvailability(loggedInuser, courseUid, permissionNumber, res)
         }
-    }
-    if (!isCourseWaitlist) {
-        queryString += 'UPDATE course SET total_enrollment = total_enrollment+1 WHERE course_uid=' + courseUid + "; "
+    });
+}
 
-    }
-
-    queryString += 'INSERT INTO student_courses (email_id, course_uid , isWaitlist) VALUES (?,?,?); COMMIT;'
-
-    //add student course
-    console.log(queryString + "[" + loggedInuser + "," + courseUid + "," + isCourseWaitlist + "]");
-    connection.query(queryString, [loggedInuser, courseUid, isCourseWaitlist], function (error, results, fields) {
-        console.log("Final result:" + results);
+updatePermissionNumber = (loggedInuser, courseUid, permissionNumber, res) => {
+    connection.query('UPDATE permission_code SET isUsed=1 WHERE permission_code=?', [permissionNumber], function (error, results, fields) {
+        console.log(results);
         if (error) {
             console.log(error);
             connection.query("ROLLBACK;")
             res.status(500).send(error);
         } else {
-            res.status(200).send("Success");
+            checkStudentAlreadyWailisted(loggedInuser, courseUid, permissionNumber, res)
         }
     });
 }
-catch(error){
-    res.status(500).send(error);
-}
 
-})
-
-isValidPN = (permissionNumber, courseUid, res) => {
-    connection.query('SELECT * FROM permission_code WHERE permissionNumber=? AND course_uid=?', [permissionNumber, courseUid], function (error, results, fields) {
-        console.log(results);
-        if (error) {
-            res.status(500).send(error);
-        }
-        if (results.length === 0) {
-            return false;
-        }
-        return results[0].isUsed === 0;
-    });
-}
-
-availability = (courseUid, res) => {
+checkAvailability = (loggedInuser, courseUid, permissionNumber, res) => {
     connection.query('SELECT * FROM course WHERE course_uid=?', [courseUid], function (error, results, fields) {
         console.log(results);
         if (error) {
-            throw error;
+            console.log(error);
+            connection.query("ROLLBACK;")
+            res.status(500).send(error);
+        } else if (results[0].total_enrollment < results[0].course_capacity) {
+            updateEnrollment(loggedInuser, courseUid, permissionNumber, res)
+        } else if (results[0].total_waitlist < results[0].waitlist_capacity) {
+            updateWaitist(loggedInuser, courseUid, permissionNumber, res)
+        } else {
+            connection.query("ROLLBACK;")
+            res.status(403).send("Forbidden")
         }
-        if (results.length === 0) {
-            throw "Not found";
-        }
-        if (results[0].total_enrollment < results[0].course_capacity) {
-            return 'available';
-        }
-
-        if (results[0].total_waitlist < results[0].waitlist_capacity) {
-            return 'waitlist'
-        }
-
-        return 'none';
     });
 }
 
-isStudentAlreadyWailisted = (courseUid, user, res) => {
-    connection.query('SELECT * FROM student_courses WHERE course_uid=? AND email_id=?', [courseUid,user], function (error, results, fields) {
+//only for valid permission code
+checkStudentAlreadyWailisted = (loggedInuser, courseUid, permissionNumber, res) => {
+    connection.query('SELECT * FROM student_courses WHERE course_uid=? AND email_id=?', [courseUid, loggedInuser], function (error, results, fields) {
         console.log(results);
         if (error) {
-            throw error;
+            console.log(error);
+            connection.query("ROLLBACK;")
+            res.status(500).send(error);
+        } else if (results.length === 0) {
+            updateEnrollment(loggedInuser, courseUid, permissionNumber, res)
+        } else if(results[0].isWaitlist === 1){
+            removeFromWaitlist(loggedInuser, courseUid, permissionNumber, res)
+        } else {
+            connection.query("ROLLBACK;")
+            res.status(403).send("Forbidden")
         }
-        if (results.length === 0) {
-           return false;
-        }
-        
-        return results[0].isWaitlist !== 0;
     });
 }
 
+updateWaitist = (loggedInuser, courseUid, permissionNumber, res) => {
+    connection.query('UPDATE course SET total_waitlist = total_waitlist+1 WHERE course_uid=?', [courseUid], function (error, results, fields) {
+        console.log(results);
+        if (error) {
+            console.log(error);
+            connection.query("ROLLBACK;")
+            res.status(500).send(error);
+        } else {
+            insertStudentCourse(loggedInuser, courseUid, permissionNumber, true, res)
+        }
+    });
+}
+
+updateEnrollment = (loggedInuser, courseUid, permissionNumber, res) => {
+    connection.query('UPDATE course SET total_enrollment = total_enrollment+1 WHERE course_uid=?', [courseUid], function (error, results, fields) {
+        console.log(results);
+        if (error) {
+            console.log(error);
+            connection.query("ROLLBACK;")
+            res.status(500).send(error);
+        } else {
+            insertStudentCourse(loggedInuser, courseUid, permissionNumber, false, res)
+        }
+    });
+}
+
+removeFromWaitlist = (loggedInuser, courseUid, permissionNumber, res) => {
+    let queryString = 'UPDATE course SET total_waitlist = total_waitlist-1,total_enrollment = total_enrollment+1 WHERE course_uid=' + courseUid + '; ';
+    queryString += 'UPDATE student_courses SET isWaitlist=0 WHERE course_uid=' + courseUid + 'AND email_id=' + loggedInuser + '; ';
+    connection.query(queryString, function (error, results, fields) {
+        console.log(results);
+        if (error) {
+            console.log(error);
+            connection.query("ROLLBACK;")
+            res.status(500).send(error);
+        } else {
+            connection.query("COMMIT;")
+            res.status(200).send("Success")
+        }
+    });
+}
+
+insertStudentCourse = (loggedInuser, courseUid, permissionNumber, isWaitlist, res) => {
+    connection.query('INSERT INTO student_courses (email_id, course_uid , isWaitlist) VALUES (?,?,?);', [loggedInuser,courseUid,isWaitlist], function (error, results, fields) {
+        console.log(results);
+        if (error) {
+            console.log(error);
+            connection.query("ROLLBACK;")
+            res.status(500).send(error);
+        } else {
+            connection.query("COMMIT;")
+            res.status(200).send("Success")
+        }
+    });
+}
 
 
 module.exports = router;
