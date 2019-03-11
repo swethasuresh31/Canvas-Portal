@@ -12,6 +12,7 @@ import SearchCourse from './Courses/SearchCourse';
 import CreateCourse from './Courses/CreateCourse';
 import GeneratePermission from './Courses/GeneratePermission';
 import Signup from './Signup/Signup';
+import CourseNav from './Courses/CourseNav';
 
 import Dashboard from './Dashboard/Dashboard';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -35,6 +36,8 @@ class Main extends Component {
                 <Route path="/facultyCourse" exact component={CourseFaculty} />
                 <Route path="/studentCourse" exact component={CourseStudent} />
                 <Route path="/generatePermissionCode" exact component={GeneratePermission} />
+                <Route path="/coursedetails/:courseUid" exact component={CourseDetails} />
+                <Route path="/coursenav" exact component={CourseNav} />
             </div>
         )
     }
