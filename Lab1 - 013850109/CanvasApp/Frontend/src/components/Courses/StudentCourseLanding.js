@@ -8,7 +8,8 @@ import Heading from '@instructure/ui-elements/lib/components/Heading';
 import cookie from 'react-cookies';
 import Cookies from 'universal-cookie';
 import axios from 'axios';
-import { IconSearchLine, IconAddLine, IconTrashLine } from '@instructure/ui-icons'
+import { IconSearchLine, IconAddLine, IconTrashLine } from '@instructure/ui-icons';
+import { Link } from 'react-router-dom';
 
 const cookies = new Cookies();
 
@@ -77,9 +78,10 @@ export default class StudentCourseLanding extends Component {
                                         {
                                             this.props.coursework.map(course => {
                                                 let enrollmentStatus = (course.isWaitlist !== 0) ? "Waitlist" : "Enrolled";
+                                                let linkpath = '/coursedetails/' + course.course_uid;
                                                 return (
                                                     <tr>
-                                                        <td>{course.course_dept_code}-{course.course_id} - {course.course_name}</td>
+                                                        <td><Link to={linkpath} >{course.course_dept_code}-{course.course_id} - {course.course_name}</Link></td>
                                                         <td>{course.course_term}</td>
                                                         <td>{enrollmentStatus}</td>
                                                         <td>

@@ -9,6 +9,7 @@ import cookie from 'react-cookies';
 import Cookies from 'universal-cookie';
 import axios from 'axios';
 import { IconAddLine } from '@instructure/ui-icons'
+import { Link } from 'react-router-dom';
 
 const cookies = new Cookies();
 
@@ -60,9 +61,10 @@ export default class StudentCourseLanding extends Component {
                                     <tbody>
                                         {
                                             this.props.coursework.map(course => {
+                                                let linkpath = '/coursedetails/' + course.course_uid;
                                                 return (
                                                     <tr>
-                                                        <td>{course.course_dept_code}-{course.course_id} - {course.course_name}</td>
+                                                        <td><Link to={linkpath} >{course.course_dept_code}-{course.course_id} - {course.course_name}</Link></td>
                                                         <td>{course.course_term}</td>
                                                         <td>{course.total_enrollment} out of {course.course_capacity}</td>
                                                         <td>{course.total_waitlist} out of {course.waitlist_capacity}</td>

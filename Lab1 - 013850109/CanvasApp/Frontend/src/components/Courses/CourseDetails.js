@@ -1,21 +1,18 @@
 import React, { Component } from 'react';
-import { Grid, GridRow, GridCol } from '@instructure/ui-layout'
-import theme from '@instructure/ui-themes/lib/canvas/base'
 import Navbar from '../LandingPage/Navbar';
-import Dashboard from '../Dashboard/Dashboard';
+import CourseNav from '../Courses/CourseNav';
 import cookie from 'react-cookies';
 import { Redirect } from 'react-router';
-import { Table } from '@instructure/ui-elements';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
-import { SideNav, Nav } from "react-sidenav";
 import styled from "styled-components";
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
+
 
 import {
     AppContainer as BaseAppContainer,
     ExampleNavigation as Navigation,
     ExampleBody as Body
-} from "./CourseNav.js";
+} from "./CourseNavStyle.js";
 
 const AppContainer = styled(BaseAppContainer)`
   height: calc(100vh - 40px);
@@ -52,36 +49,28 @@ export default class CourseDetails extends Component {
         if (cookie.load('cookieF')) {
             //Return faculty page
             return (
-                <div>
+                <div className="container-fluid md-0 p-0">
                     {redirectVar}
                     <div className="row">
-                        <div className="col col-sm-2">
-                            <Navbar selected="account" />
-                            <div className="col">
-                                    <SideNav
-                                        defaultSelectedPath="1"
-                                        theme={themeCourse}
-                                        onItemSelection={this.onItemSelection}
-                                    >
-                                        <Nav id="1"><Link to="/courseHome">Course List</Link></Nav>
-                                        <Nav id="2"><Link to="/courseCreate">Create Course</Link></Nav>
-                                        <Nav id="2"><Link to="/coursePC">Generate Permission Code</Link></Nav>
-                                    </SideNav>
-                                </div>
+                        <div className="col col-sm-1">
+                            <Navbar selected="courses" />
                         </ div>
+                        <div className="col">
+                                <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">All Courses</ Heading>
+                       <div className="row">
+                       
+                        <div className="col col-sm-2">
+                        <br />    <CourseNav selected="home"></CourseNav>
+                        </div>
+                            
                         <div className="col col-lg-8">
                             <div className="row">
-                                
-                                <div className="col">
-                                    <br />
-                                    <Heading theme={{ borderPadding: "1rem" }} border="bottom">Faculty Courses</ Heading>
-                                </ div>
-                            </ div>
-                            <div className="row">
-
+                                {this.state.courseComponent}
                             </ div>
                         </div>
+                        </div>
                     </div>
+                </div>
                 </div>
             );
         } else if (cookie.load('cookieS')) {
@@ -93,24 +82,22 @@ export default class CourseDetails extends Component {
                         <div className="col col-sm-1">
                             <Navbar selected="courses" />
                         </ div>
+                        <div className="col">
+                                <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">All Courses</ Heading>
+                       <div className="row">
+                       
                         <div className="col col-sm-2">
-                            <SideNav
-                                defaultSelectedPath="1"
-                                theme={themeCourse}
-                                onItemSelection={this.onItemSelection}
-                            >
-                                <Nav id="1"><Link to="/courseHome">Enrolled Courses</Link></Nav>
-                                <Nav id="2"><Link to="/courseSearch">Search Courses</Link></Nav>
-                                <Nav id="3"><Link to="/courseEnroll">Enroll Course</Link></Nav>
-                                <Nav id="4" onClick={()=>{this.setState({courseComponent:<Dashboard />})}}> Displaydash</Nav>
-                            </SideNav>
+                        <br />    <CourseNav selected="home"></CourseNav>
                         </div>
+                            
                         <div className="col col-lg-8">
                             <div className="row">
                                 {this.state.courseComponent}
                             </ div>
                         </div>
+                        </div>
                     </div>
+                </div>
                 </div>
             );
         } else {
