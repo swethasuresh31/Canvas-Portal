@@ -53,6 +53,10 @@ app.use('/permission', userCourseRouter);
 var announcementRouter = require('./routes/Announcement');
 app.use('/announcement', announcementRouter);
 
+//Route to get announcements
+var peopleRouter = require('./routes/People');
+app.use('/user', peopleRouter);
+
 
 
 app.post('/signup', function (req, res) {
@@ -105,20 +109,7 @@ app.put('/account', function (req, res) {
 });
 
 
-//Route to get the account information when user visits the accounts Page
-app.get('/user/:user', function (req, res) {
-    console.log("Inside account get handler");
-    var loggedInuser = decodeURI(req.params.user);
-    console.log(loggedInuser);
-    connection.query('SELECT * from user where email_id=?', [loggedInuser], function (error, results, fields) {
-        if (error) {
-            res.status(500).send(error);
-        } else {
-            console.log(JSON.stringify(results));
-            res.send(JSON.stringify(results));
-        }
-    });
-})
+
 
 
 

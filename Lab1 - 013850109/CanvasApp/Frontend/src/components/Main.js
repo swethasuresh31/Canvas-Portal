@@ -9,7 +9,8 @@ import UserCourseAnnouncements from './Courses/CourseModules/Announcements/UserC
 import AddAnnouncement from './Courses/CourseModules/Announcements/AddAnnouncement';
 import ShowAnnouncement from './Courses/CourseModules/Announcements/ShowAnnouncement';
 import UserCourseGrades from './Courses/CourseModules/UserCourseGrades';
-import UserCoursePeople from './Courses/CourseModules/UserCoursePeople';
+import UserCoursePeople from './Courses/CourseModules/People/UserCoursePeople';
+import PeopleProfile from './Courses/CourseModules/People/PeopleProfile';
 import UserCourseFiles from './Courses/CourseModules/UserCourseFiles';
 import UserCourseQuizzes from './Courses/CourseModules/UserCourseQuizzes';
 import CourseHome from './Courses/CourseLanding';
@@ -51,6 +52,7 @@ class Main extends Component {
                 <Route path="/coursedetails/:courseUid/announcements/add" exact component={AddAnnouncement} />
                 <Route path="/coursedetails/:courseUid/grades" exact component={UserCourseGrades} />
                 <Route path="/coursedetails/:courseUid/people" exact component={UserCoursePeople} />
+                <Route path="/coursedetails/:courseUid/people/:user" exact component={PeopleProfile} />
                 <Route path="/coursedetails/:courseUid/files" exact component={UserCourseFiles} />
                 <Route path="/coursedetails/:courseUid/quizzes" exact component={UserCourseQuizzes} />
             </div>
