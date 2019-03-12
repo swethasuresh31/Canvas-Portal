@@ -14,7 +14,7 @@ import {
     AppContainer as BaseAppContainer,
     ExampleNavigation as Navigation,
     ExampleBody as Body
-} from "./CourseNavStyle.js";
+} from "./CourseModules/CourseNavStyle.js";
 
 const AppContainer = styled(BaseAppContainer)`
   height: calc(100vh - 40px);

@@ -191,6 +191,19 @@ app.get('/course', function (req, res) {
     });
 })
 
+//Route to get all course information with a uid
+app.get('/course/:uid', function (req, res) {
+    console.log("Inside course search handler");
+    connection.query('select * from course where course_uid=?', [req.params.uid], function (error, results, fields) {
+        if (error) {
+            res.status(500).send(error);
+        } else {
+            console.log(JSON.stringify(results));
+            res.send(JSON.stringify(results));
+        }
+    });
+})
+
 
 
 
