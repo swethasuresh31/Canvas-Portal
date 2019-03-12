@@ -57,7 +57,7 @@ export default class UserCourseHome extends Component {
                             <Navbar selected="courses" />
                         </div>
                         <div className="col">
-                                <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">Home - {this.props.match.params.courseUid}</Heading>
+                                <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">Home</Heading>
                        <div className="row">
                        
                         <div className="col col-sm-2">

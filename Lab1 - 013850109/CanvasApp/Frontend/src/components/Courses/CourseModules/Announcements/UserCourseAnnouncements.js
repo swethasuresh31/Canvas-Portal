@@ -1,19 +1,19 @@
 import React, { Component } from 'react';
-import Navbar from '../../LandingPage/Navbar';
-import CourseNav from './CourseNav';
+import Navbar from '../../../LandingPage/Navbar';
+import CourseNav from '../CourseNav';
 import cookie from 'react-cookies';
 import { Redirect } from 'react-router';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
 import styled from "styled-components";
-import { Link } from 'react-router-dom';
 import axios from 'axios';
-
-
 import {
     AppContainer as BaseAppContainer,
     ExampleNavigation as Navigation,
     ExampleBody as Body
-} from "./CourseNavStyle.js";
+} from "../CourseNavStyle.js";
+import SearchBar from '../SearchBar';
+import AnnouncementCard from './AnnouncementCard';
+import { IconAddLine } from '@instructure/ui-icons';
 
 const AppContainer = styled(BaseAppContainer)`
   height: calc(100vh - 40px);
@@ -33,21 +33,22 @@ export default class UserCourseAnnouncements extends Component {
         super(props);
         // Don't call this.setState() here!
         this.state = {
+            announcements: []
         };
     }
 
     componentWillMount() {
-        axios.get('http://localhost:3001/course/' + this.props.match.params.courseUid)
+        axios.get('http://localhost:3001/announcement/' + this.props.match.params.courseUid)
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)
-                    this.setState({ course: response.data })
+                    this.setState({ announcements: response.data })
             })
     }
 
     render() {
         let redirectVar = null;
-        let assignmentsModule = ''
+        let addAnnouncementPath = "/coursedetails/" + this.props.match.params.courseUid + "/announcements/add"
         if (cookie.load('cookieF')) {
             return (
                 <div className="container-fluid md-0 p-0">
@@ -64,10 +65,25 @@ export default class UserCourseAnnouncements extends Component {
                                     <br />   <CourseNav courseUid={this.props.match.params.courseUid} selected="announcements" />
                                 </div>
 
-                                <div className="col col-lg-8">
+                                <div className="col">
                                     <div className="row">
-                                        Faculty announcements
-                                </div>
+                                        <div className="col">
+                                            <div class="float-right">
+                                                <a href={addAnnouncementPath} class="btn btn-primary btn-lg active  m-3 p-2" style={{ backgroundColor: '#0055a2' }} role="button" aria-pressed="true"><IconAddLine /> Add Announcement</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="row">
+                                        <div className="col"></div>
+                                        <table className="table">
+                                            <tbody>
+                                                {
+                                                    this.state.announcements.map(announcement => <AnnouncementCard announcement={announcement} />
+                                                    )
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -90,10 +106,15 @@ export default class UserCourseAnnouncements extends Component {
                                     <br />   <CourseNav courseUid={this.props.match.params.courseUid} selected="announcements" />
                                 </div>
 
-                                <div className="col col-lg-8">
-                                    <div className="row">
-                                        Student announcements
-                            </div>
+                                <div className="col">
+                                    <table className="table">
+                                        <tbody>
+                                            {
+                                                this.state.announcements.map(announcement => <AnnouncementCard announcement={announcement} />
+                                                )
+                                            }
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>

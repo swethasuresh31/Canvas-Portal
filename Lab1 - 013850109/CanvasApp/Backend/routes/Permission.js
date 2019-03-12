@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var connection = require('../db/connection')
-const bcrypt = require('bcrypt');
 
 router.get('/:course', function (req, res) {
     permissionCode = Math.floor(Math.random() * 90000000) + 10000000;
