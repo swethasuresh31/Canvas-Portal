@@ -49,6 +49,10 @@ app.use('/usercourse', userCourseRouter);
 var userCourseRouter = require('./routes/Permission');
 app.use('/permission', userCourseRouter);
 
+//Route to get announcements
+var announcementRouter = require('./routes/Announcement');
+app.use('/announcement', announcementRouter);
+
 
 
 app.post('/signup', function (req, res) {

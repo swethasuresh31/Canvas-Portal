@@ -9,7 +9,8 @@ db = mysql.createConnection({
     user: 'root',
     password: 'adminuser',
     database: 'canvas',
-    multipleStatements: true
+    multipleStatements: true,
+    dateStrings: true
   });
   
   db.connect(function (err) {

@@ -5,7 +5,9 @@ import Account from './Account/Account';
 import Courses from './Courses/Courses';
 import UserCourseHome from './Courses/CourseModules/UserCourseHome';
 import UserCourseAssignments from './Courses/CourseModules/UserCourseAssignments';
-import UserCourseAnnouncements from './Courses/CourseModules/UserCourseAnnouncements';
+import UserCourseAnnouncements from './Courses/CourseModules/Announcements/UserCourseAnnouncements';
+import AddAnnouncement from './Courses/CourseModules/Announcements/AddAnnouncement';
+import ShowAnnouncement from './Courses/CourseModules/Announcements/ShowAnnouncement';
 import UserCourseGrades from './Courses/CourseModules/UserCourseGrades';
 import UserCoursePeople from './Courses/CourseModules/UserCoursePeople';
 import UserCourseFiles from './Courses/CourseModules/UserCourseFiles';
@@ -45,6 +47,8 @@ class Main extends Component {
                 <Route path="/coursedetails/:courseUid/home" exact component={UserCourseHome} />
                 <Route path="/coursedetails/:courseUid/assignments" exact component={UserCourseAssignments} />
                 <Route path="/coursedetails/:courseUid/announcements" exact component={UserCourseAnnouncements} />
+                <Route path="/coursedetails/:courseUid/announcement/:announcementUid" exact component={ShowAnnouncement} />
+                <Route path="/coursedetails/:courseUid/announcements/add" exact component={AddAnnouncement} />
                 <Route path="/coursedetails/:courseUid/grades" exact component={UserCourseGrades} />
                 <Route path="/coursedetails/:courseUid/people" exact component={UserCoursePeople} />
                 <Route path="/coursedetails/:courseUid/files" exact component={UserCourseFiles} />
