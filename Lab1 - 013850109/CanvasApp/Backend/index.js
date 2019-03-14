@@ -53,9 +53,13 @@ app.use('/permission', userCourseRouter);
 var announcementRouter = require('./routes/Announcement');
 app.use('/announcement', announcementRouter);
 
-//Route to get announcements
+//Route to get people
 var peopleRouter = require('./routes/People');
 app.use('/user', peopleRouter);
+
+//Route to get quizzes
+var quizRouter = require('./routes/Quiz');
+app.use('/quiz', quizRouter);
 
 
 

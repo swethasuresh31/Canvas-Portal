@@ -12,7 +12,9 @@ import UserCourseGrades from './Courses/CourseModules/UserCourseGrades';
 import UserCoursePeople from './Courses/CourseModules/People/UserCoursePeople';
 import PeopleProfile from './Courses/CourseModules/People/PeopleProfile';
 import UserCourseFiles from './Courses/CourseModules/UserCourseFiles';
-import UserCourseQuizzes from './Courses/CourseModules/UserCourseQuizzes';
+import UserCourseQuizzes from './Courses/CourseModules/Quizzes/UserCourseQuizzes';
+import AddQuiz from './Courses/CourseModules/Quizzes/AddQuiz';
+import TakeQuiz from './Courses/CourseModules/Quizzes/TakeQuiz';
 import CourseHome from './Courses/CourseLanding';
 import CourseStudent from './Courses/StudentCourseLanding';
 import CourseFaculty from './Courses/FacultyCourseLanding';
@@ -55,6 +57,8 @@ class Main extends Component {
                 <Route path="/coursedetails/:courseUid/people/:user" exact component={PeopleProfile} />
                 <Route path="/coursedetails/:courseUid/files" exact component={UserCourseFiles} />
                 <Route path="/coursedetails/:courseUid/quizzes" exact component={UserCourseQuizzes} />
+                <Route path="/coursedetails/:courseUid/quizzes/add" exact component={AddQuiz} />
+                <Route path="/coursedetails/:courseUid/quizzes/take/:quizUid" exact component={TakeQuiz} />
             </div>
         )
     }
