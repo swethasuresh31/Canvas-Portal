@@ -37,7 +37,6 @@ export default class CourseNav extends Component {
         let peoplePath = coursePrefix+"/people"
         let filesPath = coursePrefix+"/files"
         let quizzesPath = coursePrefix+"/quizzes"
-        console.log(this.props.selected)
         return (
 
             <div className="col ml-0">

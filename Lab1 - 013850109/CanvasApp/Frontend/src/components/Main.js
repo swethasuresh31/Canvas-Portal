@@ -4,7 +4,6 @@ import Login from './Login/Login';
 import Account from './Account/Account';
 import Courses from './Courses/Courses';
 import UserCourseHome from './Courses/CourseModules/UserCourseHome';
-import UserCourseAssignments from './Courses/CourseModules/UserCourseAssignments';
 import UserCourseAnnouncements from './Courses/CourseModules/Announcements/UserCourseAnnouncements';
 import AddAnnouncement from './Courses/CourseModules/Announcements/AddAnnouncement';
 import ShowAnnouncement from './Courses/CourseModules/Announcements/ShowAnnouncement';
@@ -15,6 +14,9 @@ import UserCourseFiles from './Courses/CourseModules/UserCourseFiles';
 import UserCourseQuizzes from './Courses/CourseModules/Quizzes/UserCourseQuizzes';
 import AddQuiz from './Courses/CourseModules/Quizzes/AddQuiz';
 import TakeQuiz from './Courses/CourseModules/Quizzes/TakeQuiz';
+import UserCourseAssignments from './Courses/CourseModules/Assignments/UserCourseAssignments';
+import AddAssignment from './Courses/CourseModules/Assignments/AddAssignment';
+import TakeAssignment from './Courses/CourseModules/Assignments/TakeAssignment';
 import CourseHome from './Courses/CourseLanding';
 import CourseStudent from './Courses/StudentCourseLanding';
 import CourseFaculty from './Courses/FacultyCourseLanding';
@@ -48,7 +50,6 @@ class Main extends Component {
                 <Route path="/generatePermissionCode" exact component={GeneratePermission} />
                 <Route path="/coursedetails/:courseUid" exact component={UserCourseHome} />
                 <Route path="/coursedetails/:courseUid/home" exact component={UserCourseHome} />
-                <Route path="/coursedetails/:courseUid/assignments" exact component={UserCourseAssignments} />
                 <Route path="/coursedetails/:courseUid/announcements" exact component={UserCourseAnnouncements} />
                 <Route path="/coursedetails/:courseUid/announcement/:announcementUid" exact component={ShowAnnouncement} />
                 <Route path="/coursedetails/:courseUid/announcements/add" exact component={AddAnnouncement} />
@@ -59,6 +60,9 @@ class Main extends Component {
                 <Route path="/coursedetails/:courseUid/quizzes" exact component={UserCourseQuizzes} />
                 <Route path="/coursedetails/:courseUid/quizzes/add" exact component={AddQuiz} />
                 <Route path="/coursedetails/:courseUid/quizzes/take/:quizUid" exact component={TakeQuiz} />
+                <Route path="/coursedetails/:courseUid/assignments" exact component={UserCourseAssignments} />
+                <Route path="/coursedetails/:courseUid/assignments/add" exact component={AddAssignment} />
+                <Route path="/coursedetails/:courseUid/assignments/take/:assignmentUid" exact component={TakeAssignment} />
             </div>
         )
     }
