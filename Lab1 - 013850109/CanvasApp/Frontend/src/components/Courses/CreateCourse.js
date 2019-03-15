@@ -24,7 +24,8 @@ export default class CreateCourse extends Component {
             courseCapacity: '',
             waitlistCapacity: '',
             courseTerm: '',
-            courseSyllabus: ''
+            courseSyllabus: '',
+            courseDayAndTime: ''
 
         };
         //Bind the handlers to this class
@@ -38,6 +39,7 @@ export default class CreateCourse extends Component {
         this.waitlistCapacityChangeHandler = this.waitlistCapacityChangeHandler.bind(this);
         this.courseTermChangeHandler = this.courseTermChangeHandler.bind(this);
         this.courseSyllabusChangeHandler = this.courseSyllabusChangeHandler.bind(this);
+        this.courseDayAndTimeChangeHandler = this.courseDayAndTimeChangeHandler.bind(this);
         this.onCreate = this.onCreate.bind(this);
         this.clearForm = this.clearForm.bind(this);
     }
@@ -121,6 +123,14 @@ export default class CreateCourse extends Component {
         })
     }
 
+    //course day and time change handler to update state variable with the text entered by the user
+    courseDayAndTimeChangeHandler = (e) => {
+        this.setState({
+            courseDayAndTime: e.target.value,
+            errorMsg: ''
+        })
+    }
+
     clearForm = () => {
         this.setState({
             courseDeptCode: '',
@@ -132,15 +142,16 @@ export default class CreateCourse extends Component {
             courseCapacity: '',
             waitlistCapacity: '',
             courseTerm: '',
-            courseSyllabus: ''
+            courseSyllabus: '',
+            courseDayAndTime: ''
         })
     }
 
-    componentDidMount() {
+    componentWillMount() {
         var user = '';
         if (cookie.load('cookieF')) {
             user = cookies.get('cookieF')
-            axios.get('http://localhost:3001/user/' + encodeURI(user))
+            axios.get('http://localhost:3001/user/id/' + encodeURI(user))
                 .then((response) => {
                     console.log(response);
                     if (response !== undefined)
@@ -155,6 +166,11 @@ export default class CreateCourse extends Component {
             return false;
         }
 
+        if (this.state.courseDept === '') {
+            this.setState({ errorMsg: '*Please enter a department' })
+            return false;
+        }
+
         if (this.state.courseId === '') {
             this.setState({ errorMsg: '*Please enter a course id' })
             return false;
@@ -164,6 +180,21 @@ export default class CreateCourse extends Component {
             this.setState({ errorMsg: '*Please enter a course name' })
             return false;
         }
+
+        if (this.state.courseDesc === '') {
+            this.setState({ errorMsg: '*Please enter a course description' })
+            return false;
+        }
+
+        if (this.state.courseRoom === '') {
+            this.setState({ errorMsg: '*Please enter a course room' })
+            return false;
+        }
+        if (this.state.courseDayAndTime === '') {
+            this.setState({ errorMsg: '*Please enter day and time for course' })
+            return false;
+        }
+
         if (this.state.courseCapacity === '') {
             this.setState({ errorMsg: '*Please enter a course capacity' })
             return false;
@@ -176,6 +207,11 @@ export default class CreateCourse extends Component {
 
         if (this.state.courseTerm === '') {
             this.setState({ errorMsg: '*Please enter a course term' })
+            return false;
+        }
+
+        if (this.state.courseSyllabus === '') {
+            this.setState({ errorMsg: '*Please enter a course syllabus' })
             return false;
         }
 
@@ -205,20 +241,22 @@ export default class CreateCourse extends Component {
                 courseCapacity: this.state.courseCapacity,
                 waitlistCapacity: this.state.waitlistCapacity,
                 courseTerm: this.state.courseTerm,
-                courseSyllabus: this.state.courseSyllabus
+                courseSyllabus: this.state.courseSyllabus,
+                courseDayAndTime: this.state.courseDayAndTime
+
             }
 
             //post information into the course table
-            axios.post('http://localhost:3001/course', courseData)
+            axios.post('http://localhost:3001/UserCourse/course', courseData)
                 .then(response => {
                     console.log("Status Code : ", response.status);
                     if (response.status === 200) {
                         this.setState({
-                            redirectVar: <Redirect to="/facultyCourse" />
+                            redirectVar: <Redirect to="/coursehome" />
                         })
                     } else {
                         this.setState({
-                            errorMsg: 'Unable to signup! ' + response.data
+                            errorMsg: 'Unable to create course! ' + response.data
                         })
                     }
                 });
@@ -280,6 +318,12 @@ export default class CreateCourse extends Component {
                                             <label class="input-group-text" for="inputGroupSelect05">Course Room</label>
                                         </div>
                                         <input type="text" class="form-control" value={this.state.courseRoom} onChange={this.courseRoomChangeHandler} />
+                                    </div>
+                                    <div class="row input-group mb-3 px-3">
+                                        <div class="input-group-prepend">
+                                            <label class="input-group-text" for="inputGroupSelect05">Course Day/Time</label>
+                                        </div>
+                                        <input type="text" class="form-control" value={this.state.courseDayAndTime} onChange={this.courseDayAndTimeChangeHandler} />
                                     </div>
                                     <div class="row input-group mb-3 px-3">
                                         <div class="input-group-prepend">

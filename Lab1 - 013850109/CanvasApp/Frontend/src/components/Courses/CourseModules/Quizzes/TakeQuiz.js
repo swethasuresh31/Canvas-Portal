@@ -11,7 +11,8 @@ import Cookies from 'universal-cookie';
 import DatePicker from "react-datepicker";
 import { IconQuizLine, IconAddLine } from '@instructure/ui-icons'
 import "react-datepicker/dist/react-datepicker.css";
-import { Button } from '@instructure/ui-buttons'
+import { Button } from '@instructure/ui-buttons';
+import { Link } from 'react-router-dom';
 
 
 const cookies = new Cookies();
@@ -26,7 +27,8 @@ export default class TakeQuiz extends Component {
             redirectVar: '',
             quizInfo: '',
             questions: [],
-            answers: []
+            answers: [],
+            course: []
         };
         this.onSubmit = this.onSubmit.bind(this);
     }
@@ -51,6 +53,12 @@ export default class TakeQuiz extends Component {
                             this.setState({ questions: response.data, answers: new Array(response.data.length) }, () => this.state.answers.fill(''));
                     })
             )
+            axios.get('http://localhost:3001/course/' + this.props.match.params.courseUid)
+            .then((response) => {
+                console.log(response);
+                if (response !== undefined)
+                    this.setState({ course: response.data[0] })
+            })
     }
 
     evaluatePoints = () => {
@@ -88,6 +96,8 @@ export default class TakeQuiz extends Component {
 
     render() {
         console.log(this.state.questions)
+        let homePath = "/coursedetails/" + this.state.course.course_uid + "/home";
+
         if (cookie.load('cookieF')) {
             let announcementsPage = "/coursedetails/" + this.props.match.params.courseUid + "/quizzes";
             return (<div><Redirect to={announcementsPage} /></div>);
@@ -101,7 +111,7 @@ export default class TakeQuiz extends Component {
                             <Navbar selected="courses" />
                         </div>
                         <div className="col">
-                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">Quiz</Heading>
+                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom"><Link to={homePath} >{this.state.course.course_term}: {this.state.course.course_dept_code} - {this.state.course.course_id} - {this.state.course.course_name}</Link></Heading>
                             <div className="row">
 
                                 <div className="col col-sm-2">

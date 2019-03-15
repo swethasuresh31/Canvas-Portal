@@ -6,6 +6,8 @@ import { Redirect } from 'react-router';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
 import styled from "styled-components";
 import axios from 'axios';
+import { Link } from 'react-router-dom';
+
 import {
     AppContainer as BaseAppContainer,
     ExampleNavigation as Navigation,
@@ -33,7 +35,8 @@ export default class UserCourseAnnouncements extends Component {
         super(props);
         // Don't call this.setState() here!
         this.state = {
-            announcements: []
+            announcements: [],
+            course: []
         };
     }
 
@@ -44,10 +47,18 @@ export default class UserCourseAnnouncements extends Component {
                 if (response !== undefined)
                     this.setState({ announcements: response.data })
             })
+        axios.get('http://localhost:3001/course/' + this.props.match.params.courseUid)
+            .then((response) => {
+                console.log(response);
+                if (response !== undefined)
+                    this.setState({ course: response.data[0] })
+            })
     }
 
     render() {
         let redirectVar = null;
+        let homePath = "/coursedetails/" + this.state.course.course_uid + "/home";
+
         let addAnnouncementPath = "/coursedetails/" + this.props.match.params.courseUid + "/announcements/add"
         if (cookie.load('cookieF')) {
             return (
@@ -58,7 +69,7 @@ export default class UserCourseAnnouncements extends Component {
                             <Navbar selected="courses" />
                         </div>
                         <div className="col">
-                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">Announcements</Heading>
+                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom"><Link to={homePath} >{this.state.course.course_term}: {this.state.course.course_dept_code} - {this.state.course.course_id} - {this.state.course.course_name}</Link></Heading>
                             <div className="row">
 
                                 <div className="col col-sm-2">

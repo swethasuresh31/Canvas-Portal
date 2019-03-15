@@ -8,6 +8,7 @@ import styled from "styled-components";
 import axios from 'axios';
 import { Avatar, Text, Table } from '@instructure/ui-elements'
 import Cookies from 'universal-cookie';
+import { Link } from 'react-router-dom';
 
 
 const cookies = new Cookies();
@@ -20,9 +21,19 @@ export default class AddAnnouncement extends Component {
         this.state = {
             redirectVar: '',
             subject: '',
-            body: ''
+            body: '',
+            courseDet: []
         };
         this.onAdd = this.onAdd.bind(this);
+    }
+
+    componentWillMount() {
+        axios.get('http://localhost:3001/course/' + this.props.match.params.courseUid)
+            .then((response) => {
+                console.log(response);
+                if (response !== undefined)
+                    this.setState({ courseDet: response.data[0] })
+            })
     }
 
     onAdd(courseId, courseTerm, courseNumber, courseDept, courseName) {
@@ -104,6 +115,7 @@ export default class AddAnnouncement extends Component {
 
 
     render() {
+        let homePath = "/coursedetails/" + this.state.courseDet.course_uid + "/home";
         if (cookie.load('cookieF')) {
             return (
                 <div className="container-fluid md-0 p-0">
@@ -113,7 +125,7 @@ export default class AddAnnouncement extends Component {
                             <Navbar selected="courses" />
                         </div>
                         <div className="col">
-                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">Add Announcement</Heading>
+                        <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom"><Link to={homePath} >{this.state.courseDet.course_term}: {this.state.courseDet.course_dept_code} - {this.state.courseDet.course_id} - {this.state.courseDet.course_name}</Link></Heading>
                             <div className="row">
 
                                 <div className="col col-sm-2">
