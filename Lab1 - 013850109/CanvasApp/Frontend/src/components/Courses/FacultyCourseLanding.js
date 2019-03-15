@@ -13,7 +13,7 @@ import { Link } from 'react-router-dom';
 
 const cookies = new Cookies();
 
-export default class StudentCourseLanding extends Component {
+export default class FacultyCourseLanding extends Component {
 
     constructor(props) {
         super(props);
