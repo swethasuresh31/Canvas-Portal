@@ -61,6 +61,10 @@ app.use('/user', peopleRouter);
 var quizRouter = require('./routes/Quiz');
 app.use('/quiz', quizRouter);
 
+//Route to get assignments
+var quizRouter = require('./routes/Assignment');
+app.use('/assignment', quizRouter);
+
 
 
 app.post('/signup', function (req, res) {

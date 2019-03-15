@@ -9,8 +9,8 @@ import axios from 'axios';
 import { Avatar, Text, Table } from '@instructure/ui-elements'
 import { Link } from 'react-router-dom';
 import Cookies from 'universal-cookie';
-import StudentQuizLanding from './StudentQuizLanding'
-import FacultyQuizLanding from './FacultyQuizLanding'
+import StudentAssignmentLanding from './StudentAssignmentLanding'
+import FacultyAssignmentLanding from './FacultyAssignmentLanding'
 
 import {
     AppContainer as BaseAppContainer,
@@ -32,7 +32,7 @@ const themeCourse = {
 
 const cookies = new Cookies();
 
-export default class UserCourseQuizzes extends Component {
+export default class UserCourseAssignments extends Component {
 
     constructor(props) {
         super(props);
@@ -53,13 +53,13 @@ export default class UserCourseQuizzes extends Component {
                             <Navbar selected="courses" />
                         </div>
                         <div className="col">
-                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">Quizzes</Heading>
+                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">Assignments</Heading>
                             <div className="row">
 
                                 <div className="col col-sm-2">
-                                    <br />   <CourseNav courseUid={this.props.match.params.courseUid} selected="quizzes" />
+                                    <br />   <CourseNav courseUid={this.props.match.params.courseUid} selected="assignments" />
                                 </div>
-                                    <FacultyQuizLanding parentProps={this.props}/>
+                                    <FacultyAssignmentLanding parentProps={this.props}/>
                                 <div className="col">
                                     <div className="row">
                                         
@@ -79,16 +79,16 @@ export default class UserCourseQuizzes extends Component {
                                 <Navbar selected="courses" />
                             </div>
                             <div className="col">
-                                <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">Quizzes</Heading>
+                                <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">Assignments</Heading>
                                 <div className="row">
     
                                     <div className="col col-sm-2">
-                                        <br />   <CourseNav courseUid={this.props.match.params.courseUid} selected="quizzes" />
+                                        <br />   <CourseNav courseUid={this.props.match.params.courseUid} selected="assignments" />
                                     </div>
     
                                     <div className="col">
                                         <div className="row">
-                                            <StudentQuizLanding parentProps={this.props}/>
+                                            <StudentAssignmentLanding parentProps={this.props}/>
                                         </div>
                                     </div>
                                 </div>

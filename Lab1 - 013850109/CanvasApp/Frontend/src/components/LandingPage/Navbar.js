@@ -23,7 +23,7 @@ export default class Card extends Component {
 
   render() {
     return (
-      <div style={{ height: "100vh" }}>
+      <div class="position-fixed" style={{ height: "100vh" }}>
         <Navigation
           label="Main navigation"
           toggleLabel={{
