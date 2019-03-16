@@ -3,16 +3,42 @@ var router = express.Router();
 var fs = require('fs');
 var connection = require('../db/connection')
 
-router.get('/:courseUid/:courseworkUid', function (req, res) {
-    console.log("Getting people for assignment: " + req.params.courseworkUid)
-    connection.query('select * from user left join student_coursework on student_coursework.coursework_uid=? having user.is_student=1 and user.email_id in (select email_id from student_courses where course_uid = ?);', [req.params.courseworkUid,req.params.courseUid], function (error, results, fields) {
-        if (error) {
-            console.log(error)
-            res.status(500).send(error);
-        } else {
-            res.send(JSON.stringify(results));
+router.get('/:courseUid', function (req, res) {
+    console.log("Getting files for course: " + req.params.courseUid)
+    // connection.query('select * from user left join student_coursework on student_coursework.coursework_uid=? having user.is_student=1 and user.email_id in (select email_id from student_courses where course_uid = ?);', [req.params.courseworkUid,req.params.courseUid], function (error, results, fields) {
+    //     if (error) {
+    //         console.log(error)
+    //         res.status(500).send(error);
+    //     } else {
+    //         res.send(JSON.stringify(results));
+    //     }
+    // });
+    var fileNameList = [];
+    var rootDir='public/files/course/' + req.params.courseUid + '/'
+    var walkSync = function(dir, filelist) {
+        var fs = fs || require('fs'),
+            files = fs.readdirSync(dir);
+        filelist = filelist || [];
+        fileNameList = fileNameList || [];
+        files.forEach(function(file) {
+          if (fs.statSync(dir + '/' + file).isDirectory()) {
+            filelist = walkSync(dir + '/' + file, filelist);
         }
-    });
+        else {
+            let displayPath = dir.slice(rootDir.length + 1) + '/' + file;
+            fileNameList.push({
+                key: displayPath,
+                size: fs.statSync(dir + '/' + file).size,
+                modified: new Date(fs.statSync(dir + '/' + file).mtime).getTime()
+            })
+            filelist.push(file);
+          }
+        });
+        return filelist;
+      };
+      walkSync(rootDir)
+      console.log(fileNameList)
+      res.send(fileNameList)
 })
 
 router.get('/:courseUid/:courseworkUid/:user', function (req, res) {

@@ -12,7 +12,9 @@ import DatePicker from "react-datepicker";
 import { IconAssignmentLine, IconAddLine } from '@instructure/ui-icons'
 import "react-datepicker/dist/react-datepicker.css";
 import { Button } from '@instructure/ui-buttons'
-import { Document } from 'react-pdf'
+import { Document, Page, pdfjs } from 'react-pdf'
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+
 
 
 const cookies = new Cookies();
@@ -27,11 +29,22 @@ export default class TakeAssignment extends Component {
             redirectVar: '',
             assignmentInfo: '',
             file: '',
+            numPages: null,
+            onDocumentLoadSuccess: null,
             totalPoints: 0
         };
+        this.onDocumentLoadSuccess = this.onDocumentLoadSuccess.bind(this);
         this.pointsOnChangeHandler = this.pointsOnChangeHandler.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
     }
+
+    onDocumentLoadSuccess = (document) => {
+        const { numPages } = document;
+        if(this.state.numPages !== numPages)
+        this.setState({
+            numPages: numPages,
+        });
+    };
 
     pointsOnChangeHandler = (e) => {
         this.setState({
@@ -47,21 +60,9 @@ export default class TakeAssignment extends Component {
                 if (response !== undefined)
                     this.setState({
                         assignmentInfo: response.data[0],
+                        file: fileURL
                     })
             })
-        .then(axios.get('http://localhost:3001/studentassignment/file/' + this.props.match.params.courseUid + '/' + this.props.match.params.assignmentUid + '/' + encodeURI(this.props.match.params.user))
-        .then((response) => {
-            console.log(response);
-            if (response !== undefined)
-                this.setState({ 
-                    file: <Document
-                        file={{
-                            url: fileURL
-                        }}
-                    />
-                 })
-                console.log("file received: " + response.files)
-        }))
     }
 
     onSubmit(e) {
@@ -106,12 +107,23 @@ export default class TakeAssignment extends Component {
                                 <div className="col col-sm-2">
                                     <br />   <CourseNav courseUid={this.props.match.params.courseUid} selected="assignments" />
                                 </div>
-
                                 <div className="col">
                                     <br />
                                     <div class="row">
                                         <div class="col">
-                                            {this.state.file}
+                                            <Document
+                                                file={{url:this.state.file}}
+                                                onLoadSuccess={this.onDocumentLoadSuccess}
+                                            >
+                                                {Array.from(
+                                                    new Array(this.state.numPages),
+                                                    (el, index) => (
+                                                        <Page
+                                                            pageNumber={index + 1}
+                                                        />
+                                                    ),
+                                                )}
+                                            </Document>
                                         </div>
                                         <div class="col-3 border-left">
                                             <form>

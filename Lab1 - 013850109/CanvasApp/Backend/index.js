@@ -9,6 +9,7 @@ app.set('view engine', 'ejs');
 var connection = require('./db/connection')
 const bcrypt = require('bcrypt');
 var async = require('async');
+var mkdirp = require('mkdirp');
 
 //use cors to allow cross origin resource sharing
 app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
@@ -41,6 +42,10 @@ app.use(function (req, res, next) {
 var loginRouter = require('./routes/Login');
 app.use('/login', loginRouter);
 
+// //Route to get enrolled/created course information when a user visits the course Page
+// var curseRouter = require('./routes/Course');
+// app.use('/course', courseRouter);
+
 //Route to get enrolled/created course information when a user visits the course Page
 var userCourseRouter = require('./routes/UserCourse');
 app.use('/usercourse', userCourseRouter);
@@ -68,6 +73,10 @@ app.use('/assignment', quizRouter);
 //Route to get student assignments
 var studentAssignmentRouter = require('./routes/StudentAssignment');
 app.use('/studentassignment', studentAssignmentRouter);
+
+//Route to get student assignments
+var filesRouter = require('./routes/Files');
+app.use('/files', filesRouter);
 
 
 
@@ -232,15 +241,27 @@ app.post('/course', function (req, res) {
     connection.query('INSERT INTO course(course_id,course_term,course_name,course_dept,course_dept_code, ' +
     'course_desc,course_room,course_capacity,waitlist_capacity,course_instructor,created_by) ' + 
     'VALUES (?,?,?,?,?,?,?,?,?,?,?,?);', [course_id,course_term,course_name,course_deptcode,course_dept,course_desc,course_room,course_capacity,waitlist_capacity,course_instructor,loggedInuser], function (error, results, fields) {
-        console.log();
+        console.log(course_id);
         if (error) {
             res.status(500).send(error);
         } else {
-            res.status(200).send("Success");
+            createfolder()
+            
         }
         });
-
 });
+
+createfolder = (courseId, courseTerm, res) => {
+    connection.query('select * from course where course_id=? and courseTerm=?', [courseId,courseTerm], function (error, results, fields) {
+        if (error || results.length !== 1) {
+            res.status(500).send(error);
+        } else {
+            mkdirp('/public/files/course/'+ results[0].course_uid)
+            mkdirp('/public/files/assignments')
+            res.status(200).send("Success");
+        }
+    });
+}
 
 
 

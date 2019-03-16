@@ -10,7 +10,7 @@ import ShowAnnouncement from './Courses/CourseModules/Announcements/ShowAnnounce
 import UserCourseGrades from './Courses/CourseModules/UserCourseGrades';
 import UserCoursePeople from './Courses/CourseModules/People/UserCoursePeople';
 import PeopleProfile from './Courses/CourseModules/People/PeopleProfile';
-import UserCourseFiles from './Courses/CourseModules/UserCourseFiles';
+import UserCourseFiles from './Courses/CourseModules/Files/UserCourseFiles';
 import UserCourseQuizzes from './Courses/CourseModules/Quizzes/UserCourseQuizzes';
 import AddQuiz from './Courses/CourseModules/Quizzes/AddQuiz';
 import TakeQuiz from './Courses/CourseModules/Quizzes/TakeQuiz';
