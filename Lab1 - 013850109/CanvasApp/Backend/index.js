@@ -69,6 +69,10 @@ app.use('/assignment', assignmentRouter);
 var gradesRouter = require('./routes/Grades');
 app.use('/grades', gradesRouter);
 
+//Route to get student assignments
+var studentAssignmentRouter = require('./routes/StudentAssignment');
+app.use('/studentassignment', studentAssignmentRouter);
+
 
 
 app.post('/signup', function (req, res) {

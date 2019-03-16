@@ -15,6 +15,8 @@ import UserCourseQuizzes from './Courses/CourseModules/Quizzes/UserCourseQuizzes
 import AddQuiz from './Courses/CourseModules/Quizzes/AddQuiz';
 import TakeQuiz from './Courses/CourseModules/Quizzes/TakeQuiz';
 import UserCourseAssignments from './Courses/CourseModules/Assignments/UserCourseAssignments';
+import Submissions from './Courses/CourseModules/Assignments/Submissions';
+import GradeAssignment from './Courses/CourseModules/Assignments/GradeAssignment';
 import AddAssignment from './Courses/CourseModules/Assignments/AddAssignment';
 import TakeAssignment from './Courses/CourseModules/Assignments/TakeAssignment';
 import CourseHome from './Courses/CourseLanding';
@@ -61,6 +63,8 @@ class Main extends Component {
                 <Route path="/coursedetails/:courseUid/quizzes/add" exact component={AddQuiz} />
                 <Route path="/coursedetails/:courseUid/quizzes/take/:quizUid" exact component={TakeQuiz} />
                 <Route path="/coursedetails/:courseUid/assignments" exact component={UserCourseAssignments} />
+                <Route path="/coursedetails/:courseUid/assignments/submissions/:assignmentUid" exact component={Submissions} />
+                <Route path="/coursedetails/:courseUid/assignments/submissions/:assignmentUid/:user" exact component={GradeAssignment} />
                 <Route path="/coursedetails/:courseUid/assignments/add" exact component={AddAssignment} />
                 <Route path="/coursedetails/:courseUid/assignments/take/:assignmentUid" exact component={TakeAssignment} />
             </div>

@@ -30,10 +30,18 @@ export default class FacultyAssignmentLanding extends Component {
             })
     }
 
+    viewSubmissions = (courseworkUid, e) => {
+        let takeAssignmentPage = "/coursedetails/"+this.props.parentProps.match.params.courseUid+"/assignments/submissions/"+courseworkUid;
+        this.setState({
+            redirectVar: <Redirect to={takeAssignmentPage}/>
+        })
+    }
+
     render() {
         let addAssignmentPath = "/coursedetails/" + this.props.parentProps.match.params.courseUid + "/assignments/add"
         return (
             <div class="col-8 border m-3 pb-5" style={{ backgroundColor: "#f5f5f5" }}>
+            {this.state.redirectVar}
                 <div className="row">
                     <div className="col">
                         <div class="float-right">
@@ -46,8 +54,9 @@ export default class FacultyAssignmentLanding extends Component {
                         <div class="list-group">
                             {
                                 this.state.assignments.map(assignment => {
+                                    let viewSubmissionsPath = "/coursedetails/" + this.props.parentProps.match.params.courseUid + "/assignments/"+assignment.coursework_uid
                                     return (
-                                        <button type="button" class="list-group-item list-group-item-action" disabled>
+                                        <button type="button" class="list-group-item list-group-item-action" onClick={(e)=>this.viewSubmissions(assignment.coursework_uid, e)}>
                                             <div class="row">
                                                 <div class="col-sm-1 align-self-center" style={{ width: "50px", maxWidth: "50px" }}><IconAssignmentLine /></div>
                                                 <div class="col">
