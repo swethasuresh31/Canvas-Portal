@@ -70,6 +70,13 @@ app.use('/quiz', quizRouter);
 var quizRouter = require('./routes/Assignment');
 app.use('/assignment', quizRouter);
 
+var assignmentRouter = require('./routes/Assignment');
+app.use('/assignment', assignmentRouter);
+
+//Route to get grades
+var gradesRouter = require('./routes/Grades');
+app.use('/grades', gradesRouter);
+
 //Route to get student assignments
 var studentAssignmentRouter = require('./routes/StudentAssignment');
 app.use('/studentassignment', studentAssignmentRouter);
@@ -77,8 +84,6 @@ app.use('/studentassignment', studentAssignmentRouter);
 //Route to get student assignments
 var filesRouter = require('./routes/Files');
 app.use('/files', filesRouter);
-
-
 
 app.post('/signup', function (req, res) {
     var username = req.body.username;
