@@ -62,8 +62,12 @@ var quizRouter = require('./routes/Quiz');
 app.use('/quiz', quizRouter);
 
 //Route to get assignments
-var quizRouter = require('./routes/Assignment');
-app.use('/assignment', quizRouter);
+var assignmentRouter = require('./routes/Assignment');
+app.use('/assignment', assignmentRouter);
+
+//Route to get grades
+var gradesRouter = require('./routes/Grades');
+app.use('/grades', gradesRouter);
 
 
 
@@ -210,33 +214,6 @@ app.get('/course/:uid', function (req, res) {
 
 
 
-app.post('/course', function (req, res) {
-    console.log("Inside create course handler");
-    var loggedInuser = req.body.user;
-    let course_id = req.body.courseId;
-    let course_term = req.body.courseTerm;
-    let course_name = req.body.courseName;
-    let course_deptcode = req.body.courseDeptCode;
-    let course_dept = req.body.courseDept;
-    let course_desc = req.body.courseDesc;
-    let course_instructor=req.body.courseInstructor;
-    let course_room = req.body.courseRoom;
-    let course_capacity = req.body.courseCapacity;
-    let waitlist_capacity = req.body.waitlistCapacity;
-    
-    console.log(loggedInuser);
-    connection.query('INSERT INTO course(course_id,course_term,course_name,course_dept,course_dept_code, ' +
-    'course_desc,course_room,course_capacity,waitlist_capacity,course_instructor,created_by) ' + 
-    'VALUES (?,?,?,?,?,?,?,?,?,?,?,?);', [course_id,course_term,course_name,course_deptcode,course_dept,course_desc,course_room,course_capacity,waitlist_capacity,course_instructor,loggedInuser], function (error, results, fields) {
-        console.log();
-        if (error) {
-            res.status(500).send(error);
-        } else {
-            res.status(200).send("Success");
-        }
-        });
-
-});
 
 
 

@@ -7,7 +7,7 @@ import UserCourseHome from './Courses/CourseModules/Home/CourseHome';
 import UserCourseAnnouncements from './Courses/CourseModules/Announcements/UserCourseAnnouncements';
 import AddAnnouncement from './Courses/CourseModules/Announcements/AddAnnouncement';
 import ShowAnnouncement from './Courses/CourseModules/Announcements/ShowAnnouncement';
-import UserCourseGrades from './Courses/CourseModules/UserCourseGrades';
+import UserCourseGrades from './Courses/CourseModules/Grades/UserCourseGrades';
 import UserCoursePeople from './Courses/CourseModules/People/UserCoursePeople';
 import PeopleProfile from './Courses/CourseModules/People/PeopleProfile';
 import UserCourseFiles from './Courses/CourseModules/UserCourseFiles';
