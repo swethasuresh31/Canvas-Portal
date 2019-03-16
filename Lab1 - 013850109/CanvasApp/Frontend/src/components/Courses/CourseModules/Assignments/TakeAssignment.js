@@ -11,6 +11,7 @@ import Cookies from 'universal-cookie';
 import DatePicker from "react-datepicker";
 import { IconAssignmentLine, IconAddLine } from '@instructure/ui-icons'
 import "react-datepicker/dist/react-datepicker.css";
+import FormData from 'form-data'
 import { Button } from '@instructure/ui-buttons'
 
 
@@ -25,15 +26,13 @@ export default class TakeAssignment extends Component {
             dueDate: new Date(),
             redirectVar: '',
             assignmentInfo: '',
+            assignmentFile: null,
+            errorMsg: '',
             questions: [],
             answers: []
         };
+        this.fileInput=React.createRef();
         this.onSubmit = this.onSubmit.bind(this);
-    }
-
-    answerChangeHandler = (questionNumber, e) => {
-        this.state.answers[questionNumber - 1] = this.state.questions[questionNumber - 1][e.target.value];
-        this.forceUpdate()
     }
 
     componentWillMount() {
@@ -41,7 +40,7 @@ export default class TakeAssignment extends Component {
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)
-                    this.setState({ assignmentInfo: response.data[0] })
+                    this.setState({ assignmentInfo: response.data[0], errorMsg: '' })
             })
     }
 
@@ -57,15 +56,17 @@ export default class TakeAssignment extends Component {
 
     onSubmit(e) {
         e.preventDefault();
-        let points = this.evaluatePoints();
-        let data = {
-            user: cookies.get('cookieS'),
-            totalPoints: points
-        }
+        console.log(this.fileInput.current.files[0])
+        if(this.fileInput.current.files[0] !== undefined) {
+            console.log(this.fileInput.current.files[0])
+        let filename=this.props.match.params.courseUid + '-' + this.state.assignmentInfo.coursework_uid + '-' + encodeURI(cookies.get('cookieS')) + '.' + this.fileInput.current.files[0].name.split('.').pop();
+        console.log(filename)
+        let data = new FormData();
+        data.append('file', this.fileInput.current.files[0], filename)
         console.log(data)
         let assignmentsPage = "/coursedetails/" + this.props.match.params.courseUid + "/assignments";
         //adds the assignment based on information entered
-        axios.post('http://localhost:3001/assignment/' + this.props.match.params.courseUid + '/' + this.state.assignmentInfo.coursework_uid, data)
+        axios.post('http://localhost:3001/assignment/' + this.props.match.params.courseUid + '/' + this.state.assignmentInfo.coursework_uid + '/' + cookies.get('cookieS'), data)
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)
@@ -75,11 +76,15 @@ export default class TakeAssignment extends Component {
                         })
                     }
             })
+        } else {
+            this.setState({
+                errorMsg: 'Please select file to submit'
+            })
+        }
     }
 
 
     render() {
-        console.log(this.state.questions)
         if (cookie.load('cookieF')) {
             let announcementsPage = "/coursedetails/" + this.props.match.params.courseUid + "/assignments";
             return (<div><Redirect to={announcementsPage} /></div>);
@@ -125,7 +130,7 @@ export default class TakeAssignment extends Component {
                                     <form>
                                         <div class="row m-1">
                                             <div class="col-8">
-                                                <textarea row="50"></textarea>
+                                                <input type="file" name="assignmentFile" id="assignmentFile" ref={this.fileInput}></input>
                                                 <div>{this.state.errorMsg}</div><br />
                                                 <div class="row input-group mb-3 justify-content-center">
                                                     <button type="button" class="btn btn-primary btn-md mx-2" style={{ backgroundColor: '#0055a2' }} onClick={this.onSubmit} >Submit Assignment</button>

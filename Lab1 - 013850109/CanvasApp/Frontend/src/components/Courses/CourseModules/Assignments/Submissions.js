@@ -29,29 +29,29 @@ const themeCourse = {
 };
 
 
-export default class UserCoursePeople extends Component {
+export default class Submissions extends Component {
 
     constructor(props) {
         super(props);
         // Don't call this.setState() here!
         this.state = {
-            people: []
+            assignments: []
         };
     }
 
     componentWillMount() {
-        axios.get('http://localhost:3001/user/course/' + this.props.match.params.courseUid)
+        axios.get('http://localhost:3001/studentassignment/'+ this.props.match.params.courseUid + '/' + this.props.match.params.assignmentUid)
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)
-                    this.setState({ people: response.data })
+                    this.setState({ assignments: response.data })
             })
     }
 
     render() {
-        console.log(this.state.people[0])
+        console.log(this.state.assignments[0])
         let redirectVar = null;
-        if (cookie.load('cookieF') || cookie.load('cookieS')) {
+        if (cookie.load('cookieF')) {
             return (
                 <div className="container-fluid md-0 p-0">
                     {redirectVar}
@@ -60,11 +60,11 @@ export default class UserCoursePeople extends Component {
                             <Navbar selected="courses" />
                         </div>
                         <div className="col">
-                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">People</Heading>
+                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">Submissions</Heading>
                             <div className="row">
 
                                 <div className="col col-sm-2">
-                                    <br />   <CourseNav courseUid={this.props.match.params.courseUid} selected="people" />
+                                    <br />   <CourseNav courseUid={this.props.match.params.courseUid} selected="assignments" />
                                 </div>
 
                                 <div className="col">
@@ -75,20 +75,20 @@ export default class UserCoursePeople extends Component {
                                             <tr>
                                                 <th></th>
                                                 <th>Name</th>
-                                                <th>Section</th>
-                                                <th>Role</th>
+                                                <th>Assignment</th>
+                                                <th>Scored Points</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {
-                                                this.state.people.map(person => {
-                                                    let personProfileLink = "/coursedetails/" + this.props.match.params.courseUid + "/people/" + encodeURI(person.email_id)
+                                                this.state.assignments.map(assignment => {
+                                                    let assignmentSubmissionLink = "/coursedetails/"+this.props.match.params.courseUid+"/assignments/submissions/"+this.props.match.params.assignmentUid+"/" + encodeURI(assignment.email_id)
                                                     return (
                                                         <tr>
-                                                            <td> <Avatar name={person.name} size="snall" /></td>
-                                                            <td><Link to={personProfileLink}>{person.name}</Link></td>
-                                                            <td> {person.course_term}: {person.course_dept_code}-{person.course_id}</td>
-                                                            <td>Student</td>
+                                                            <td> <Avatar name={assignment.name} size="small" /></td>
+                                                            <td><Link to={assignmentSubmissionLink}>{assignment.name}</Link></td>
+                                                            <td><Link to={assignmentSubmissionLink}>{assignment.coursework_name}</Link></td>
+                                                            <td>{assignment.scored_points}</td>
                                                         </tr>
                                                     )
                                                 })
@@ -102,6 +102,10 @@ export default class UserCoursePeople extends Component {
                     </div>
                 </div>
             );
+        }
+        else if (cookie.load('cookieS')) {
+            let announcementsPage = "/coursedetails/" + this.props.match.params.courseUid + "/assignments";
+            return (<div><Redirect to={announcementsPage} /></div>);
         }
         else {
             return (<div><Redirect to="/login" /></div>);
