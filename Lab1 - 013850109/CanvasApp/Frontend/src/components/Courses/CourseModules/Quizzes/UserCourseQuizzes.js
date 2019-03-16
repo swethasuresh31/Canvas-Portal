@@ -38,12 +38,23 @@ export default class UserCourseQuizzes extends Component {
         super(props);
         // Don't call this.setState() here!
         this.state = {
-            people: []
+            people: [],
+            course: []
         };
+    }
+
+    componentWillMount() {
+        axios.get('http://localhost:3001/course/' + this.props.match.params.courseUid)
+            .then((response) => {
+                console.log(response);
+                if (response !== undefined)
+                    this.setState({ course: response.data[0] })
+            })
     }
 
     render() {
         let redirectVar = null;
+        let homePath = "/coursedetails/" + this.state.course.course_uid + "/home";
         if (cookie.load('cookieF')) {
             return (
                 <div className="container-fluid md-0 p-0">
@@ -53,7 +64,7 @@ export default class UserCourseQuizzes extends Component {
                             <Navbar selected="courses" />
                         </div>
                         <div className="col">
-                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">Quizzes</Heading>
+                        <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom"><Link to={homePath} >{this.state.course.course_term}: {this.state.course.course_dept_code} - {this.state.course.course_id} - {this.state.course.course_name}</Link></Heading>
                             <div className="row">
 
                                 <div className="col col-sm-2">
@@ -79,7 +90,7 @@ export default class UserCourseQuizzes extends Component {
                                 <Navbar selected="courses" />
                             </div>
                             <div className="col">
-                                <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">Quizzes</Heading>
+                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom"><Link to={homePath} >{this.state.course.course_term}: {this.state.course.course_dept_code} - {this.state.course.course_id} - {this.state.course.course_name}</Link></Heading>
                                 <div className="row">
     
                                     <div className="col col-sm-2">

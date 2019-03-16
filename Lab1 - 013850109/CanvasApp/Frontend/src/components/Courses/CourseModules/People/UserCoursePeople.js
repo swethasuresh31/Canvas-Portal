@@ -35,7 +35,8 @@ export default class UserCoursePeople extends Component {
         super(props);
         // Don't call this.setState() here!
         this.state = {
-            people: []
+            people: [],
+            course: []
         };
     }
 
@@ -46,10 +47,17 @@ export default class UserCoursePeople extends Component {
                 if (response !== undefined)
                     this.setState({ people: response.data })
             })
+            axios.get('http://localhost:3001/course/' + this.props.match.params.courseUid)
+            .then((response) => {
+                console.log(response);
+                if (response !== undefined)
+                    this.setState({ course: response.data[0] })
+            })
     }
 
     render() {
         console.log(this.state.people[0])
+        let homePath = "/coursedetails/" + this.state.course.course_uid + "/home";
         let redirectVar = null;
         if (cookie.load('cookieF') || cookie.load('cookieS')) {
             return (
@@ -60,7 +68,7 @@ export default class UserCoursePeople extends Component {
                             <Navbar selected="courses" />
                         </div>
                         <div className="col">
-                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">People</Heading>
+                        <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom"><Link to={homePath} >{this.state.course.course_term}: {this.state.course.course_dept_code} - {this.state.course.course_id} - {this.state.course.course_name}</Link></Heading>
                             <div className="row">
 
                                 <div className="col col-sm-2">

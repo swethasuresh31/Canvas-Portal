@@ -3,7 +3,7 @@ import { Route } from 'react-router-dom';
 import Login from './Login/Login';
 import Account from './Account/Account';
 import Courses from './Courses/Courses';
-import UserCourseHome from './Courses/CourseModules/UserCourseHome';
+import UserCourseHome from './Courses/CourseModules/Home/CourseHome';
 import UserCourseAnnouncements from './Courses/CourseModules/Announcements/UserCourseAnnouncements';
 import AddAnnouncement from './Courses/CourseModules/Announcements/AddAnnouncement';
 import ShowAnnouncement from './Courses/CourseModules/Announcements/ShowAnnouncement';
