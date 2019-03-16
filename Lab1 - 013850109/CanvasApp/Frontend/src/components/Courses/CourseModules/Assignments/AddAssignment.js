@@ -10,7 +10,7 @@ import { Avatar, Text, Table } from '@instructure/ui-elements'
 import Cookies from 'universal-cookie';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-
+import { Link } from 'react-router-dom';
 
 
 const cookies = new Cookies();
@@ -27,7 +27,8 @@ export default class AddAssignment extends Component {
             instructions: '',
             points: '',
             numQuestions: 0,
-            questions: []
+            questions: [],
+            course: []
         };
         this.assignmentNameChangeHandler = this.assignmentNameChangeHandler.bind(this);
         this.instructionsChangeHandler = this.instructionsChangeHandler.bind(this);
@@ -98,8 +99,18 @@ export default class AddAssignment extends Component {
             })
     }
 
+    componentWillMount() {
+        axios.get('http://localhost:3001/course/' + this.props.match.params.courseUid)
+            .then((response) => {
+                console.log(response);
+                if (response !== undefined)
+                    this.setState({ course: response.data[0] })
+            })
+    }
 
     render() {
+        let homePath = "/coursedetails/" + this.state.course.course_uid + "/home";
+
         if (cookie.load('cookieF')) {
             return (
                 <div className="container-fluid md-0 p-0">
@@ -109,7 +120,7 @@ export default class AddAssignment extends Component {
                             <Navbar selected="courses" />
                         </div>
                         <div className="col">
-                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">Add Announcement</Heading>
+                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom"><Link to={homePath} >{this.state.course.course_term}: {this.state.course.course_dept_code} - {this.state.course.course_id} - {this.state.course.course_name}</Link></Heading>
                             <div className="row">
 
                                 <div className="col col-sm-2">

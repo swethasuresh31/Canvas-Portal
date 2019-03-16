@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 var connection = require('../db/connection')
 
+
+
 router.get('/course/:courseUid', function (req, res) {
     console.log("Getting people for course: " + req.params.courseUid)
     connection.query('select * from user,course where course.course_uid=? and user.email_id in (select email_id from student_courses where course_uid = ?);', [req.params.courseUid,req.params.courseUid], function (error, results, fields) {
