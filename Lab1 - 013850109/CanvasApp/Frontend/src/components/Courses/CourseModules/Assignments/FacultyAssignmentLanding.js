@@ -56,7 +56,7 @@ export default class FacultyAssignmentLanding extends Component {
                                 this.state.assignments.map(assignment => {
                                     let viewSubmissionsPath = "/coursedetails/" + this.props.parentProps.match.params.courseUid + "/assignments/"+assignment.coursework_uid
                                     return (
-                                        <button type="button" class="list-group-item list-group-item-action" onClick={(e)=>this.viewSubmissions(assignment.coursework_uid, e)}>
+                                        <button type="button" class="list-group-item list-group-item-action" disabled>
                                             <div class="row">
                                                 <div class="col-sm-1 align-self-center" style={{ width: "50px", maxWidth: "50px" }}><IconAssignmentLine /></div>
                                                 <div class="col">

@@ -33,7 +33,7 @@ router.get('/file/:courseUid/:courseworkUid/:user', function (req, res) {
     console.log("Inside student assignment get file handler");
     var loggedInuser = decodeURI(req.params.user);
     console.log(req.params.courseUid)
-    var assignmentFileName = fs.readdirSync('public/files').filter(fn => fn.startsWith(req.params.courseUid + '-' + req.params.courseworkUid + '-' + loggedInuser))[0];
+    var assignmentFileName = fs.readdirSync('public/files/assignments').filter(fn => fn.startsWith(req.params.courseUid + '-' + req.params.courseworkUid + '-' + loggedInuser))[0];
 
     console.log(loggedInuser);
     console.log(assignmentFileName);

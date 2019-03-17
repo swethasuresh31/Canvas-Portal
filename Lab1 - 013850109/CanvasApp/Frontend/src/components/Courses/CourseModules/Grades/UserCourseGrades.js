@@ -94,7 +94,7 @@ export default class UserCourseGrades extends Component {
                                 <div className="row">
     
                                     <div className="col col-sm-2">
-                                        <br />   <CourseNav courseUid={this.props.match.params.courseUid} selected="assignments" />
+                                        <br />   <CourseNav courseUid={this.props.match.params.courseUid} selected="grades" />
                                     </div>
     
                                     <div className="col">

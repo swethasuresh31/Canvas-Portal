@@ -50,7 +50,7 @@ router.post('/:courseUid/:courseworkUid/:user', upload.single('file'), function 
                 res.status(500).send(error);
             } else {
                 console.log(results[0].studentcourses_uid)
-                addAssignmentResult(results[0].studentcourses_uid, req.params.courseworkUid, req.params.user, 0, res)
+                addAssignmentResult(results[0].studentcourses_uid, req.params.courseworkUid, req.params.user, res)
 
             }
         });
@@ -59,8 +59,8 @@ router.post('/:courseUid/:courseworkUid/:user', upload.single('file'), function 
 
 addAssignmentResult = (studentcoursesUid, courseworkUid, emailId, totalPoints, res) => {
     console.log(studentcoursesUid + '' + courseworkUid + emailId + totalPoints)
-    connection.query('insert into student_coursework(studentcourses_uid, coursework_uid, email_id, scored_points)' +
-        ' values (?,?,?,?) ON DUPLICATE KEY UPDATE scored_points=?;', [studentcoursesUid, courseworkUid, emailId, totalPoints, totalPoints], function (error, results, fields) {
+    connection.query('insert into student_coursework(studentcourses_uid, coursework_uid, email_id)' +
+        ' values (?,?,?) ON DUPLICATE KEY UPDATE scored_points=?;', [studentcoursesUid, courseworkUid, emailId, totalPoints], function (error, results, fields) {
             if (error) {
                 console.log(error)
                 res.status(500).send(error);
