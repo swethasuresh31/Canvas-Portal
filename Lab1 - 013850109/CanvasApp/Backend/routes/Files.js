@@ -3,18 +3,22 @@ var router = express.Router();
 var fs = require('fs');
 var connection = require('../db/connection')
 
+var multer = require('multer');
+let storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'public/files/courses')
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname)
+    }
+});
+let upload = multer({ storage });
+
+
 router.get('/:courseUid', function (req, res) {
     console.log("Getting files for course: " + req.params.courseUid)
-    // connection.query('select * from user left join student_coursework on student_coursework.coursework_uid=? having user.is_student=1 and user.email_id in (select email_id from student_courses where course_uid = ?);', [req.params.courseworkUid,req.params.courseUid], function (error, results, fields) {
-    //     if (error) {
-    //         console.log(error)
-    //         res.status(500).send(error);
-    //     } else {
-    //         res.send(JSON.stringify(results));
-    //     }
-    // });
     var fileNameList = [];
-    var rootDir='public/files/course/' + req.params.courseUid + '/'
+    var rootDir='public/files/courses/'
     var walkSync = function(dir, filelist) {
         var fs = fs || require('fs'),
             files = fs.readdirSync(dir);
@@ -31,6 +35,7 @@ router.get('/:courseUid', function (req, res) {
                 size: fs.statSync(dir + '/' + file).size,
                 modified: new Date(fs.statSync(dir + '/' + file).mtime).getTime()
             })
+            if(file.startsWith(req.params.courseUid + '_'))
             filelist.push(file);
           }
         });
@@ -41,31 +46,27 @@ router.get('/:courseUid', function (req, res) {
       res.send(fileNameList)
 })
 
-router.get('/:courseUid/:courseworkUid/:user', function (req, res) {
-    console.log("Inside student assignment get handler");
-    var loggedInuser = decodeURI(req.params.user);
-    console.log(loggedInuser);
-    connection.query('SELECT * from student_coursework,coursework where student_coursework.coursework_uid=coursework.coursework_uid and student_coursework.coursework_uid=? and student_coursework.email_id=?', [req.params.courseworkUid,req.params.user], function (error, results, fields) {
-        if (error) {
-            res.status(500).send(error);
-        } else {
-            console.log(JSON.stringify(results));
-            res.send(JSON.stringify(results));
-        }
-    });
+router.post('/:courseUid/:courseworkUid/:user', upload.single('file'), function (req, res) {
+    console.log(req.file)
+    if (!req.file) {
+        res.status(500).send("No file");
+    } else {
+        console.log("posting file for course: " + req.params.courseUid)
+       res.send("Success")
+    }
 })
 
-router.get('/file/:courseUid/:courseworkUid/:user', function (req, res) {
+router.get('/:courseUid/:filename', function (req, res) {
     console.log("Inside student assignment get file handler");
-    var loggedInuser = decodeURI(req.params.user);
+    var name = decodeURI(req.params.filename);
     console.log(req.params.courseUid)
-    var assignmentFileName = fs.readdirSync('public/files').filter(fn => fn.startsWith(req.params.courseUid + '-' + req.params.courseworkUid + '-' + loggedInuser))[0];
+    var assignmentFileName = fs.readdirSync('public/files/courses').filter(fn => fn.startsWith(req.params.courseUid + '_' + filename))[0];
 
     console.log(loggedInuser);
     console.log(assignmentFileName);
     if(assignmentFileName !== undefined) {
         let options = {
-            root: 'public/files/assignments',
+            root: 'public/files/courses',
             dotfiles: 'deny',
             headers: {
                 'x-timestamp': Date.now(),
