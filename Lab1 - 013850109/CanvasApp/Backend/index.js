@@ -66,10 +66,6 @@ app.use('/user', peopleRouter);
 var quizRouter = require('./routes/Quiz');
 app.use('/quiz', quizRouter);
 
-//Route to get assignments
-var quizRouter = require('./routes/Assignment');
-app.use('/assignment', quizRouter);
-
 var assignmentRouter = require('./routes/Assignment');
 app.use('/assignment', assignmentRouter);
 
@@ -271,5 +267,6 @@ createfolder = (courseId, courseTerm, res) => {
 
 
 //start your server on port 3001
-app.listen(3001);
+module.exports  = app.listen(3001);
 console.log("Server Listening on port 3001");
+
