@@ -257,7 +257,7 @@ createfolder = (courseId, courseTerm, res) => {
         if (error || results.length !== 1) {
             res.status(500).send(error);
         } else {
-            mkdirp('/public/files/course/'+ results[0].course_uid)
+            mkdirp('/public/files/courses')
             mkdirp('/public/files/assignments')
             res.status(200).send("Success");
         }

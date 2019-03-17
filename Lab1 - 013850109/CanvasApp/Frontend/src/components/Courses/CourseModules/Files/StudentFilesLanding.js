@@ -7,7 +7,7 @@ import { Redirect } from 'react-router-dom'
 import { Link } from 'react-router-dom';
 import { IconAssignmentLine } from '@instructure/ui-icons'
 import Moment from 'moment'
-import FileBrowser, {Icons} from 'react-keyed-file-browser'
+import FileBrowser, { Icons } from 'react-keyed-file-browser'
 import 'react-keyed-file-browser/dist/react-keyed-file-browser.css';
 
 
@@ -25,6 +25,18 @@ export default class StudentFilesLanding extends Component {
             assignments: [],
             files: []
         }
+        this.fileInput=React.createRef();
+        this.fileSelectHandler = this.fileSelectHandler.bind(this);
+    }
+
+    fileSelectHandler(fileKey) {
+        setTimeout(() => {
+            const response = {
+              file: 'http://localhost:3001/files/' + this.props.parentProps.match.params.courseUid + '/' + encodeURI(fileKey.key),
+            };
+            window.open(response.file,'_blank');
+            window.focus();
+          }, 100);
     }
 
     componentWillMount() {
@@ -35,7 +47,7 @@ export default class StudentFilesLanding extends Component {
                     this.setState({ files: response.data })
             })
     }
-    
+
     render() {
         return (
             <div class="col border m-3 py-5">
@@ -46,14 +58,8 @@ export default class StudentFilesLanding extends Component {
                             files={this.state.files}
                             icons={Icons.FontAwesome(4)}
 
-                            onCreateFolder={this.handleCreateFolder}
-                            onCreateFiles={this.handleCreateFiles}
-                            onMoveFolder={this.handleRenameFolder}
-                            onMoveFile={this.handleRenameFile}
-                            onRenameFolder={this.handleRenameFolder}
-                            onRenameFile={this.handleRenameFile}
-                            onDeleteFolder={this.handleDeleteFolder}
-                            onDeleteFile={this.handleDeleteFile}
+                            onSelectFile={this.fileSelectHandler}
+                            detailRenderer={() => null}
                         />
                     </div>
                 </div>
