@@ -6,7 +6,7 @@ import { Redirect } from 'react-router';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
 import styled from "styled-components";
 import axios from 'axios';
-import { Avatar, Text, Table } from '@instructure/ui-elements'
+import { Breadcrumb, BreadcrumbLink } from '@instructure/ui-breadcrumb'
 import Cookies from 'universal-cookie';
 import DatePicker from "react-datepicker";
 import { IconAssignmentLine, IconAddLine } from '@instructure/ui-icons'
@@ -31,7 +31,8 @@ export default class TakeAssignment extends Component {
             file: '',
             numPages: null,
             onDocumentLoadSuccess: null,
-            totalPoints: 0
+            totalPoints: 0,
+            course: ''
         };
         this.onDocumentLoadSuccess = this.onDocumentLoadSuccess.bind(this);
         this.pointsOnChangeHandler = this.pointsOnChangeHandler.bind(this);
@@ -63,6 +64,12 @@ export default class TakeAssignment extends Component {
                         file: fileURL
                     })
             })
+            axios.get('http://localhost:3001/course/' + this.props.match.params.courseUid)
+            .then((response) => {
+                console.log(response);
+                if (response !== undefined)
+                    this.setState({ course: response.data[0] })
+            })
     }
 
     onSubmit(e) {
@@ -88,6 +95,10 @@ export default class TakeAssignment extends Component {
 
 
     render() {
+        let homePath = "/coursedetails/" + this.state.course.course_uid + "/home";
+        let path1 = "/coursedetails/" + this.state.course.course_uid + "/assignments";
+        let courseName = this.state.course.course_term + ': ' + this.state.course.course_dept_code + ' - ' + this.state.course.course_id + ' - ' + this.state.course.course_name
+        
         if (cookie.load('cookieS')) {
             let announcementsPage = "/coursedetails/" + this.props.match.params.courseUid + "/assignments";
             return (<div><Redirect to={announcementsPage} /></div>);
@@ -101,7 +112,13 @@ export default class TakeAssignment extends Component {
                             <Navbar selected="courses" />
                         </div>
                         <div className="col">
-                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">Assignment</Heading>
+                        <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">
+                                <Breadcrumb size="large">
+                                    <BreadcrumbLink href={homePath}>{courseName}</BreadcrumbLink>
+                                    <BreadcrumbLink href={path1}>Assignments</BreadcrumbLink>
+                                    <BreadcrumbLink>{this.state.assignmentInfo.coursework_name}</BreadcrumbLink>
+                                </Breadcrumb>
+                            </Heading>
                             <div className="row">
 
                                 <div className="col col-sm-2">

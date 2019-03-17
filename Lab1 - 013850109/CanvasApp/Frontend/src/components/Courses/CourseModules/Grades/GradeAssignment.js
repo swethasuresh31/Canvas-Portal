@@ -6,7 +6,7 @@ import { Redirect } from 'react-router';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
 import styled from "styled-components";
 import axios from 'axios';
-import { Avatar, Text, Table } from '@instructure/ui-elements'
+import { Breadcrumb, BreadcrumbLink } from '@instructure/ui-breadcrumb'
 import Cookies from 'universal-cookie';
 import DatePicker from "react-datepicker";
 import { IconAssignmentLine, IconAddLine } from '@instructure/ui-icons'
@@ -32,7 +32,8 @@ export default class TakeAssignment extends Component {
             numPages: null,
             onDocumentLoadSuccess: null,
             shouldUpdate: true,
-            totalPoints: 0
+            totalPoints: 0,
+            course: ''
         };
         this.onDocumentLoadSuccess = this.onDocumentLoadSuccess.bind(this);
         this.pointsOnChangeHandler = this.pointsOnChangeHandler.bind(this);
@@ -45,10 +46,10 @@ export default class TakeAssignment extends Component {
 
     onDocumentLoadSuccess = (document) => {
         const { numPages } = document;
-        if(this.state.numPages !== numPages)
-        this.setState({
-            numPages: numPages,
-        });
+        if (this.state.numPages !== numPages)
+            this.setState({
+                numPages: numPages,
+            });
     };
 
     pointsOnChangeHandler = (e) => {
@@ -65,6 +66,12 @@ export default class TakeAssignment extends Component {
                         assignmentInfo: response.data[0],
                         file: fileURL
                     })
+            })
+        axios.get('http://localhost:3001/course/' + this.props.match.params.courseUid)
+            .then((response) => {
+                console.log(response);
+                if (response !== undefined)
+                    this.setState({ course: response.data[0] })
             })
     }
 
@@ -91,6 +98,11 @@ export default class TakeAssignment extends Component {
 
 
     render() {
+        let homePath = "/coursedetails/" + this.state.course.course_uid + "/home";
+        let path1 = "/coursedetails/" + this.state.course.course_uid + "/grades";
+        let path2 = "/coursedetails/" + this.state.course.course_uid + "/assignments/submissions/" + this.state.assignmentInfo.coursework_uid;
+        let courseName = this.state.course.course_term + ': ' + this.state.course.course_dept_code + ' - ' + this.state.course.course_id + ' - ' + this.state.course.course_name
+
         if (cookie.load('cookieS')) {
             let announcementsPage = "/coursedetails/" + this.props.match.params.courseUid + "/assignments";
             return (<div><Redirect to={announcementsPage} /></div>);
@@ -104,7 +116,14 @@ export default class TakeAssignment extends Component {
                             <Navbar selected="courses" />
                         </div>
                         <div className="col">
-                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">Grade Assignment</Heading>
+                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">
+                                <Breadcrumb size="large">
+                                    <BreadcrumbLink href={homePath}>{courseName}</BreadcrumbLink>
+                                    <BreadcrumbLink href={path1}>Grades</BreadcrumbLink>
+                                    <BreadcrumbLink href={path2}>{this.state.assignmentInfo.coursework_name}</BreadcrumbLink>
+                                    <BreadcrumbLink>{this.props.match.params.user}</BreadcrumbLink>
+                                </Breadcrumb>
+                            </Heading>
                             <div className="row">
 
                                 <div className="col col-sm-2">
@@ -115,7 +134,7 @@ export default class TakeAssignment extends Component {
                                     <div class="row">
                                         <div class="col">
                                             <Document
-                                                file={{url:this.state.file}}
+                                                file={{ url: this.state.file }}
                                                 onLoadSuccess={this.onDocumentLoadSuccess}
                                             >
                                                 {Array.from(

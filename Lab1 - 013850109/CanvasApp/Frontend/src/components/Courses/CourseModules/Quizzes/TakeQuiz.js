@@ -6,7 +6,7 @@ import { Redirect } from 'react-router';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
 import styled from "styled-components";
 import axios from 'axios';
-import { Avatar, Text, Table } from '@instructure/ui-elements'
+import { Breadcrumb, BreadcrumbLink } from '@instructure/ui-breadcrumb'
 import Cookies from 'universal-cookie';
 import DatePicker from "react-datepicker";
 import { IconQuizLine, IconAddLine } from '@instructure/ui-icons'
@@ -28,7 +28,7 @@ export default class TakeQuiz extends Component {
             quizInfo: '',
             questions: [],
             answers: [],
-            course: []
+            course: ''
         };
         this.onSubmit = this.onSubmit.bind(this);
     }
@@ -97,6 +97,8 @@ export default class TakeQuiz extends Component {
     render() {
         console.log(this.state.questions)
         let homePath = "/coursedetails/" + this.state.course.course_uid + "/home";
+        let courseName = this.state.course.course_term + ': ' + this.state.course.course_dept_code + ' - ' + this.state.course.course_id + ' - ' + this.state.course.course_name
+        let path1 = "/coursedetails/" + this.state.course.course_uid + "/quizzes";
 
         if (cookie.load('cookieF')) {
             let announcementsPage = "/coursedetails/" + this.props.match.params.courseUid + "/quizzes";
@@ -111,7 +113,13 @@ export default class TakeQuiz extends Component {
                             <Navbar selected="courses" />
                         </div>
                         <div className="col">
-                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom"><Link to={homePath} >{this.state.course.course_term}: {this.state.course.course_dept_code} - {this.state.course.course_id} - {this.state.course.course_name}</Link></Heading>
+                        <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">
+                                <Breadcrumb size="large">
+                                    <BreadcrumbLink href={homePath}>{courseName}</BreadcrumbLink>
+                                    <BreadcrumbLink href={path1}>Quizzes</BreadcrumbLink>
+                                    <BreadcrumbLink>{this.state.quizInfo.coursework_name}</BreadcrumbLink>
+                                </Breadcrumb>
+                            </Heading>
                             <div className="row">
 
                                 <div className="col col-sm-2">

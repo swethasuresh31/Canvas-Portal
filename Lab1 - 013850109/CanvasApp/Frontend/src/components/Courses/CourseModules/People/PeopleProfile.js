@@ -7,7 +7,7 @@ import Heading from '@instructure/ui-elements/lib/components/Heading';
 import styled from "styled-components";
 import axios from 'axios';
 import { Avatar, Text, Table } from '@instructure/ui-elements'
-import { Link } from 'react-router-dom';
+import { Breadcrumb, BreadcrumbLink } from '@instructure/ui-breadcrumb'
 import Cookies from 'universal-cookie';
 
 import {
@@ -36,7 +36,8 @@ export default class UserCoursePeople extends Component {
         super(props);
         // Don't call this.setState() here!
         this.state = {
-            people: []
+            people: [],
+            course:''
         };
     }
 
@@ -61,9 +62,20 @@ export default class UserCoursePeople extends Component {
                     })
                 })
             });
+
+            axios.get('http://localhost:3001/course/' + this.props.match.params.courseUid)
+            .then((response) => {
+                console.log(response);
+                if (response !== undefined)
+                    this.setState({ course: response.data[0] })
+            })
     }
 
     render() {
+        let homePath = "/coursedetails/" + this.state.course.course_uid + "/home";
+        let courseName = this.state.course.course_term + ': ' + this.state.course.course_dept_code + ' - ' + this.state.course.course_id + ' - ' + this.state.course.course_name
+        let path1 = "/coursedetails/" + this.state.course.course_uid + "/people";
+
         console.log(this.state.people[0])
         let redirectVar = null;
         if (cookie.load('cookieF') || cookie.load('cookieS')) {
@@ -75,7 +87,13 @@ export default class UserCoursePeople extends Component {
                             <Navbar selected="courses" />
                         </div>
                         <div className="col">
-                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">Announcement</Heading>
+                        <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">
+                                <Breadcrumb size="large">
+                                    <BreadcrumbLink href={homePath}>{courseName}</BreadcrumbLink>
+                                    <BreadcrumbLink href={path1}>People</BreadcrumbLink>
+                                    <BreadcrumbLink>{this.state.name}</BreadcrumbLink>
+                                </Breadcrumb>
+                            </Heading>
                             <div className="row">
 
                                 <div className="col col-sm-2">
@@ -93,7 +111,7 @@ export default class UserCoursePeople extends Component {
                                     <div className="row">
                                         <div className="col col-sm-1">
                                             <br /><Avatar name={this.state.name} size="x-large" />
-                                        </ div>
+                                        </div>
                                         <div className="col col-lg-5">
                                             <br /><h4>
                                                 <table className="table-borderless">
@@ -110,9 +128,9 @@ export default class UserCoursePeople extends Component {
                                                         <tr><td><label>Languages: </label></td><td><input type="text" readonly class="form-control-plaintext" id="inputName" aria-describedby="emailHelp" value={this.state.languages} /></td></tr>
                                                         <tr><td><label>Gender: </label></td><td><input type="text" readonly class="form-control-plaintext" id="inputName" aria-describedby="emailHelp" value={this.state.gender} /></td></tr>
                                                     </tbody>
-                                                </table></ h4>
-                                        </ div>
-                                    </ div>
+                                                </table></h4>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

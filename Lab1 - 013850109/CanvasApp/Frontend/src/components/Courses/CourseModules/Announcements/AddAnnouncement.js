@@ -6,7 +6,7 @@ import { Redirect } from 'react-router';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
 import styled from "styled-components";
 import axios from 'axios';
-import { Avatar, Text, Table } from '@instructure/ui-elements'
+import { Breadcrumb, BreadcrumbLink } from '@instructure/ui-breadcrumb'
 import Cookies from 'universal-cookie';
 import { Link } from 'react-router-dom';
 
@@ -22,7 +22,7 @@ export default class AddAnnouncement extends Component {
             redirectVar: '',
             subject: '',
             body: '',
-            courseDet: []
+            courseDet: ''
         };
         this.onAdd = this.onAdd.bind(this);
     }
@@ -34,25 +34,6 @@ export default class AddAnnouncement extends Component {
                 if (response !== undefined)
                     this.setState({ courseDet: response.data[0] })
             })
-    }
-
-    onAdd(courseId, courseTerm, courseNumber, courseDept, courseName) {
-
-        this.setState({
-            redirectVar: <Redirect to={{
-                pathname: '/enrollCourse',
-                course: {
-                    course_uid: courseId,
-                    course_term: courseTerm,
-                    course_dept_code: courseDept,
-                    course_id: courseNumber,
-                    course_name: courseName
-                }
-            }}
-            />
-        })
-        this.subjectChangeHandler = this.subjectChangeHandler.bind(this);
-        this.bodyChangeHandler = this.bodyChangeHandler.bind(this);
     }
 
     clearForm = () => {
@@ -116,6 +97,8 @@ export default class AddAnnouncement extends Component {
 
     render() {
         let homePath = "/coursedetails/" + this.state.courseDet.course_uid + "/home";
+        let path1 = "/coursedetails/" + this.state.courseDet.course_uid + "/announcements";
+        let courseName = this.state.courseDet.course_term + ': ' + this.state.courseDet.course_dept_code + ' - ' + this.state.courseDet.course_id + ' - ' + this.state.courseDet.course_name
         if (cookie.load('cookieF')) {
             return (
                 <div className="container-fluid md-0 p-0">
@@ -125,7 +108,13 @@ export default class AddAnnouncement extends Component {
                             <Navbar selected="courses" />
                         </div>
                         <div className="col">
-                        <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom"><Link to={homePath} >{this.state.courseDet.course_term}: {this.state.courseDet.course_dept_code} - {this.state.courseDet.course_id} - {this.state.courseDet.course_name}</Link></Heading>
+                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">
+                                <Breadcrumb size="large">
+                                    <BreadcrumbLink href={homePath}>{courseName}</BreadcrumbLink>
+                                    <BreadcrumbLink href={path1}>Announcements</BreadcrumbLink>
+                                    <BreadcrumbLink>Add Announcement</BreadcrumbLink>
+                                </Breadcrumb>
+                            </Heading>
                             <div className="row">
 
                                 <div className="col col-sm-2">
@@ -163,7 +152,7 @@ export default class AddAnnouncement extends Component {
                 </div>
             );
         }
-        else  if (cookie.load('cookieS')) {
+        else if (cookie.load('cookieS')) {
             let announcementsPage = "/coursedetails/" + this.props.match.params.courseUid + "/announcements";
             return (<div><Redirect to={announcementsPage} /></div>);
         } else {

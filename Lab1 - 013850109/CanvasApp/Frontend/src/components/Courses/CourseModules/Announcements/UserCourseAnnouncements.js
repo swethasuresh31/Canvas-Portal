@@ -7,6 +7,7 @@ import Heading from '@instructure/ui-elements/lib/components/Heading';
 import styled from "styled-components";
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { Breadcrumb, BreadcrumbLink } from '@instructure/ui-breadcrumb'
 
 import {
     AppContainer as BaseAppContainer,
@@ -36,7 +37,7 @@ export default class UserCourseAnnouncements extends Component {
         // Don't call this.setState() here!
         this.state = {
             announcements: [],
-            course: []
+            course: ''
         };
     }
 
@@ -58,7 +59,7 @@ export default class UserCourseAnnouncements extends Component {
     render() {
         let redirectVar = null;
         let homePath = "/coursedetails/" + this.state.course.course_uid + "/home";
-
+        let courseName = this.state.course.course_term + ': ' + this.state.course.course_dept_code + ' - ' + this.state.course.course_id + ' - ' + this.state.course.course_name
         let addAnnouncementPath = "/coursedetails/" + this.props.match.params.courseUid + "/announcements/add"
         if (cookie.load('cookieF')) {
             return (
@@ -69,7 +70,12 @@ export default class UserCourseAnnouncements extends Component {
                             <Navbar selected="courses" />
                         </div>
                         <div className="col">
-                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom"><Link to={homePath} >{this.state.course.course_term}: {this.state.course.course_dept_code} - {this.state.course.course_id} - {this.state.course.course_name}</Link></Heading>
+                        <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">
+                                <Breadcrumb size="large">
+                                    <BreadcrumbLink href={homePath}>{courseName}</BreadcrumbLink>
+                                    <BreadcrumbLink>Announcements</BreadcrumbLink>
+                                </Breadcrumb>
+                            </Heading>
                             <div className="row">
 
                                 <div className="col col-sm-2">
@@ -110,7 +116,12 @@ export default class UserCourseAnnouncements extends Component {
                             <Navbar selected="courses" />
                         </div>
                         <div className="col">
-                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">Assignments</Heading>
+                        <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">
+                                <Breadcrumb size="large">
+                                    <BreadcrumbLink href={homePath}>{courseName}</BreadcrumbLink>
+                                    <BreadcrumbLink>Announcements</BreadcrumbLink>
+                                </Breadcrumb>
+                            </Heading>
                             <div className="row">
 
                                 <div className="col col-sm-2">

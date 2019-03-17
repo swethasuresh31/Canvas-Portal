@@ -6,6 +6,7 @@ import { Redirect } from 'react-router';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
 import styled from "styled-components";
 import axios from 'axios';
+import { Breadcrumb, BreadcrumbLink } from '@instructure/ui-breadcrumb'
 import { Avatar, Text, Table } from '@instructure/ui-elements'
 import { Link } from 'react-router-dom';
 
@@ -36,7 +37,7 @@ export default class UserCoursePeople extends Component {
         // Don't call this.setState() here!
         this.state = {
             people: [],
-            course: []
+            course: ''
         };
     }
 
@@ -58,6 +59,7 @@ export default class UserCoursePeople extends Component {
     render() {
         console.log(this.state.people[0])
         let homePath = "/coursedetails/" + this.state.course.course_uid + "/home";
+        let courseName = this.state.course.course_term + ': ' + this.state.course.course_dept_code + ' - ' + this.state.course.course_id + ' - ' + this.state.course.course_name
         let redirectVar = null;
         if (cookie.load('cookieF') || cookie.load('cookieS')) {
             return (
@@ -68,8 +70,13 @@ export default class UserCoursePeople extends Component {
                             <Navbar selected="courses" />
                         </div>
                         <div className="col">
-                        <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom"><Link to={homePath} >{this.state.course.course_term}: {this.state.course.course_dept_code} - {this.state.course.course_id} - {this.state.course.course_name}</Link></Heading>
-                            <div className="row">
+                        <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">
+                                <Breadcrumb size="large">
+                                    <BreadcrumbLink href={homePath}>{courseName}</BreadcrumbLink>
+                                    <BreadcrumbLink>People</BreadcrumbLink>
+                                </Breadcrumb>
+                            </Heading>
+                               <div className="row">
 
                                 <div className="col col-sm-2">
                                     <br />   <CourseNav courseUid={this.props.match.params.courseUid} selected="people" />

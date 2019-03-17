@@ -6,7 +6,7 @@ import { Redirect } from 'react-router';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
 import styled from "styled-components";
 import axios from 'axios';
-import { Avatar, Text, Table } from '@instructure/ui-elements'
+import { Breadcrumb, BreadcrumbLink } from '@instructure/ui-breadcrumb'
 import Cookies from 'universal-cookie';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -28,7 +28,7 @@ export default class AddAssignment extends Component {
             points: '',
             numQuestions: 0,
             questions: [],
-            course: []
+            course: ''
         };
         this.assignmentNameChangeHandler = this.assignmentNameChangeHandler.bind(this);
         this.instructionsChangeHandler = this.instructionsChangeHandler.bind(this);
@@ -110,7 +110,9 @@ export default class AddAssignment extends Component {
 
     render() {
         let homePath = "/coursedetails/" + this.state.course.course_uid + "/home";
-
+        let path1 = "/coursedetails/" + this.state.course.course_uid + "/assignments";
+        let courseName = this.state.course.course_term + ': ' + this.state.course.course_dept_code + ' - ' + this.state.course.course_id + ' - ' + this.state.course.course_name
+        
         if (cookie.load('cookieF')) {
             return (
                 <div className="container-fluid md-0 p-0">
@@ -120,8 +122,14 @@ export default class AddAssignment extends Component {
                             <Navbar selected="courses" />
                         </div>
                         <div className="col">
-                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom"><Link to={homePath} >{this.state.course.course_term}: {this.state.course.course_dept_code} - {this.state.course.course_id} - {this.state.course.course_name}</Link></Heading>
-                            <div className="row">
+                        <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">
+                                <Breadcrumb size="large">
+                                    <BreadcrumbLink href={homePath}>{courseName}</BreadcrumbLink>
+                                    <BreadcrumbLink href={path1}>Assignments</BreadcrumbLink>
+                                    <BreadcrumbLink>Add Assignment</BreadcrumbLink>
+                                </Breadcrumb>
+                            </Heading>
+                             <div className="row">
 
                                 <div className="col col-sm-2">
                                     <br />   <CourseNav courseUid={this.props.match.params.courseUid} selected="assignments" />

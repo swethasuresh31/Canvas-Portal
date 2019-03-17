@@ -6,8 +6,8 @@ import { Redirect } from 'react-router';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
 import styled from "styled-components";
 import axios from 'axios';
-import { Avatar, Text, Table } from '@instructure/ui-elements'
-import { Link } from 'react-router-dom';
+import { Breadcrumb, BreadcrumbLink } from '@instructure/ui-breadcrumb'
+
 
 
 
@@ -35,7 +35,7 @@ export default class CourseHome extends Component {
         super(props);
         // Don't call this.setState() here!
         this.state = {
-            course: []
+            course: ''
         };
     }
 
@@ -50,7 +50,8 @@ export default class CourseHome extends Component {
 
     render() {
         let homePath = "/coursedetails/" + this.state.course.course_uid + "/home";
-
+        let courseName = this.state.course.course_term + ': ' + this.state.course.course_dept_code + ' - ' + this.state.course.course_id + ' - ' + this.state.course.course_name
+        console.log(courseName)
         if (cookie.load('cookieF') || cookie.load('cookieS')) {
             return (
                 <div className="container-fluid md-0 p-0">
@@ -59,7 +60,12 @@ export default class CourseHome extends Component {
                             <Navbar selected="courses" />
                         </div>
                         <div className="col">
-                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom"><Link to={homePath} >{this.state.course.course_term}: {this.state.course.course_dept_code} - {this.state.course.course_id} - {this.state.course.course_name}</Link></Heading>
+                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">
+                                <Breadcrumb size="large">
+                                    <BreadcrumbLink href={homePath}>{courseName}</BreadcrumbLink>
+                                    <BreadcrumbLink>Home</BreadcrumbLink>
+                                </Breadcrumb>
+                            </Heading>
                             <div className="row">
 
                                 <div className="col col-sm-2">
@@ -69,22 +75,22 @@ export default class CourseHome extends Component {
                                 <div className="col">
                                     <br />
                                     <div class="list-group">
-                                    <button type="button" class="list-group-item list-group-item-action" disabled>
-                                    <div className="row">
-                                        <div className="col">
-                                            <br /><Heading theme={{ borderPadding: "0.5rem" }} border="bottom"><b>{this.state.course.course_term}: {this.state.course.course_dept_code} - {this.state.course.course_id} - {this.state.course.course_name}</b></Heading>
-                                            <br />
-                                            <div class="h4">
-                                                <div class="panel-body"><b>Instructor:</b> {this.state.course.course_instructor}</div>
-                                                <div class="panel-body"><b>Classroom Location: </b>{this.state.course.course_room}</div>
-                                                <div class="panel-body"><b>Email Id: </b>{this.state.course.created_by}</div>
-                                                <div class="panel-body"><b>Class Days/Time: </b>{this.state.course.course_dayandtime}</div>
-                                                <div class="panel-body"><b>Course Description: </b>{this.state.course.course_desc}</div>
-                                                <div class="panel-body"><b>Syllabus: </b>{this.state.course.course_syllabus}</div>
+                                        <button type="button" class="list-group-item list-group-item-action" disabled>
+                                            <div className="row">
+                                                <div className="col">
+                                                    <br /><Heading theme={{ borderPadding: "0.5rem" }} border="bottom"><b>{this.state.course.course_term}: {this.state.course.course_dept_code} - {this.state.course.course_id} - {this.state.course.course_name}</b></Heading>
+                                                    <br />
+                                                    <div class="h4">
+                                                        <div class="panel-body"><b>Instructor:</b> {this.state.course.course_instructor}</div>
+                                                        <div class="panel-body"><b>Classroom Location: </b>{this.state.course.course_room}</div>
+                                                        <div class="panel-body"><b>Email Id: </b>{this.state.course.created_by}</div>
+                                                        <div class="panel-body"><b>Class Days/Time: </b>{this.state.course.course_dayandtime}</div>
+                                                        <div class="panel-body"><b>Course Description: </b>{this.state.course.course_desc}</div>
+                                                        <div class="panel-body"><b>Syllabus: </b>{this.state.course.course_syllabus}</div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    </button>
+                                        </button>
                                     </div>
                                 </div>
                             </div>

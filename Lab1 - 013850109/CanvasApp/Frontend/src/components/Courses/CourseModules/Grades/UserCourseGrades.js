@@ -6,7 +6,7 @@ import { Redirect } from 'react-router';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
 import styled from "styled-components";
 import axios from 'axios';
-import { Avatar, Text, Table } from '@instructure/ui-elements'
+import { Breadcrumb, BreadcrumbLink } from '@instructure/ui-breadcrumb'
 import { Link } from 'react-router-dom';
 import Cookies from 'universal-cookie';
 import StudentGradeLanding from './StudentGradeLanding'
@@ -39,7 +39,7 @@ export default class UserCourseGrades extends Component {
         // Don't call this.setState() here!
         this.state = {
             people: [],
-            course: []
+            course: ''
         };
     }
 
@@ -55,6 +55,7 @@ export default class UserCourseGrades extends Component {
     render() {
         let redirectVar = null;
         let homePath = "/coursedetails/" + this.state.course.course_uid + "/home";
+        let courseName = this.state.course.course_term + ': ' + this.state.course.course_dept_code + ' - ' + this.state.course.course_id + ' - ' + this.state.course.course_name
         if (cookie.load('cookieF')) {
             return (
                 <div className="container-fluid md-0 p-0">
@@ -64,16 +65,21 @@ export default class UserCourseGrades extends Component {
                             <Navbar selected="courses" />
                         </div>
                         <div className="col">
-                        <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom"><Link to={homePath} >{this.state.course.course_term}: {this.state.course.course_dept_code} - {this.state.course.course_id} - {this.state.course.course_name}</Link></Heading>
+                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">
+                                <Breadcrumb size="large">
+                                    <BreadcrumbLink href={homePath}>{courseName}</BreadcrumbLink>
+                                    <BreadcrumbLink>Grades</BreadcrumbLink>
+                                </Breadcrumb>
+                            </Heading>
                             <div className="row">
 
                                 <div className="col col-sm-2">
                                     <br />   <CourseNav courseUid={this.props.match.params.courseUid} selected="grades" />
                                 </div>
-                                    <FacultyGradeLanding parentProps={this.props}/>
+                                <FacultyGradeLanding parentProps={this.props} />
                                 <div className="col">
                                     <div className="row">
-                                        
+
                                     </div>
                                 </div>
                             </div>
@@ -82,32 +88,37 @@ export default class UserCourseGrades extends Component {
                 </div>
             );
         } else if (cookie.load('cookieS')) {
-                return (
-                    <div className="container-fluid md-0 p-0">
-                        {redirectVar}
-                        <div className="row">
-                            <div className="col pr-0 mr-0" style={{ maxWidth: "100px" }}>
-                                <Navbar selected="courses" />
-                            </div>
-                            <div className="col">
-                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom"><Link to={homePath} >{this.state.course.course_term}: {this.state.course.course_dept_code} - {this.state.course.course_id} - {this.state.course.course_name}</Link></Heading>
-                                <div className="row">
-    
-                                    <div className="col col-sm-2">
-                                        <br />   <CourseNav courseUid={this.props.match.params.courseUid} selected="grades" />
-                                    </div>
-    
-                                    <div className="col">
-                                        <div className="row">
-                                            <StudentGradeLanding parentProps={this.props}/>
-                                        </div>
+            return (
+                <div className="container-fluid md-0 p-0">
+                    {redirectVar}
+                    <div className="row">
+                        <div className="col pr-0 mr-0" style={{ maxWidth: "100px" }}>
+                            <Navbar selected="courses" />
+                        </div>
+                        <div className="col">
+                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">
+                                <Breadcrumb size="large">
+                                    <BreadcrumbLink href={homePath}>{courseName}</BreadcrumbLink>
+                                    <BreadcrumbLink>Grades</BreadcrumbLink>
+                                </Breadcrumb>
+                            </Heading>
+                            <div className="row">
+
+                                <div className="col col-sm-2">
+                                    <br />   <CourseNav courseUid={this.props.match.params.courseUid} selected="grades" />
+                                </div>
+
+                                <div className="col">
+                                    <div className="row">
+                                        <StudentGradeLanding parentProps={this.props} />
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                );
-            }
+                </div>
+            );
+        }
         else {
             return (<div><Redirect to="/login" /></div>);
         }

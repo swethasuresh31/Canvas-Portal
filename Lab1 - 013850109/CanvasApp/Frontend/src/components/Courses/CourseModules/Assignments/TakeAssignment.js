@@ -6,7 +6,7 @@ import { Redirect } from 'react-router';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
 import styled from "styled-components";
 import axios from 'axios';
-import { Avatar, Text, Table } from '@instructure/ui-elements'
+import { Breadcrumb, BreadcrumbLink } from '@instructure/ui-breadcrumb'
 import Cookies from 'universal-cookie';
 import DatePicker from "react-datepicker";
 import { IconAssignmentLine, IconAddLine } from '@instructure/ui-icons'
@@ -29,9 +29,10 @@ export default class TakeAssignment extends Component {
             assignmentFile: null,
             errorMsg: '',
             questions: [],
-            answers: []
+            answers: [],
+            course: ''
         };
-        this.fileInput=React.createRef();
+        this.fileInput = React.createRef();
         this.onSubmit = this.onSubmit.bind(this);
     }
 
@@ -41,6 +42,12 @@ export default class TakeAssignment extends Component {
                 console.log(response);
                 if (response !== undefined)
                     this.setState({ assignmentInfo: response.data[0], errorMsg: '' })
+            })
+        axios.get('http://localhost:3001/course/' + this.props.match.params.courseUid)
+            .then((response) => {
+                console.log(response);
+                if (response !== undefined)
+                    this.setState({ course: response.data[0] })
             })
     }
 
@@ -57,25 +64,25 @@ export default class TakeAssignment extends Component {
     onSubmit(e) {
         e.preventDefault();
         console.log(this.fileInput.current.files[0])
-        if(this.fileInput.current.files[0] !== undefined) {
+        if (this.fileInput.current.files[0] !== undefined) {
             console.log(this.fileInput.current.files[0])
-        let filename=this.props.match.params.courseUid + '-' + this.state.assignmentInfo.coursework_uid + '-' + encodeURI(cookies.get('cookieS')) + '.' + this.fileInput.current.files[0].name.split('.').pop();
-        console.log(filename)
-        let data = new FormData();
-        data.append('file', this.fileInput.current.files[0], filename)
-        console.log(data)
-        let assignmentsPage = "/coursedetails/" + this.props.match.params.courseUid + "/assignments";
-        //adds the assignment based on information entered
-        axios.post('http://localhost:3001/assignment/' + this.props.match.params.courseUid + '/' + this.state.assignmentInfo.coursework_uid + '/' + cookies.get('cookieS'), data)
-            .then((response) => {
-                console.log(response);
-                if (response !== undefined)
-                    if (response.status === 200) {
-                        this.setState({
-                            redirectVar: <Redirect to={assignmentsPage} />
-                        })
-                    }
-            })
+            let filename = this.props.match.params.courseUid + '-' + this.state.assignmentInfo.coursework_uid + '-' + encodeURI(cookies.get('cookieS')) + '.' + this.fileInput.current.files[0].name.split('.').pop();
+            console.log(filename)
+            let data = new FormData();
+            data.append('file', this.fileInput.current.files[0], filename)
+            console.log(data)
+            let assignmentsPage = "/coursedetails/" + this.props.match.params.courseUid + "/assignments";
+            //adds the assignment based on information entered
+            axios.post('http://localhost:3001/assignment/' + this.props.match.params.courseUid + '/' + this.state.assignmentInfo.coursework_uid + '/' + cookies.get('cookieS'), data)
+                .then((response) => {
+                    console.log(response);
+                    if (response !== undefined)
+                        if (response.status === 200) {
+                            this.setState({
+                                redirectVar: <Redirect to={assignmentsPage} />
+                            })
+                        }
+                })
         } else {
             this.setState({
                 errorMsg: 'Please select file to submit'
@@ -85,6 +92,10 @@ export default class TakeAssignment extends Component {
 
 
     render() {
+        let homePath = "/coursedetails/" + this.state.course.course_uid + "/home";
+        let path1 = "/coursedetails/" + this.state.course.course_uid + "/assignments";
+        let courseName = this.state.course.course_term + ': ' + this.state.course.course_dept_code + ' - ' + this.state.course.course_id + ' - ' + this.state.course.course_name
+
         if (cookie.load('cookieF')) {
             let announcementsPage = "/coursedetails/" + this.props.match.params.courseUid + "/assignments";
             return (<div><Redirect to={announcementsPage} /></div>);
@@ -98,7 +109,13 @@ export default class TakeAssignment extends Component {
                             <Navbar selected="courses" />
                         </div>
                         <div className="col">
-                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">Assignment</Heading>
+                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">
+                                <Breadcrumb size="large">
+                                    <BreadcrumbLink href={homePath}>{courseName}</BreadcrumbLink>
+                                    <BreadcrumbLink href={path1}>Assignments</BreadcrumbLink>
+                                    <BreadcrumbLink>{this.state.assignmentInfo.coursework_name}</BreadcrumbLink>
+                                </Breadcrumb>
+                            </Heading>
                             <div className="row">
 
                                 <div className="col col-sm-2">

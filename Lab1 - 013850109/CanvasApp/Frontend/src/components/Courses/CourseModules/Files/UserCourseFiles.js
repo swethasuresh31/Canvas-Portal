@@ -5,9 +5,8 @@ import cookie from 'react-cookies';
 import { Redirect } from 'react-router';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
 import styled from "styled-components";
+import { Breadcrumb, BreadcrumbLink } from '@instructure/ui-breadcrumb'
 import axios from 'axios';
-import { Avatar, Text, Table } from '@instructure/ui-elements'
-import { Link } from 'react-router-dom';
 import Cookies from 'universal-cookie';
 import FacultyFilesLanding from './FacultyFilesLanding'
 import StudentFilesLanding from './StudentFilesLanding'
@@ -38,16 +37,25 @@ export default class UserCourseFiles extends Component {
         super(props);
         // Don't call this.setState() here!
         this.state = {
+            course: ''
         };
     }
 
     componentWillMount() {
-        
+        axios.get('http://localhost:3001/course/' + this.props.match.params.courseUid)
+        .then((response) => {
+            console.log(response);
+            if (response !== undefined)
+                this.setState({ course: response.data[0] })
+        })
     }
 
     render() {
         let redirectVar = null;
         let assignmentsModule = ''
+        let homePath = "/coursedetails/" + this.state.course.course_uid + "/home";
+        let courseName = this.state.course.course_term + ': ' + this.state.course.course_dept_code + ' - ' + this.state.course.course_id + ' - ' + this.state.course.course_name
+        
         if (cookie.load('cookieF')) {
             return (
                 <div className="container-fluid md-0 p-0">
@@ -57,7 +65,12 @@ export default class UserCourseFiles extends Component {
                             <Navbar selected="courses" />
                         </div>
                         <div className="col">
-                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">Files</Heading>
+                        <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">
+                                <Breadcrumb size="large">
+                                    <BreadcrumbLink href={homePath}>{courseName}</BreadcrumbLink>
+                                    <BreadcrumbLink>Files</BreadcrumbLink>
+                                </Breadcrumb>
+                            </Heading>
                             <div className="row">
 
                                 <div className="col col-sm-2">
@@ -83,7 +96,12 @@ export default class UserCourseFiles extends Component {
                             <Navbar selected="courses" />
                         </div>
                         <div className="col">
-                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">Assignments</Heading>
+                        <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">
+                                <Breadcrumb size="large">
+                                    <BreadcrumbLink href={homePath}>{courseName}</BreadcrumbLink>
+                                    <BreadcrumbLink>Files</BreadcrumbLink>
+                                </Breadcrumb>
+                            </Heading>
                             <div className="row">
 
                                 <div className="col col-sm-2">

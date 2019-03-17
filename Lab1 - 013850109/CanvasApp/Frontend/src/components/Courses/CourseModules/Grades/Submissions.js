@@ -4,6 +4,7 @@ import CourseNav from '../CourseNav';
 import cookie from 'react-cookies';
 import { Redirect } from 'react-router';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
+import { Breadcrumb, BreadcrumbLink } from '@instructure/ui-breadcrumb'
 import styled from "styled-components";
 import axios from 'axios';
 import { Avatar, Text, Table } from '@instructure/ui-elements'
@@ -35,7 +36,8 @@ export default class Submissions extends Component {
         super(props);
         // Don't call this.setState() here!
         this.state = {
-            assignments: []
+            assignments: [],
+            course: ''
         };
     }
 
@@ -46,9 +48,19 @@ export default class Submissions extends Component {
                 if (response !== undefined)
                     this.setState({ assignments: response.data })
             })
+            axios.get('http://localhost:3001/course/' + this.props.match.params.courseUid)
+            .then((response) => {
+                console.log(response);
+                if (response !== undefined)
+                    this.setState({ course: response.data[0] })
+            })
     }
 
     render() {
+        let homePath = "/coursedetails/" + this.state.course.course_uid + "/home";
+        let path1 = "/coursedetails/" + this.state.course.course_uid + "/grades";
+        let courseName = this.state.course.course_term + ': ' + this.state.course.course_dept_code + ' - ' + this.state.course.course_id + ' - ' + this.state.course.course_name
+
         console.log(this.state.assignments[0])
         let redirectVar = null;
         if (cookie.load('cookieF')) {
@@ -60,7 +72,13 @@ export default class Submissions extends Component {
                             <Navbar selected="courses" />
                         </div>
                         <div className="col">
-                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">Submissions</Heading>
+                        <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">
+                                <Breadcrumb size="large">
+                                    <BreadcrumbLink href={homePath}>{courseName}</BreadcrumbLink>
+                                    <BreadcrumbLink href={path1}>Grades</BreadcrumbLink>
+                                    <BreadcrumbLink>Submissions</BreadcrumbLink>
+                                </Breadcrumb>
+                            </Heading>
                             <div className="row">
 
                                 <div className="col col-sm-2">
