@@ -1,24 +1,32 @@
 var mysql = require('mysql');
 
-var db;
+var pool = mysql.createPool({
+  connectionLimit: 100,
+  host: 'localhost',
+  user: 'root',
+  password: 'adminuser',
+  database: 'canvas',
+  multipleStatements: true,
+  dateStrings: true
+});
 
-function getInstance() {
-    if (!db) {
-db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'adminuser',
-    database: 'canvas',
-    multipleStatements: true,
-    dateStrings: true
-  });
-  
-  db.connect(function (err) {
-    if (err) throw err;
+pool.getConnection((err, connection) => {
+  if (err) {
+    if (err.code === 'PROTOCOL_CONNECTION_LOST') {
+      console.error('Database connection was closed.')
+    }
+    if (err.code === 'ER_CON_COUNT_ERROR') {
+      console.error('Database has too many connections.')
+    }
+    if (err.code === 'ECONNREFUSED') {
+      console.error('Database connection was refused.')
+    }
+  }
+  if (connection) {
     console.log("Connected!");
-  });
-}
-return db;
-}
+    connection.release()
+  }
+  return
+})
 
-module.exports = getInstance();
+module.exports = pool;
