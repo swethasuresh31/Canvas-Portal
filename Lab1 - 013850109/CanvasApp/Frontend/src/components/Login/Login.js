@@ -148,11 +148,11 @@ class Login extends Component {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div clasName="errorMsg">{this.state.errorMsg}</div>
+                                            <div className="errorMsg">{this.state.errorMsg}</div>
                                             <div className="o-form-button-bar"><button className="button button-primary" value="Sign In" id="sjsu-signin-submit" data-type="save" onClick={this.submitLogin}>Sign In</button></div>
                                         </form>
                                         <div className="auth-footer">
-                                            <Link to="/signup">Signup for an account</Link>
+                                            <a href="/signup">Signup for an account</a>
 
                                         </div>
                                     </div>

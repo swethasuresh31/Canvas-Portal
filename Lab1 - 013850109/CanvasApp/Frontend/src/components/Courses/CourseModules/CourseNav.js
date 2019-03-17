@@ -44,13 +44,13 @@ export default class CourseNav extends Component {
                     defaultSelectedPath={this.props.selected}
                     theme={themeCourse}
                 >
-                    <Link to={homePath} style = {{textDecoration:'none'}}><Nav id="home">Home</Nav></Link>
-                    <Link to={assignmentsPath} style = {{textDecoration:'none'}}><Nav id="assignments">Assignments</Nav></Link>
-                    <Link to={announcementsPath} style = {{textDecoration:'none'}}><Nav id="announcements">Announcements</Nav></Link>
-                    <Link to={gradesPath} style = {{textDecoration:'none'}}><Nav id="grades">Grades</Nav></Link>
-                    <Link to={peoplePath} style = {{textDecoration:'none'}}><Nav id="people">People</Nav></Link>
-                    <Link to={filesPath} style = {{textDecoration:'none'}}><Nav id="files">Files</Nav></Link>
-                    <Link to={quizzesPath} style = {{textDecoration:'none'}}><Nav id="quizzes">Quizzes</Nav></Link>
+                    <a href={homePath} style = {{textDecoration:'none'}}><Nav id="home">Home</Nav></a>
+                    <a href={assignmentsPath} style = {{textDecoration:'none'}}><Nav id="assignments">Assignments</Nav></a>
+                    <a href={announcementsPath} style = {{textDecoration:'none'}}><Nav id="announcements">Announcements</Nav></a>
+                    <a href={gradesPath} style = {{textDecoration:'none'}}><Nav id="grades">Grades</Nav></a>
+                    <a href={peoplePath} style = {{textDecoration:'none'}}><Nav id="people">People</Nav></a>
+                    <a href={filesPath} style = {{textDecoration:'none'}}><Nav id="files">Files</Nav></a>
+                    <a href={quizzesPath} style = {{textDecoration:'none'}}><Nav id="quizzes">Quizzes</Nav></a>
                 </SideNav>
             </div>
                          
