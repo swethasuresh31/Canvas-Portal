@@ -23,9 +23,7 @@ app.use(session({
     activeDuration: 5 * 60 * 1000
 }));
 
-// app.use(bodyParser.urlencoded({
-//     extended: true
-//   }));
+
 app.use(bodyParser.json());
 
 //Allow Access Control
@@ -42,9 +40,6 @@ app.use(function (req, res, next) {
 var loginRouter = require('./routes/Login');
 app.use('/login', loginRouter);
 
-// //Route to get enrolled/created course information when a user visits the course Page
-// var curseRouter = require('./routes/Course');
-// app.use('/course', courseRouter);
 
 //Route to get enrolled/created course information when a user visits the course Page
 var userCourseRouter = require('./routes/UserCourse');
@@ -106,12 +101,6 @@ app.post('/signup', function (req, res) {
     });
 
 });
-
-
-
-
-
-
 
 
 //Route to get course term and department information before student searches for courses
@@ -198,9 +187,6 @@ app.get('/course/:uid', function (req, res) {
     });
 })
 
-
-
-
 app.post('/course', function (req, res) {
     console.log("Inside create course handler");
     var loggedInuser = req.body.user;
@@ -210,27 +196,27 @@ app.post('/course', function (req, res) {
     let course_deptcode = req.body.courseDeptCode;
     let course_dept = req.body.courseDept;
     let course_desc = req.body.courseDesc;
-    let course_instructor=req.body.courseInstructor;
+    let course_instructor = req.body.courseInstructor;
     let course_room = req.body.courseRoom;
     let course_capacity = req.body.courseCapacity;
     let waitlist_capacity = req.body.waitlistCapacity;
-    
+
     console.log(loggedInuser);
     connection.query('INSERT INTO course(course_id,course_term,course_name,course_dept,course_dept_code, ' +
-    'course_desc,course_room,course_capacity,waitlist_capacity,course_instructor,created_by) ' + 
-    'VALUES (?,?,?,?,?,?,?,?,?,?,?,?);', [course_id,course_term,course_name,course_deptcode,course_dept,course_desc,course_room,course_capacity,waitlist_capacity,course_instructor,loggedInuser], function (error, results, fields) {
-        console.log(course_id);
-        if (error) {
-            res.status(500).send(error);
-        } else {
-            createfolder()
-            
-        }
+        'course_desc,course_room,course_capacity,waitlist_capacity,course_instructor,created_by) ' +
+        'VALUES (?,?,?,?,?,?,?,?,?,?,?,?);', [course_id, course_term, course_name, course_deptcode, course_dept, course_desc, course_room, course_capacity, waitlist_capacity, course_instructor, loggedInuser], function (error, results, fields) {
+            console.log(course_id);
+            if (error) {
+                res.status(500).send(error);
+            } else {
+                createfolder()
+
+            }
         });
 });
 
 createfolder = (courseId, courseTerm, res) => {
-    connection.query('select * from course where course_id=? and courseTerm=?', [courseId,courseTerm], function (error, results, fields) {
+    connection.query('select * from course where course_id=? and courseTerm=?', [courseId, courseTerm], function (error, results, fields) {
         if (error || results.length !== 1) {
             res.status(500).send(error);
         } else {
@@ -244,6 +230,6 @@ createfolder = (courseId, courseTerm, res) => {
 
 
 //start your server on port 3001
-module.exports  = app.listen(3001);
+module.exports = app.listen(3001);
 console.log("Server Listening on port 3001");
 
