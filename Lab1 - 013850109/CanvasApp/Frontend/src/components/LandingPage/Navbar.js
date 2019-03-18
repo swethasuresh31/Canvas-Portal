@@ -6,6 +6,9 @@ import { ScreenReaderContent } from '@instructure/ui-a11y'
 import logo from '../../img/sjsu-header-logo-alt.png'
 import { IconUserLine, IconDashboardLine, IconCoursesLine, IconDeactivateUserLine } from '@instructure/ui-icons'
 import cookie from 'react-cookies';
+import Cookies from 'universal-cookie';
+
+const cookies = new Cookies();
 
 export default class Card extends Component {
 
@@ -22,6 +25,8 @@ export default class Card extends Component {
   }
 
   render() {
+    let user = cookies.get('cookieS') || cookies.get('cookieF');
+    let profileImg = "http://localhost:3001/account/img/" + encodeURI(user)
     return (
       <div class="position-fixed" style={{ height: "100vh" }}>
         <Navigation
@@ -48,8 +53,7 @@ export default class Card extends Component {
           </div>
           <NavigationItem
             selected={this.props.selected === "account"}
-            // icon={<Avatar name={this.props.name} size="x-small" />}
-            icon={<IconUserLine />}
+            icon={<Avatar src={profileImg} size="small" />}
             label="Account"
             href="/account"
             theme={{

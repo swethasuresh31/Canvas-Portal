@@ -75,7 +75,7 @@ export default class UserCoursePeople extends Component {
         let homePath = "/coursedetails/" + this.state.course.course_uid + "/home";
         let courseName = this.state.course.course_term + ': ' + this.state.course.course_dept_code + ' - ' + this.state.course.course_id + ' - ' + this.state.course.course_name
         let path1 = "/coursedetails/" + this.state.course.course_uid + "/people";
-
+        let profileImg = "http://localhost:3001/account/img/" + encodeURI(this.state.emailId)
         console.log(this.state.people[0])
         let redirectVar = null;
         if (cookie.load('cookieF') || cookie.load('cookieS')) {
@@ -110,7 +110,7 @@ export default class UserCoursePeople extends Component {
                                     </div>
                                     <div className="row">
                                         <div className="col col-sm-1">
-                                            <br /><Avatar name={this.state.name} size="x-large" />
+                                            <br /><Avatar src={profileImg} size="x-large" />
                                         </div>
                                         <div className="col col-lg-5">
                                             <br /><h4>

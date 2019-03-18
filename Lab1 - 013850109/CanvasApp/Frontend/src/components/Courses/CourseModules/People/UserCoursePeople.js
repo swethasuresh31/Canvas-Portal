@@ -9,6 +9,8 @@ import axios from 'axios';
 import { Breadcrumb, BreadcrumbLink } from '@instructure/ui-breadcrumb'
 import { Avatar, Text, Table } from '@instructure/ui-elements'
 import { Link } from 'react-router-dom';
+import { IconXLine } from '@instructure/ui-icons';
+
 
 
 
@@ -92,18 +94,21 @@ export default class UserCoursePeople extends Component {
                                                 <th>Name</th>
                                                 <th>Section</th>
                                                 <th>Role</th>
+                                                <th>Remove</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {
                                                 this.state.people.map(person => {
                                                     let personProfileLink = "/coursedetails/" + this.props.match.params.courseUid + "/people/" + encodeURI(person.email_id)
+                                                    let profileImg = "http://localhost:3001/account/img/" + encodeURI(person.email_id)
                                                     return (
                                                         <tr>
-                                                            <td> <Avatar name={person.name} size="snall" /></td>
+                                                            <td> <Avatar src={profileImg} name={person.name} size="snall" /></td>
                                                             <td><Link to={personProfileLink}>{person.name}</Link></td>
                                                             <td> {person.course_term}: {person.course_dept_code}-{person.course_id}</td>
                                                             <td>Student</td>
+                                                            <td><button type="button" class="btn btn-danger mx-2" ><IconXLine /> Remove</button></td>
                                                         </tr>
                                                     )
                                                 })

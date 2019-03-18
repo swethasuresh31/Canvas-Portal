@@ -81,6 +81,10 @@ app.use('/studentassignment', studentAssignmentRouter);
 var filesRouter = require('./routes/Files');
 app.use('/files', filesRouter);
 
+//Route to get account
+var accountRouter = require('./routes/Account');
+app.use('/account', accountRouter);
+
 app.post('/signup', function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
@@ -101,33 +105,6 @@ app.post('/signup', function (req, res) {
         });
     });
 
-});
-
-//Route to update the account information when user visits the accounts page
-app.put('/account', function (req, res) {
-    var username = req.body.username;
-    var name = req.body.name;
-    var phoneNo = req.body.phoneNo;
-    var aboutMe = req.body.aboutMe;
-    var city = req.body.city;
-    var country = req.body.country;
-    var company = req.body.company;
-    var school = req.body.school;
-    var hometown = req.body.hometown;
-    var languages = req.body.languages;
-    var gender = req.body.gender;
-
-    console.log("Inside account Information Put Request");
-    console.log("Req Body : ", req.body);
-    connection.query('UPDATE user SET name = ?, phone_number = ?,about_me = ?, city = ?, country =?, company = ?, school =?, hometown =?, languages =?,gender =? WHERE email_id = ?;',
-        [name, phoneNo, aboutMe, city, country, company, school, hometown, languages, gender, username], function (error, results, fields) {
-            console.log();
-            if (error) {
-                res.status(500).send(error);
-            } else {
-                res.status(200).send("Success");
-            }
-        });
 });
 
 

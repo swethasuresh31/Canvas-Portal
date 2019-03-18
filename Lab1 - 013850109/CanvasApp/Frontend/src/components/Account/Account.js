@@ -30,7 +30,8 @@ export default class Account extends Component {
       school: '',
       hometown: '',
       languages: '',
-      gender: ''
+      gender: '',
+      img: ''
     }
     //Bind the handlers to this class
     this.nameChangeHandler = this.nameChangeHandler.bind(this);
@@ -44,82 +45,98 @@ export default class Account extends Component {
     this.languagesChangeHandler = this.languagesChangeHandler.bind(this);
     this.genderChangeHandler = this.genderChangeHandler.bind(this);
     this.saveProfile = this.saveProfile.bind(this);
+    this.fileInput = React.createRef();
   }
 
   //name change handler to update state variable with the text entered by the user
   nameChangeHandler = (e) => {
-    this.setState({
-      name: e.target.value,
-      errorMsg: ''
-    })
+    this.state.name = e.target.value
+    this.state.errorMsg = ''
   }
   //phoneNo change handler to update state variable with the text entered by the user
   phoneNoChangeHandler = (e) => {
-    this.setState({
-      phoneNo: e.target.value,
-      errorMsg: ''
-    })
+    this.state.phoneNo = e.target.value,
+      this.state.errorMsg = ''
+
   }
   //aboutMe change handler to update state variable with the text entered by the user
   aboutMeChangeHandler = (e) => {
-    this.setState({
-      aboutMe: e.target.value,
-      errorMsg: ''
-    })
+
+    this.state.aboutMe = e.target.value,
+      this.state.errorMsg = ''
+
   }
   //city change handler to update state variable with the text entered by the user
   cityChangeHandler = (e) => {
-    this.setState({
-      city: e.target.value,
-      errorMsg: ''
-    })
+
+    this.state.city = e.target.value,
+      this.state.errorMsg = ''
+
   }
   //country change handler to update state variable with the text entered by the user
   countryChangeHandler = (e) => {
-    this.setState({
-      country: e.target.value,
-      errorMsg: ''
-    })
+
+    this.state.country = e.target.value,
+      this.state.errorMsg = ''
+
   }
   //company change handler to update state variable with the text entered by the user
   companyChangeHandler = (e) => {
-    this.setState({
-      company: e.target.value,
-      errorMsg: ''
-    })
+
+    this.state.company = e.target.value,
+      this.state.errorMsg = ''
+
   }
   //school change handler to update state variable with the text entered by the user
   schoolChangeHandler = (e) => {
-    this.setState({
-      school: e.target.value,
-      errorMsg: ''
-    })
+
+    this.state.school = e.target.value,
+      this.state.errorMsg = ''
+
   }
   //hometown change handler to update state variable with the text entered by the user
   hometownChangeHandler = (e) => {
-    this.setState({
-      hometown: e.target.value,
-      errorMsg: ''
-    })
+
+    this.state.hometown = e.target.value,
+      this.state.errorMsg = ''
+
   }
   //languages change handler to update state variable with the text entered by the user
   languagesChangeHandler = (e) => {
-    this.setState({
-      languages: e.target.value,
-      errorMsg: ''
-    })
+
+    this.state.languages = e.target.value,
+      this.state.errorMsg = ''
+
   }
   //gender change handler to update state variable with the text entered by the user
   genderChangeHandler = (e) => {
-    this.setState({
-      gender: e.target.value,
-      errorMsg: ''
-    })
+
+    this.state.gender = e.target.value,
+      this.state.errorMsg = ''
+
   }
 
 
   saveProfile(e) {
     e.preventDefault()
+
+    if (this.fileInput.current.files[0] !== undefined) {
+      console.log(this.fileInput.current.files[0])
+      let filename = this.state.emailId + '.' + this.fileInput.current.files[0].name.split('.').pop();
+      console.log(filename)
+      let data = new FormData();
+      data.append('file', this.fileInput.current.files[0], filename)
+      console.log(data)
+      //adds the assignment based on information entered
+      axios.post('http://localhost:3001/account/img/' + encodeURI(this.state.emailId), data)
+        .then((response) => {
+          console.log(response);
+          if (response !== undefined)
+            if (response.status === 200) {
+              this.setState({ img: "http://localhost:3001/account/img/" + encodeURI(this.state.emailId) })
+            }
+        })
+    }
 
     const accountUpd = {
       name: this.state.name,
@@ -140,8 +157,8 @@ export default class Account extends Component {
       .then(response => {
         console.log("Status Code : ", response.status);
         if (response.status === 200) {
-          this.setState({ isEditing: "false" });
           console.log("success");
+          window.location.reload();
         } else {
           this.setState({
             errorMsg: 'Some problem updating account information!'
@@ -178,7 +195,8 @@ export default class Account extends Component {
             school: data.school,
             hometown: data.hometown,
             languages: data.languages,
-            gender: data.gender
+            gender: data.gender,
+            img: "http://localhost:3001/account/img/" + encodeURI(data.email_id)
           })
         })
       });
@@ -188,28 +206,35 @@ export default class Account extends Component {
 
   render() {
     let redirectVar = null;
+    console.log(this.state.img)
     if (cookie.load('cookieF') || (cookie.load('cookieS'))) {
       if (this.state.isEditing === "true") {
         return (
           <div>
-          <div className="row">
-          <div className="col" style={{ maxWidth: "100px" }}>
-              <Navbar selected="account" />
-            </ div>
-            <div className="col">
-              <div className="row">
-                <div className="col">
+            {this.state.redirectVar}
+            <div className="row">
+              <div className="col" style={{ maxWidth: "100px" }}>
+                <Navbar selected="account" />
+              </div>
+              <div className="col">
+                <div className="row">
+                  <div className="col">
                     <br />
                     <Heading theme={{ borderPadding: "1rem" }} border="bottom">{this.state.name}'s Profile
-                  <span style={{ float: "right" }}><button type="button" class="btn btn-secondary btn" onClick={() => { this.setState({ isEditing: "false" }) }}><IconEditLine /> Cancel Edit</button>
+                  <span style={{ float: "right" }}><button type="button" class="btn btn-secondary btn mr-3" onClick={() => { this.setState({ isEditing: "false" }) }}><IconEditLine /> Cancel Edit</button>
                       </span>
-                    </ Heading>
-                  </ div>
-                </ div>
+                    </Heading>
+                  </div>
+                </div>
                 <div className="row">
-                  <div className="col col-sm-1">
-                    <br /><Avatar name={this.state.name} size="x-large" />
-                  </ div>
+                  <div className="col col-sm-2 pl-5">
+                    <br /><Avatar src={this.state.img} name={this.state.name} size="x-large" />
+                    <div className="row mt-2">
+                      <div className="col">
+                        <input type="file" name="assignmentFile" id="assignmentFile" ref={this.fileInput}></input>
+                      </div>
+                    </div>
+                  </div>
                   <div className="col col-lg-5">
                     <br /><h4>
                       <table className="table-borderless"
@@ -226,12 +251,12 @@ export default class Account extends Component {
                           <tr><td><label>Languages: </label></td><td><input type="text" class="form-control" id="inputName" aria-describedby="emailHelp" onChange={this.languagesChangeHandler} /></td></tr>
                           <tr><td><label>Gender: </label></td><td><input type="text" class="form-control" id="inputName" aria-describedby="emailHelp" onChange={this.genderChangeHandler} /></td></tr>
                         </tbody>
-                      </table></ h4>
+                      </table></h4>
                     <div align="center">
                       <button type="button" class="btn btn-secondary btn m-2" onClick={() => { this.setState({ isEditing: "false" }) }}>Cancel</button><button type="button" class="btn btn-primary btn m-2" onClick={this.saveProfile}>Save</button>
-                    </ div>
+                    </div>
                   </div>
-                </ div>
+                </div>
               </div>
             </div>
           </div>
@@ -239,10 +264,11 @@ export default class Account extends Component {
       } else {
         return (
           <div>
+            {this.state.redirectVar}
             <div className="row">
-            <div className="col" style={{ maxWidth: "100px" }}>
+              <div className="col" style={{ maxWidth: "100px" }}>
                 <Navbar selected="account" />
-              </ div>
+              </div>
               <div className="col">
                 <div className="row">
                   <div className="col">
@@ -250,13 +276,13 @@ export default class Account extends Component {
                     <Heading theme={{ borderPadding: "1rem" }} border="bottom">{this.state.name}'s Profile
                   <span style={{ float: "right" }}><button type="button" class="btn btn-secondary btn" onClick={() => { this.setState({ isEditing: "true" }) }}><IconEditLine /> Edit Profile</button>
                       </span>
-                    </ Heading>
-                  </ div>
-                </ div>
+                    </Heading>
+                  </div>
+                </div>
                 <div className="row">
-                  <div className="col col-sm-1">
-                    <br /><Avatar name={this.state.name} size="x-large" />
-                  </ div>
+                  <div className="col col-sm-2 pl-5">
+                    <br /><Avatar src={this.state.img} name={this.state.name} size="x-large" />
+                  </div>
                   <div className="col col-lg-5">
                     <br /><h4>
                       <table className="table-borderless">
@@ -273,9 +299,9 @@ export default class Account extends Component {
                           <tr><td><label>Languages: </label></td><td><input type="text" readonly class="form-control-plaintext" id="inputName" aria-describedby="emailHelp" value={this.state.languages} /></td></tr>
                           <tr><td><label>Gender: </label></td><td><input type="text" readonly class="form-control-plaintext" id="inputName" aria-describedby="emailHelp" value={this.state.gender} /></td></tr>
                         </tbody>
-                      </table></ h4>
-                  </ div>
-                </ div>
+                      </table></h4>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
