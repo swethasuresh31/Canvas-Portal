@@ -2,7 +2,7 @@
 CMPE273-SP19
 
 ## Calculator Application
-- Download ReactCalcApp from the repository
+- Download ReactNodeCalc from the repository
 ### Frontend:
 - use npm install command to install the dependencies.
 - do npm start.
@@ -18,7 +18,7 @@ CMPE273-SP19
 - do npm start
 
 ### Backend:
- -use npm install command to install the dependencies.
+- use npm install command to install the dependencies.
 - do npm start
 
 ### Database Setup:
