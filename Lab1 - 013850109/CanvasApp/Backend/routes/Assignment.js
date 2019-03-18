@@ -50,7 +50,7 @@ router.post('/:courseUid/:courseworkUid/:user', upload.single('file'), function 
                 res.status(500).send(error);
             } else {
                 console.log(results[0].studentcourses_uid)
-                addAssignmentResult(results[0].studentcourses_uid, req.params.courseworkUid, req.params.user, res)
+                addAssignmentResult(results[0].studentcourses_uid, req.params.courseworkUid, req.params.user, null, res)
 
             }
         });
