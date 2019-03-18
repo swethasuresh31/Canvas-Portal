@@ -6,7 +6,7 @@ var connection = require('../db/connection')
 
 router.get('/course/:courseUid', function (req, res) {
     console.log("Getting people for course: " + req.params.courseUid)
-    connection.query('select * from user,course where course.course_uid=? and user.email_id in (select email_id from student_courses where course_uid = ?);', [req.params.courseUid,req.params.courseUid], function (error, results, fields) {
+    connection.query('select * from user,course , student_courses where user.email_id=student_courses.email_id and course.course_uid=student_courses.course_uid and course.course_uid=? and user.email_id in (select email_id from student_courses where course_uid = ?);', [req.params.courseUid,req.params.courseUid], function (error, results, fields) {
         if (error) {
             console.log(error)
             res.status(500).send(error);

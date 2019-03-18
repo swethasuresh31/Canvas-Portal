@@ -100,6 +100,7 @@ shouldUpdateWaitlist = (courseUid, res) => {
             res.status(500).send(error);
         }
         if (results[0].total_waitlist === 0 || results[0].total_enrollment >= results[0].course_capacity) {
+            console.log("Commiting drop")
             connection.query("COMMIT;")
             res.status(200).send("Success");
         } else {
@@ -130,6 +131,7 @@ updateWaitlistForStudent = (studentId, courseUid, res) => {
             connection.query("ROLLBACK;")
             res.status(500).send(error);
         } else {
+            console.log("Commiting drop")
             connection.query("COMMIT;")
             res.status(200).send("Success");
         }
@@ -270,6 +272,7 @@ removeFromWaitlist = (loggedInuser, courseUid, permissionNumber, res) => {
             connection.query("ROLLBACK;")
             res.status(500).send(error);
         } else {
+            console.log("Commiting add")
             connection.query("COMMIT;")
             res.status(200).send("Success")
         }
@@ -284,6 +287,7 @@ insertStudentCourse = (loggedInuser, courseUid, permissionNumber, isWaitlist, re
             connection.query("ROLLBACK;")
             res.status(500).send(error);
         } else {
+            console.log("Commiting add insert")
             connection.query("COMMIT;")
             res.status(200).send("Success")
         }

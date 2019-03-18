@@ -13,8 +13,9 @@ export default class Card extends Component {
   }
 
   render() {
-    let coursePath= (this.props.course.isWaitlist !== 0) ? '#' :"/coursedetails/"+this.props.course.course_uid+"/home"
-    let isWaitlist= (this.props.course.isWaitlist !== 0) ? "(waitlist)" : ""
+    let coursePath= (this.props.course.isWaitlist === 1) ? '#' :"/coursedetails/"+this.props.course.course_uid+"/home"
+    let isWaitlist= (this.props.course.isWaitlist === 1) ? "(waitlist)" : ""
+
     return (
       <div class={this.state.cardStyle}
         style={{ width: "18rem" }}

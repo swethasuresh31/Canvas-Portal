@@ -41,6 +41,27 @@ export default class UserCoursePeople extends Component {
             people: [],
             course: ''
         };
+        this.onDrop = this.onDrop.bind(this);
+
+    }
+
+    onDrop(user, courseUid, enrollmentStatus) {
+        this.setState({ errorMsg: '' })
+        //drops the courses based on information entered
+        axios.delete('http://localhost:3001/usercourse?user=' + encodeURI(user) + '&courseUid=' + courseUid + '&status=' + enrollmentStatus)
+            .then((response) => {
+                console.log(response);
+                if (response !== undefined && response.status === 200) {
+                    let index = this.state.people.findIndex(row => row.email_id === user)
+                    console.log(index)
+                    var newPeople = [...this.state.people]
+                    newPeople.splice(index, 1);
+                    console.log(newPeople)
+                    this.setState({ people: newPeople });
+                }
+
+            })
+
     }
 
     componentWillMount() {
@@ -50,7 +71,7 @@ export default class UserCoursePeople extends Component {
                 if (response !== undefined)
                     this.setState({ people: response.data })
             })
-            axios.get('http://localhost:3001/course/' + this.props.match.params.courseUid)
+        axios.get('http://localhost:3001/course/' + this.props.match.params.courseUid)
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)
@@ -63,7 +84,7 @@ export default class UserCoursePeople extends Component {
         let homePath = "/coursedetails/" + this.state.course.course_uid + "/home";
         let courseName = this.state.course.course_term + ': ' + this.state.course.course_dept_code + ' - ' + this.state.course.course_id + ' - ' + this.state.course.course_name
         let redirectVar = null;
-        if (cookie.load('cookieF') || cookie.load('cookieS')) {
+        if (cookie.load('cookieF')) {
             return (
                 <div className="container-fluid md-0 p-0">
                     {redirectVar}
@@ -72,13 +93,13 @@ export default class UserCoursePeople extends Component {
                             <Navbar selected="courses" />
                         </div>
                         <div className="col">
-                        <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">
+                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">
                                 <Breadcrumb size="large">
                                     <BreadcrumbLink href={homePath}>{courseName}</BreadcrumbLink>
                                     <BreadcrumbLink>People</BreadcrumbLink>
                                 </Breadcrumb>
                             </Heading>
-                               <div className="row">
+                            <div className="row">
 
                                 <div className="col col-sm-2">
                                     <br />   <CourseNav courseUid={this.props.match.params.courseUid} selected="people" />
@@ -94,7 +115,68 @@ export default class UserCoursePeople extends Component {
                                                 <th>Name</th>
                                                 <th>Section</th>
                                                 <th>Role</th>
+                                                <th>Enrollment Status</th>
                                                 <th>Remove</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {
+                                                this.state.people.map(person => {
+                                                    let personProfileLink = "/coursedetails/" + this.props.match.params.courseUid + "/people/" + encodeURI(person.email_id)
+                                                    let profileImg = "http://localhost:3001/account/img/" + encodeURI(person.email_id)
+                                                    let enrollmentStatus = (person.isWaitlist !== 0) ? "Waitlist" : "Enrolled";
+                                                    return (
+                                                        <tr>
+                                                            <td> <Avatar src={profileImg} name={person.name} size="snall" /></td>
+                                                            <td><Link to={personProfileLink}>{person.name}</Link></td>
+                                                            <td> {person.course_term}: {person.course_dept_code}-{person.course_id}</td>
+                                                            <td>Student</td>
+                                                            <td>{enrollmentStatus}</td>
+                                                            <td><button type="button" class="btn btn-danger mx-2" onClick={() => this.onDrop(person.email_id, person.course_uid, enrollmentStatus)}><IconXLine /> Remove</button></td>
+                                                        </tr>
+                                                    )
+                                                })
+                                            }
+                                        </tbody>
+                                    </Table>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        } else if (cookie.load('cookieS')) {
+            return (
+                <div className="container-fluid md-0 p-0">
+                    {redirectVar}
+                    <div className="row">
+                        <div className="col pr-0 mr-0" style={{ maxWidth: "100px" }}>
+                            <Navbar selected="courses" />
+                        </div>
+                        <div className="col">
+                            <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">
+                                <Breadcrumb size="large">
+                                    <BreadcrumbLink href={homePath}>{courseName}</BreadcrumbLink>
+                                    <BreadcrumbLink>People</BreadcrumbLink>
+                                </Breadcrumb>
+                            </Heading>
+                            <div className="row">
+
+                                <div className="col col-sm-2">
+                                    <br />   <CourseNav courseUid={this.props.match.params.courseUid} selected="people" />
+                                </div>
+
+                                <div className="col">
+                                    <br />
+
+                                    <Table caption="" size="small" striped="rows">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th>Name</th>
+                                                <th>Section</th>
+                                                <th>Role</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -108,7 +190,6 @@ export default class UserCoursePeople extends Component {
                                                             <td><Link to={personProfileLink}>{person.name}</Link></td>
                                                             <td> {person.course_term}: {person.course_dept_code}-{person.course_id}</td>
                                                             <td>Student</td>
-                                                            <td><button type="button" class="btn btn-danger mx-2" ><IconXLine /> Remove</button></td>
                                                         </tr>
                                                     )
                                                 })
