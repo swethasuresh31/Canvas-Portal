@@ -78,10 +78,10 @@ export default class StudentCourseLanding extends Component {
                                         {
                                             this.props.coursework.map(course => {
                                                 let enrollmentStatus = (course.isWaitlist !== 0) ? "Waitlist" : "Enrolled";
-                                                let linkpath = '/coursedetails/' + course.course_uid;
+                                                let linkpath = (course.isWaitlist !== 0) ? '#' : '/coursedetails/' + course.course_uid;
                                                 return (
                                                     <tr>
-                                                        <td><Link to={linkpath} >{course.course_dept_code}-{course.course_id} - {course.course_name}</Link></td>
+                                                        <td><a href={linkpath} >{course.course_dept_code}-{course.course_id} - {course.course_name}</a></td>
                                                         <td>{course.course_term}</td>
                                                         <td>{enrollmentStatus}</td>
                                                         <td>
