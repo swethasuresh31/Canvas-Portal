@@ -24,7 +24,21 @@ router.post('/login', async (req, res, next) => {
           console.log(JSON.stringify(user))
           //We don't want to store the sensitive information such as the
           //user password in the token so we pick only the email and id
-          const body = { _id : user._id, emailId : user.emailId };
+          const body = { _id : user._id, 
+            emailId : user.emailId, 
+            name: user.name, 
+            role: user.role, 
+            phoneNo: user.phoneNo, 
+            aboutMe: user.aboutMe, 
+            city: user.city,
+            country: user.country, 
+            company: user.company,
+            school: user.school,
+            hometown: user.hometown,
+            languages: user.languages,
+            gender: user.gender,
+            img: user.img 
+          };
           //Sign the JWT token and populate the payload with the user email and id
           const token = jwt.sign({ user : body },'CMPE_Lab2_Secret');
           //Send back the token to the user
