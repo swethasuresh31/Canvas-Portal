@@ -8,6 +8,11 @@ import cookie from 'react-cookies';
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom'
 
+
+import { connect } from 'react-redux';
+import { submitLogin } from '../../js/actions/index';
+import { Field, reduxForm } from 'redux-form';
+
 //Define a Login Component
 class Login extends Component {
     //call the constructor method
@@ -23,8 +28,23 @@ class Login extends Component {
         //Bind the handlers to this class
         this.usernameChangeHandler = this.usernameChangeHandler.bind(this);
         this.passwordChangeHandler = this.passwordChangeHandler.bind(this);
-        this.submitLogin = this.submitLogin.bind(this);
     }
+
+
+    //Define component to be rendered
+    renderField(field) {
+
+        const { meta: { touched, error } } = field;
+        const className = touched && error ? "form-control form-control-lg is-invalid" : "form-control form-control-lg";
+        const inputType = field.type;
+        const inputPlaceholder = field.placeholder;
+        //const errorMessageStyling =  touched && error ? "text-danger" : "";
+
+        return (
+                <input type={inputType} placeholder={inputPlaceholder} {...field.input} />
+        );
+    }
+
     //Call the Will Mount to set the auth Flag to false
     componentWillMount() {
         this.setState({
@@ -61,44 +81,41 @@ class Login extends Component {
     }
 
     //submit Login handler to send a request to the node backend
-    submitLogin = (e) => {
-        var headers = new Headers();
-        //prevent page from refresh
-        e.preventDefault();
-
-        if (!this.validate()) return;
-
-        this.setState({ errorMsg: '' })
-
-        const data = {
-            username: this.state.username,
-            password: this.state.password
-        }
-        //set the with credentials to true
+    onSubmit(values) {
         axios.defaults.withCredentials = true;
-        //make a post request with the user data
-        axios.post('http://localhost:3001/login', data)
-            .then(response => {
-                console.log("Login response : ", response);
-                if (response.status === 200) {
-                    localStorage.setItem('userToken', response.data.token)
-                    this.setState({
-                        authFlag: true
-                    })
-                } else {
-                    this.setState({
-                        authFlag: false
-                    })
-                }
-            });
-    }
+         var data = {
+             username: values.username,
+             password: values.password
+         }
+ 
+         this.props.submitLogin(data);
+     }
 
     render() {
         //redirect based on successful login
-        let redirectVar = null;
-        if(this.state.authFlag) {
-            redirectVar = <Redirect to="/account" />
+        let redirectVar = null;        
+
+        if (this.props.loginStateStore.result) {
+            if(this.props.loginStateStore.result.authFlag === true){
+                redirectVar = <Redirect to="/account" />
+            }
+            
         }
+
+        let errorPanel = null;
+        if (this.props.loginStateStore.result) {
+        if (this.props.loginStateStore.result.authFlag === false) {
+            errorPanel = <div>
+                <div className="alert alert-danger" role="alert">
+                    Username and Password does not match!
+                </div>
+            </div>
+        }
+        }
+        
+        
+        const { handleSubmit } = this.props;
+
         return (
             <div>
                 {redirectVar}
@@ -122,7 +139,7 @@ class Login extends Component {
                             <div className="auth-content">
                                 <div className="auth-content-inner">
                                     <div className="primary-auth">
-                                        <form data-se="o-form" id="form18" className="primary-auth-form o-form o-form-edit-mode">
+                                        <form name="loginForm" onSubmit={handleSubmit(this.onSubmit.bind(this))} data-se="o-form" id="form18" className="primary-auth-form o-form o-form-edit-mode">
                                             <div data-se="o-form-content" className="o-form-content o-form-theme clearfix">
                                                 <h2 data-se="o-form-head" className="sjsu-form-title o-form-head">Sign In</h2>
                                                 <div className="o-form-error-container" data-se="o-form-error-container"></div>
@@ -132,8 +149,14 @@ class Login extends Component {
                                                             <span data-se="o-form-input-username" className="o-form-input-name-username o-form-control sjsu-form-input-field input-fix focused-input">
                                                                 <span className="input-tooltip icon form-help-16" data-hasqtip="0"></span>
                                                                 <span className="icon input-icon person-16-gray"></span>
-                                                                <input type="text" placeholder="SJSU ID" name="username" id="sjsu-signin-username" aria-label="SJSU ID Number" onChange={this.usernameChangeHandler} />
-                                                            </span>
+                                                                <Field
+                                                                name="username"
+                                                                id="username"
+                                                                type="text"
+                                                                placeholder="Enter SJSU ID"
+                                                                component={this.renderField}
+                                                            />                                                            
+                                                                </span>
                                                         </div>
                                                     </div>
                                                     <div data-se="o-form-fieldset" className="o-form-fieldset o-form-label-top">
@@ -141,12 +164,19 @@ class Login extends Component {
                                                             <span data-se="o-form-input-password" className="o-form-input-name-password o-form-control sjsu-form-input-field input-fix">
                                                                 <span className="input-tooltip icon form-help-16" data-hasqtip="1"></span>
                                                                 <span className="icon input-icon remote-lock-16"></span>
-                                                                <input type="password" placeholder="Password" name="password" id="sjsu-signin-password" aria-label="Password" onChange={this.passwordChangeHandler} />
-                                                            </span>
+                                                                <Field
+                                                                name="password"
+                                                                id="password"
+                                                                type="password"
+                                                                placeholder="Password"
+                                                                component={this.renderField}
+                                                            />                                                            
+                                                                </span>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                            {errorPanel}
                                             <div className="errorMsg">{this.state.errorMsg}</div>
                                             <div className="o-form-button-bar"><button className="button button-primary" value="Sign In" id="sjsu-signin-submit" data-type="save" onClick={this.submitLogin}>Sign In</button></div>
                                         </form>
@@ -164,5 +194,24 @@ class Login extends Component {
         )
     }
 }
+
+const mapStateToProps = state => ({
+    loginStateStore: state.login
+});
+
+function validateForm(values) {
+    const errors = {};
+    if (!values.username) {
+        errors.username = "Enter Username";
+    }
+    if (!values.password) {
+        errors.password = "Enter Password";
+    }
+    return errors;
+}
 //export Login Component
-export default Login;
+//export default Login;
+export default reduxForm({
+    validateForm,
+    form: "loginForm"
+})(connect(mapStateToProps, { submitLogin })(Login));

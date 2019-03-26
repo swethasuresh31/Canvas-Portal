@@ -119,6 +119,7 @@ export default class Account extends Component {
 
   saveProfile(e) {
     e.preventDefault()
+    axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
 
     if (this.fileInput.current.files[0] !== undefined) {
       console.log(this.fileInput.current.files[0])
@@ -133,14 +134,14 @@ export default class Account extends Component {
           console.log(response);
           if (response !== undefined)
             if (response.status === 200) {
-              this.setState({ img: "http://localhost:3001/account/img/" + encodeURI(this.state.emailId) })
+              this.setState({ img: "http://localhost:3001/img/" + encodeURI(this.state.emailId) })
             }
         })
     }
 
     const accountUpd = {
       name: this.state.name,
-      username: this.state.emailId,
+      emailId: this.state.emailId,
       phoneNo: this.state.phoneNo,
       aboutMe: this.state.aboutMe,
       city: this.state.city,
@@ -153,13 +154,15 @@ export default class Account extends Component {
     }
 
     //make a put request with the user data
-    axios.put('http://localhost:3001/account', accountUpd)
+    axios.post('http://localhost:3001/account', accountUpd)
       .then(response => {
         console.log("Status Code : ", response.status);
         if (response.status === 200) {
           console.log("success");
+          console.log("came here1");
           window.location.reload();
         } else {
+          console.log("came here");
           this.setState({
             errorMsg: 'Some problem updating account information!'
           })
@@ -176,8 +179,8 @@ export default class Account extends Component {
   }
 
   componentDidMount() {
-    let user = cookies.get('cookieS') || cookies.get('cookieF');
-    console.log(user + "UserName")
+    // let user = cookies.get('cookieS') || cookies.get('cookieF');
+    // console.log(user + "UserName")
     console.log('jwt ' + localStorage.getItem('userToken'))
     axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
     axios.get('http://localhost:3001/user/') 
@@ -187,8 +190,8 @@ export default class Account extends Component {
           this.setState({
             name: response.data.name,
             emailId: response.data.emailId,
-            phoneNo: response.data.phone_number,
-            aboutMe: response.data.about_me,
+            phoneNo: response.data.phoneNo,
+            aboutMe: response.data.aboutMe,
             city: response.data.city,
             country: response.data.country,
             company: response.data.company,
@@ -196,7 +199,7 @@ export default class Account extends Component {
             hometown: response.data.hometown,
             languages: response.data.languages,
             gender: response.data.gender,
-            img: response.data.img
+            img: "http://localhost:3001/img/" + encodeURI(response.data.emailId)
         })
       });
   }
@@ -205,7 +208,6 @@ export default class Account extends Component {
 
   render() {
     let redirectVar = null;
-    console.log(this.state.role)
     if (localStorage.getItem('userToken') !== null) {
       if (this.state.isEditing === "true") {
         return (
@@ -243,7 +245,7 @@ export default class Account extends Component {
                           <tr><td><label>Phone Number: </label></td><td><input type="text" class="form-control" id="inputName" aria-describedby="emailHelp" onChange={this.phoneNoChangeHandler} /></td></tr>
                           <tr><td><label>About Me: </label></td><td><input type="text" class="form-control" id="inputName" aria-describedby="emailHelp" onChange={this.aboutMeChangeHandler} /></td></tr>
                           <tr><td><label>City: </label></td><td><input type="text" class="form-control" id="inputName" aria-describedby="emailHelp" onChange={this.cityChangeHandler} /></td></tr>
-                          <tr><td><label>Country: </label></td><td><input type="text" class="form-control" id="inputName" aria-describedby="emailHelp" onChange={this.countryNoChangeHandler} /></td></tr>
+                          <tr><td><label>Country: </label></td><td><input type="text" class="form-control" id="inputName" aria-describedby="emailHelp" onChange={this.countryChangeHandler} /></td></tr>
                           <tr><td><label>Company: </label></td><td><input type="text" class="form-control" id="inputName" aria-describedby="emailHelp" onChange={this.companyChangeHandler} /></td></tr>
                           <tr><td><label>School: </label></td><td><input type="text" class="form-control" id="inputName" aria-describedby="emailHelp" onChange={this.schoolChangeHandler} /></td></tr>
                           <tr><td><label>Hometown: </label></td><td><input type="text" class="form-control" id="inputName" aria-describedby="emailHelp" onChange={this.hometownChangeHandler} /></td></tr>

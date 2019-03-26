@@ -16,7 +16,10 @@ router.post('/signup', passport.authenticate('signup', { session : false }) , as
 router.post('/login', async (req, res, next) => {
     passport.authenticate('login', async (err, user, info) => {     try {
         if(err || !user){
+          console.log(req.username);
+          console.log(req.password);
           const error = new Error('An Error occured')
+          console.log(err);
           return next(error);
         }
         req.login(user, { session : false }, async (error) => {
@@ -42,7 +45,7 @@ router.post('/login', async (req, res, next) => {
           //Sign the JWT token and populate the payload with the user email and id
           const token = jwt.sign({ user : body },'CMPE_Lab2_Secret');
           //Send back the token to the user
-          return res.json({ token });
+          return res.json({ token:token,emailId:user.emailId,role:user.role });
         });     } catch (error) {
         return next(error);
       }

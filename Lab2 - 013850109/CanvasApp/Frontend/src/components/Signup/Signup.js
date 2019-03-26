@@ -6,8 +6,12 @@ import axios from 'axios';
 import cookie from 'react-cookies';
 import { Redirect } from 'react-router';
 
+import { connect } from 'react-redux';
+import { signup } from '../../js/actions/index';
+import { Field, reduxForm } from 'redux-form';
+
 //Define a Login Component
-class Login extends Component {
+class Signup extends Component {
     //call the constructor method
     constructor(props) {
         //Call the constrictor of Super class i.e The Component
@@ -28,7 +32,6 @@ class Login extends Component {
         this.passwordChangeHandler = this.passwordChangeHandler.bind(this);
         this.confirmPasswordChangeHandler = this.confirmPasswordChangeHandler.bind(this);
         this.roleChangeHandler = this.roleChangeHandler.bind(this);
-        this.submitSignup = this.submitSignup.bind(this);
     }
     //Call the Will Mount to set the auth Flag to false
     componentWillMount() {
@@ -101,50 +104,74 @@ class Login extends Component {
         return true;
     }
 
-    //submit Login handler to send a request to the node backend
-    submitSignup = (e) => {
-        var headers = new Headers();
-        //prevent page from refresh
-        e.preventDefault();
-        console.log("validating");
-        if (!this.validate()) return;
-        console.log("validated");
 
-        this.setState({ errorMsg: '' })
+    //Define component to be rendered
+    renderField(field) {
 
-        const data = {
-            username: this.state.emailId,
-            password: this.state.password,
-            name: this.state.name,
-            role: this.state.role
-        }
-        //set the with credentials to true
-        axios.defaults.withCredentials = true;
-        //make a post request with the user data
-        axios.post('http://localhost:3001/signup', data)
-            .then(response => {
-                console.log("Status Code : ", response.status);
-                if (response.status === 200) {
-                    this.setState({
-                        redirectVar: <Redirect to="/login" />
-                    })
-                } else {
-                    this.setState({
-                        errorMsg: 'Unable to signup! ' + response.data
-                    })
-                }
-            });
+        const { meta: { touched, error } } = field;
+        const inputType = field.type;
+        const inputPlaceholder = field.placeholder;
+
+        return (
+
+            <input type={inputType} placeholder={inputPlaceholder} {...field.input} />
+        );
     }
 
+
+    //submit Login handler to send a request to the node backend
+    onSubmit = (values) => {
+
+        const data = {
+            username: values.emailId,
+            password: values.password,
+            name: values.name,
+            role: values.role
+        }
+        this.props.signup(data);
+    }
+    //     //set the with credentials to true
+    //     axios.defaults.withCredentials = true;
+    //     //make a post request with the user data
+    //     axios.post('http://localhost:3001/signup', data)
+    //         .then(response => {
+    //             console.log("Status Code : ", response.status);
+    //             if (response.status === 200) {
+    //                 this.setState({
+    //                     redirectVar: <Redirect to="/login" />
+    //                 })
+    //             } else {
+    //                 this.setState({
+    //                     errorMsg: 'Unable to signup! ' + response.data
+    //                 })
+    //             }
+    //         });
+    // }
+
     render() {
-        //redirect based on successful login
-        // let redirectVar = null;
-        // if (cookie.load('cookie')) {
-        //     redirectVar = <Redirect to="/home" />
-        // }
+        let redirectVar = null;
+        let errorPanel = null;
+
+        if (this.props.signupStateStore.result) {
+            console.log('Inside signup page', this.props.signupStateStore);
+            if (this.props.signupStateStore.result.newUser === true) {
+                redirectVar = <Redirect to="/login" />
+            }
+
+        }
+        if (this.props.signupStateStore.existingUser === true) {
+            errorPanel = <div>
+                <div className="alert alert-danger" role="alert">
+                    Username Already exists!
+            </div>
+            </div>
+        }
+
+        const { handleSubmit } = this.props;
+
         return (
             <div>
-                {this.state.redirectVar}
+                {redirectVar}
                 <div className="content">
                     <div className="applogin-banner">
                         <div className="applogin-background"></div>
@@ -165,7 +192,7 @@ class Login extends Component {
                             <div className="auth-content">
                                 <div className="auth-content-inner">
                                     <div className="primary-auth">
-                                        <form method="POST" data-se="o-form" id="form18" className="primary-auth-form o-form o-form-edit-mode">
+                                        <form name="signupForm" onSubmit={handleSubmit(this.onSubmit.bind(this))} method="POST" data-se="o-form" id="form18" className="primary-auth-form o-form o-form-edit-mode">
                                             <div data-se="o-form-content" className="o-form-content o-form-theme clearfix">
                                                 <h2 data-se="o-form-head" className="sjsu-form-title o-form-head">Sign Up</h2>
                                                 <div className="o-form-error-container" data-se="o-form-error-container"></div>
@@ -175,7 +202,12 @@ class Login extends Component {
                                                             <span data-se="o-form-input-username" className="o-form-input-name-username o-form-control sjsu-form-input-field input-fix focused-input">
                                                                 <span className="input-tooltip icon form-help-16" data-hasqtip="0"></span>
                                                                 <span className="icon input-icon person-16-gray"></span>
-                                                                <input type="text" placeholder="Name" name="username" id="sjsu-signin-username" onChange={this.nameChangeHandler} aria-label="Name" />
+                                                                <Field
+                                                                    name="name"
+                                                                    id="name"
+                                                                    type="text"
+                                                                    placeholder="Enter a Name"
+                                                                    component={this.renderField} />
                                                             </span>
                                                         </div>
                                                     </div>
@@ -184,7 +216,12 @@ class Login extends Component {
                                                             <span data-se="o-form-input-email" className="o-form-input-name-password-email o-form-control sjsu-form-input-field input-fix">
                                                                 <span className="input-tooltip icon form-help-16" data-hasqtip="1"></span>
                                                                 <span className="icon input-icon remote-lock-16"></span>
-                                                                <input type="email" placeholder="Email ID" name="emailId" id="sjsu-signin-email" onChange={this.emailIdChangeHandler} aria-label="Email ID" />
+                                                                <Field
+                                                                    name="emailId"
+                                                                    id="emailId"
+                                                                    type="email"
+                                                                    placeholder="Enter Email ID"
+                                                                    component={this.renderField} />
                                                             </span>
                                                         </div>
                                                     </div>
@@ -193,7 +230,12 @@ class Login extends Component {
                                                             <span data-se="o-form-input-password" className="o-form-input-name-password o-form-control sjsu-form-input-field input-fix">
                                                                 <span className="input-tooltip icon form-help-16" data-hasqtip="1"></span>
                                                                 <span className="icon input-icon remote-lock-16"></span>
-                                                                <input type="password" placeholder="Enter Password" name="password" id="sjsu-signin-password" onChange={this.passwordChangeHandler} aria-label="Password" />
+                                                                <Field
+                                                                    name="password"
+                                                                    id="password"
+                                                                    type="password"
+                                                                    placeholder="Enter Password"
+                                                                    component={this.renderField} />
                                                             </span>
                                                         </div>
                                                     </div>
@@ -202,13 +244,31 @@ class Login extends Component {
                                                             <span data-se="o-form-input-password" className="o-form-input-name-password o-form-control sjsu-form-input-field input-fix">
                                                                 <span className="input-tooltip icon form-help-16" data-hasqtip="1"></span>
                                                                 <span className="icon input-icon remote-lock-16"></span>
-                                                                <input type="password" placeholder="Confirm Password" name="confirmPassword" id="sjsu-signin-confirm-password" onChange={this.confirmPasswordChangeHandler} aria-label="Password" />
+                                                                <Field
+                                                                    name="confirmPassword"
+                                                                    id="confirmPassword"
+                                                                    type="password"
+                                                                    placeholder="Confirm Password"
+                                                                    component={this.renderField} />
                                                             </span>
                                                         </div>
                                                     </div>
-                                                    <div>I am a <input type="radio" name="role" id="sjsu-signin-radio" onChange={this.roleChangeHandler} value="student" aria-label="student" checked="checked"/> Student <input type="radio" name="role" id="sjsu-signin-radio" onChange={this.roleChangeHandler} value="faculty" aria-label="faculty" /> Faculty</div>
+                                                    <div>I am a <Field
+                                                                    name="role"
+                                                                    id="role"
+                                                                    type="radio"
+                                                                    value="student"
+                                                                    checked="checked"
+                                                                    component={this.renderField} /> Student <Field
+                                                                    name="role"
+                                                                    id="role"
+                                                                    type="radio"
+                                                                    value="faculty"
+                                                                    component={this.renderField} /> Faculty
+                                                </div>
                                                 </div>
                                             </div>
+                                            <div>{errorPanel}</div>
                                             <div className="errorMsg">{this.state.errorMsg}</div>
                                             <div className="o-form-button-bar"><input className="button button-primary" type="submit" value="Sign Up" id="sjsu-signin-submit" onClick={this.submitSignup} data-type="save" /></div>
                                         </form>
@@ -223,5 +283,32 @@ class Login extends Component {
         )
     }
 }
-//export Login Component
-export default Login;
+
+//This method provides access to redux store
+const mapStateToProps = state => ({
+    signupStateStore: state.signup
+});
+
+function validate(values) {
+    console.log('inside signup validate');
+    const errors = {};
+    if (!values.name) {
+        errors.name = "Enter your Name";
+    }
+    if (!values.emailId) {
+        errors.emailId = "Enter Email ID";
+    }
+    if (!values.password) {
+        errors.password = "Enter a password";
+    }
+    if (!values.confirmPassword) {
+        errors.confirmPassword = "Enter the password again";
+    }
+    
+    return errors;
+}
+
+export default reduxForm({
+    validate,
+    form: "signupForm"
+})(connect(mapStateToProps, { signup })(Signup));

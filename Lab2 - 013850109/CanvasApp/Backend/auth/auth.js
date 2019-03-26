@@ -36,8 +36,13 @@ passport.use('login', new localStrategy({
   passwordField : 'password'
 }, async (username, password, done) => {
   try {
+    console.log("login handler")
+    console.log(username);
+    console.log(password);
+    
     //Find the user associated with the username provided by the user
     const user = await UserModel.findOne({ emailId : username });
+    console.log(user);
     if( !user ){
       //If the user isn't found in the database, return a message
       return done(null, false, { message : 'User not found'});
@@ -46,6 +51,7 @@ passport.use('login', new localStrategy({
     //If the passwords match, it returns a value of true.
     const validate = await user.isValidPassword(password);
     if( !validate ){
+      console.log("password does not match")
       return done(null, false, { message : 'Wrong Password'});
     }
     //Send the user information to the next middleware

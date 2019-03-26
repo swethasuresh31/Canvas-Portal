@@ -86,6 +86,10 @@ app.use('/files', passport.authenticate('jwt', { session : false }), filesRouter
 var accountRouter = require('./routes/Account');
 app.use('/account', passport.authenticate('jwt', { session : false }), accountRouter);
 
+//Route to get img
+var imgRouter = require('./routes/Img');
+app.use('/img', imgRouter);
+
 // app.post('/signup', function (req, res) {
 //     var username = req.body.username;
 //     var password = req.body.password;

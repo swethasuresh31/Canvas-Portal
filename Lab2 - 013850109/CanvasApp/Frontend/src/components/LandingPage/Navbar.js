@@ -23,11 +23,14 @@ export default class Card extends Component {
     cookie.remove('cookieS', { path: '/' })
     cookie.remove('cookieF', { path: '/' })
     localStorage.removeItem('userToken')
+    localStorage.removeItem('user')
+    localStorage.removeItem('role')
+    
   }
 
   render() {
-    let user = cookies.get('cookieS') || cookies.get('cookieF');
-    let profileImg = "http://localhost:3001/account/img/" + encodeURI(user)
+    let user = localStorage.getItem('user');
+    let profileImg = "http://localhost:3001/img/" + encodeURI(user)
     return (
       <div class="position-fixed" style={{ height: "100vh" }}>
         <Navigation
