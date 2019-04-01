@@ -166,7 +166,8 @@ class Account extends Component {
     window.location.reload()
   }
 
-  async componentDidMount() {
+  async componentWillMount() {
+    console.log("started mount of account")
     await this.props.getProfileInformation();
     console.log("login: " + this.props.loginStateStore.result)
     const result = this.props.profileStateStore.result.data;
@@ -179,7 +180,6 @@ class Account extends Component {
         [name]: result[name]
       });
     }
-    console.log('state', this.state);
   }
 
 
@@ -292,10 +292,13 @@ class Account extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-  profileStateStore: state.profile,
-  loginStateStore: state.login
-})
+const mapStateToProps = state => {
+  console.log(JSON.stringify(state))
+  return {
+    profileStateStore: state.profile,
+    loginStateStore: state.login
+  }
+}
 
 //export default Profile;
 export default connect(mapStateToProps, { getProfileInformation, updateProfileInformation })(Account);

@@ -1,14 +1,16 @@
 import { GET_PROFILE_INFO, GET_PROFILE_INFO_ERROR, UPDATE_PROFILE_INFO,  UPDATE_PROFILE_INFO_ERROR } from '../actions/ProfileAction';
 
 var intialState = {
-    errorRedirect : false
+    errorRedirect : false,
+    profileDetails: null
 }
 
 
-export default function(state = intialState, action){
+export default async function(state = intialState, action){
     switch(action.type){
         case GET_PROFILE_INFO:
             console.log('GET_PROFILE_INFO Reducer');
+            console.log("Payload: " + JSON.stringify(action.payload))
             return {
                 ...state,
                 result: action.payload
