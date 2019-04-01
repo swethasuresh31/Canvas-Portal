@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express.Router();
-const UserModel = require('../model/model');
 var fs = require('fs');
 
 router.get('/:user', function (req, res) {

@@ -17,13 +17,12 @@ export function getProfileInformation() {
         var errorRedirect = false;
         console.log('jwt ' + localStorage.getItem('userToken'))
         axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
-        await axios.get('http://localhost:3001/user/')
+        await axios.get('http://localhost:3001/account/')
             .then((response) => {
                 console.log("came here")
                 result.data = response.data;
                 result.data.img = "http://localhost:3001/img/" + encodeURI(response.data.emailId);
                 console.log("in return of get");
-
             })
             .catch((err) => {
                 errorRedirect = true;
