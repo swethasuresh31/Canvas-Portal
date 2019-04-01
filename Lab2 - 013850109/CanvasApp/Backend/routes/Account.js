@@ -1,7 +1,14 @@
+//User Account profile information
 var express = require('express');
 var router = express.Router();
-// var connection = require('../db/connection')
-const UserModel = require('../model/model');
+//Passport authentication
+
+var passport = require('passport');
+// Set up middleware
+var requireAuth = passport.authenticate('jwt', {session: false});
+//Kafka
+var kafka = require('../kafka/client');
+
 var fs = require('fs');
 
 var multer = require('multer');
@@ -15,51 +22,58 @@ let storage = multer.diskStorage({
 });
 let upload = multer({ storage });
 
-router.post('/', async function (req, res, callback) {
-    console.log("Inside account post handler");
-    var loggedInuser = decodeURI(req.user.emailId);
-    console.log(loggedInuser);
-    UserModel.findOne({ emailId: loggedInuser }, (err, user) => {
-        
-        if (err) {
-            console.log("User not found.", err);
-            callback(err, null);
-        } else {
-            console.log("The feteched user detail is " + user);
-            console.log("The update request is " + JSON.stringify(req.body));
-            
+router.get('/', requireAuth, function (req, res) {
 
-            console.log("Inside account Information Post Request");
-            
-            UserModel.update({_id:user._id}, {$set: {
-                emailId: req.body.emailId,
-                name: req.body.name,
-                phoneNo: req.body.phoneNo,
-                aboutMe: req.body.aboutMe,
-                city: req.body.city,
-                country: req.body.country,
-                company: req.body.company,
-                school: req.body.school,
-                hometown: req.body.hometown,
-                languages: req.body.languages,
-                gender: req.body.gender
-            }}).then((doc) => {
+    console.log("Inside account get handler");
+    console.log("Inside account get handler");
+    console.log('Request Body:', req.user);
 
-                console.log("User details saved successfully.", doc);
-                res.send("Success");
 
-            }, (err) => {
-                console.log("Unable to save user details.", err);
-                res.status(500).send("Unable to save user details");
-            });
-        
-        }
-        
+        kafka.make_request("account-details", req.user, function(err, result){
+            if(err){
+                console.log("Unable to fetch user account details.", err);
+                res.writeHead(400, {
+                    'Content-type': 'text/plain'
+                });
+                res.end('Error in fetching user details!');
+            }
+            else{
+                console.log('Profile Information: ', result);
+                res.writeHead(200, {
+                    'Content-type': 'application/json'
+                });
+                res.end(JSON.stringify(result));
+            }
+        });        
     
-    });
 });
 
-router.post('/img/:user', upload.single('file'), function (req, res) {
+router.post('/', requireAuth, function (req, res) {
+
+    console.log('Inside Update Account Details!');
+    console.log('Request Body: ', req.body);
+
+        kafka.make_request("update-account", req, function(err, result){
+
+            if(err){
+                console.log("Unable to save user details.", err);
+                res.writeHead(400, {
+                        'Content-type': 'text/plain'
+                });
+                res.end('Error in adding an user');
+            }
+            else{
+                console.log("User details saved successfully.", result);
+                res.writeHead(200, {
+                        'Content-type': 'text/plain'
+                });
+                res.end('User details saved successfully.');
+            }
+        });        
+  
+});
+
+router.post('/img', upload.single('file'), function (req, res) {
     console.log(req.file)
     if (!req.file) {
         res.status(500).send("No file");
@@ -67,31 +81,5 @@ router.post('/img/:user', upload.single('file'), function (req, res) {
         res.send(req.file.originalname)
     }
 })
-
-// router.get('/img/:user', function (req, res) {
-//     console.log("Inside user get image handler");
-//     var name = decodeURI(req.params.user);
-//     console.log(req.params.courseUid)
-//     var imgName = fs.readdirSync('public/img').filter(fn => fn.startsWith(name))[0];
-
-//     console.log(imgName);
-//     if (imgName === undefined) imgName = "default_profile_img.jpg"
-//     let options = {
-//         root: 'public/img',
-//         dotfiles: 'deny',
-//         headers: {
-//             'x-timestamp': Date.now(),
-//             'x-sent': true
-//         }
-//     };
-//     res.sendFile(imgName, options, function (err) {
-//         if (err) {
-//             console.log(err);
-//         } else {
-//             console.log('Sent:', imgName);
-//         }
-//     });
-
-// })
 
 module.exports = router;

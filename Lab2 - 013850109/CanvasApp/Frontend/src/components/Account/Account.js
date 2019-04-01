@@ -9,9 +9,11 @@ import Cookies from 'universal-cookie';
 import { Redirect } from 'react-router';
 import axios from 'axios';
 
-const cookies = new Cookies();
+import { getProfileInformation, updateProfileInformation } from '../../js/actions/ProfileAction';
+import { connect } from 'react-redux';
 
-export default class Account extends Component {
+
+class Account extends Component {
 
   constructor(props) {
     super(props);
@@ -46,6 +48,7 @@ export default class Account extends Component {
     this.genderChangeHandler = this.genderChangeHandler.bind(this);
     this.saveProfile = this.saveProfile.bind(this);
     this.fileInput = React.createRef();
+    this.profileImage = this.profileImage.bind(this);
   }
 
   //name change handler to update state variable with the text entered by the user
@@ -115,21 +118,17 @@ export default class Account extends Component {
       this.state.errorMsg = ''
 
   }
-
-
-  saveProfile(e) {
-    e.preventDefault()
-    axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
-
+  async profileImage() {
     if (this.fileInput.current.files[0] !== undefined) {
       console.log(this.fileInput.current.files[0])
-      let filename = this.state.emailId + '.' + this.fileInput.current.files[0].name.split('.').pop();
+      let filename = localStorage.getItem('user') + '.' + this.fileInput.current.files[0].name.split('.').pop();
       console.log(filename)
       let data = new FormData();
       data.append('file', this.fileInput.current.files[0], filename)
       console.log(data)
-      //adds the assignment based on information entered
-      axios.post('http://localhost:3001/account/img/' + encodeURI(this.state.emailId), data)
+      //adds the image based on information entered
+      axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
+      await axios.post('http://localhost:3001/account/img', data)
         .then((response) => {
           console.log(response);
           if (response !== undefined)
@@ -138,7 +137,10 @@ export default class Account extends Component {
             }
         })
     }
+  }
 
+  async saveProfile(e) {
+    await this.profileImage();
     const accountUpd = {
       name: this.state.name,
       emailId: this.state.emailId,
@@ -153,62 +155,37 @@ export default class Account extends Component {
       gender: this.state.gender
     }
 
+    console.log(accountUpd);
+
     //make a put request with the user data
-    axios.post('http://localhost:3001/account', accountUpd)
-      .then(response => {
-        console.log("Status Code : ", response.status);
-        if (response.status === 200) {
-          console.log("success");
-          console.log("came here1");
-          window.location.reload();
-        } else {
-          console.log("came here");
-          this.setState({
-            errorMsg: 'Some problem updating account information!'
-          })
-        }
-      })
-      .catch(err => {
-        this.setState({
-          redirectVar: '',
-          errorMsg: '*Data not updated!'
-        })
-
-      })
-
+    await this.props.updateProfileInformation(accountUpd);
+    this.setState({
+      isEditing: "false"
+    })
+    console.log(JSON.stringify(this.state))
+    window.location.reload()
   }
 
-  componentDidMount() {
-    // let user = cookies.get('cookieS') || cookies.get('cookieF');
-    // console.log(user + "UserName")
-    console.log('jwt ' + localStorage.getItem('userToken'))
-    axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
-    axios.get('http://localhost:3001/user/') 
-      .then((response) => {
-        console.log(response);
-        //update the state with the response data
-          this.setState({
-            name: response.data.name,
-            emailId: response.data.emailId,
-            phoneNo: response.data.phoneNo,
-            aboutMe: response.data.aboutMe,
-            city: response.data.city,
-            country: response.data.country,
-            company: response.data.company,
-            school: response.data.school,
-            hometown: response.data.hometown,
-            languages: response.data.languages,
-            gender: response.data.gender,
-            img: "http://localhost:3001/img/" + encodeURI(response.data.emailId)
-        })
+  async componentWillMount() {
+    console.log("started mount of account")
+    await this.props.getProfileInformation();
+    console.log("login: " + this.props.loginStateStore.result)
+    const result = this.props.profileStateStore.result.data;
+    var keyData = Object.keys(this.props.profileStateStore.result.data);
+
+    for (var i = 0; i < keyData.length; i++) {
+      var name = keyData[i];
+      console.log('result[i]', result[name])
+      this.setState({
+        [name]: result[name]
       });
+    }
   }
 
 
 
   render() {
-    let redirectVar = null;
-    if (localStorage.getItem('userToken') !== null) {
+    if (localStorage.userToken) {
       if (this.state.isEditing === "true") {
         return (
           <div>
@@ -311,5 +288,17 @@ export default class Account extends Component {
     } else {
       return (<div><Redirect to="/login" /></div>);
     }
+
   }
 }
+
+const mapStateToProps = state => {
+  console.log(JSON.stringify(state))
+  return {
+    profileStateStore: state.profile,
+    loginStateStore: state.login
+  }
+}
+
+//export default Profile;
+export default connect(mapStateToProps, { getProfileInformation, updateProfileInformation })(Account);

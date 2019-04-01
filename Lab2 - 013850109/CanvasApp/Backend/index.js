@@ -1,42 +1,39 @@
-//import the require dependencies
 var express = require('express');
+const multer = require('multer');
+const uuidv4 = require('uuid/v4');
+const path = require('path');
+const fs = require('fs');
+
 var app = express();
-const mongoose = require('mongoose');
+
 var bodyParser = require('body-parser');
-const passport = require('passport');
 var session = require('express-session');
 var cookieParser = require('cookie-parser');
 var cors = require('cors');
-app.set('view engine', 'ejs');
-var connection = require('./db/connection')
-const bcrypt = require('bcrypt');
-var async = require('async');
-var mkdirp = require('mkdirp');
-const UserModel = require('./model/model');
 
-mongoose.connect('mongodb://127.0.0.1:27017/canvas-app', { useNewUrlParser: true });
-mongoose.connection.on('error', error => console.log(error) );
-mongoose.Promise = global.Promise;
+//Passport authentication
+var passport = require('passport');
 
-require('./auth/auth');
-//use cors to allow cross origin resource sharing
+//set up cors
 app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
+// app.use(cors({ origin: 'http://ec2-18-223-153-77.us-east-2.compute.amazonaws.com:3000', credentials: true }));
 
-//use express session to maintain session data
+//set up session variable
+
 app.use(session({
-    secret: 'cmpe273_kafka_passport_mongo',
-    resave: false, // Forces the session to be saved back to the session store, even if the session was never modified during the request
-    saveUninitialized: false, // Force to save uninitialized session to db. A session is uninitialized when it is new but not modified.
-    duration: 60 * 60 * 1000,    // Overall duration of Session : 30 minutes : 1800 seconds
-    activeDuration: 5 * 60 * 1000
+    secret: 'cmpe273-homeaway-app',
+    resave: false,
+    saveUninitialized: false,
+    duration: 60 * 60 * 100,
+    activeDuration: 5 * 60 * 100
 }));
-
 
 app.use(bodyParser.json());
 
-//Allow Access Control
+//Allow acceess control headers
 app.use(function (req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');    
+    // res.setHeader('Access-Control-Allow-Origin', 'http://ec2-18-223-153-77.us-east-2.compute.amazonaws.com:3000');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT,DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers');
@@ -44,202 +41,86 @@ app.use(function (req, res, next) {
     next();
 });
 
-var routes = require('./routes/Routes');
-app.use('/', routes);
+//require('./app/routes')(app);
+app.use(passport.initialize());
 
-//Route to get enrolled/created course information when a user visits the course Page
-var userCourseRouter = require('./routes/UserCourse');
-app.use('/usercourse', passport.authenticate('jwt', { session : false }), userCourseRouter);
+// Bring in defined Passport Strategy
+require('./config/passport')(passport);
 
-//Route to get permission code
-var userCourseRouter = require('./routes/Permission');
-app.use('/permission', passport.authenticate('jwt', { session : false }), userCourseRouter);
 
-//Route to get announcements
-var announcementRouter = require('./routes/Announcement');
-app.use('/announcement', passport.authenticate('jwt', { session : false }), announcementRouter);
 
-//Route to get people
-var peopleRouter = require('./routes/People');
-app.use('/user', passport.authenticate('jwt', { session : false }), peopleRouter);
+//Storing documents/Images
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './uploads');
+    }
+    , filename: (req, file, cb) => {
+        cb(null, file.originalname);
+    },
+});
 
-//Route to get quizzes
-var quizRouter = require('./routes/Quiz');
-app.use('/quiz', passport.authenticate('jwt', { session : false }), quizRouter);
+const upload = multer({ storage });
 
-var assignmentRouter = require('./routes/Assignment');
-app.use('/assignment', passport.authenticate('jwt', { session : false }), assignmentRouter);
+//Routing
 
-//Route to get grades
-var gradesRouter = require('./routes/Grades');
-app.use('/grades', passport.authenticate('jwt', { session : false }), gradesRouter);
 
-//Route to get student assignments
-var studentAssignmentRouter = require('./routes/StudentAssignment');
-app.use('/studentassignment', passport.authenticate('jwt', { session : false }), studentAssignmentRouter);
-
-//Route to get student assignments
-var filesRouter = require('./routes/Files');
-app.use('/files', passport.authenticate('jwt', { session : false }), filesRouter);
-
+var login = require('./routes/login.js');
+var signup = require('./routes/signup');
+var logout = require('./routes/logout');
 //Route to get account
 var accountRouter = require('./routes/Account');
-app.use('/account', passport.authenticate('jwt', { session : false }), accountRouter);
-
-//Route to get img
 var imgRouter = require('./routes/Img');
+// var updateProfile = require('./routes/update-profile');
+// var addProperty = require('./routes/add-property');
+// var search = require('./routes/search');
+// var propertyDetails = require('./routes/property-details');
+// var submitBooking = require('./routes/submit-booking');
+// var sendMessage = require('./routes/send-message');
+// var getMessages = require('./routes/get-messages');
+// var getTravelerMessages = require('./routes/get-traveler-messages');
+// var tripDetails = require('./routes/trip-details');
+// var ownerDashboard = require('./routes/owner-dashboard-details');
+
+//Route config
+
+app.use('/login', login);
+app.use('/signup', signup);
+app.use('/logout', logout);
+app.use('/account', accountRouter);
 app.use('/img', imgRouter);
-
-// app.post('/signup', function (req, res) {
-//     var username = req.body.username;
-//     var password = req.body.password;
-//     var name = req.body.name;
-//     var role = req.body.role === 'student';
-//     console.log("Inside Signup Post Request");
-//     console.log("Req Body : ", req.body);
-//     bcrypt.hash(password, 10, function (err, hash) {
-//         if (err) throw err;
-//         password = hash;
-//         connection.query('INSERT INTO user (email_id, name , password, is_student) VALUES (?,?,?,?);', [username, name, password, role], function (error, results, fields) {
-//             console.log();
-//             if (error) {
-//                 res.status(500).send(error);
-//             } else {
-//                 res.status(200).send("Success");
-//             }
-//         });
-//     });
-
-// });
+// app.use('/update-profile', updateProfile);
+// app.use('/add-property', addProperty);
+// app.use('/search', search);
+// app.use('/property-details', propertyDetails);
+// app.use('/submit-booking', submitBooking);
+// app.use('/send-message', sendMessage);
+// app.use('/get-messages', getMessages);
+// app.use('/get-traveler-messages', getTravelerMessages);
+// app.use('/trip-details', tripDetails);
+// app.use('/owner-dashboard-details', ownerDashboard);
 
 
-//Route to get course term and department information before student searches for courses
-app.get('/searchcourse', function (req, res) {
-    console.log("Inside course initial details get handler");
-    async.parallel([
-        function (callback) {
-            connection.query('select course_term from course group by course_term;', function (error, result1) {
-                callback(error, result1)
-            });
-        },
-        function (callback) {
-            connection.query('select course_dept_code from course group by course_dept_code;', function (error, result2) {
-                callback(error, result2)
-            });
-        }
-
-    ], function (err, results) {
-        if (err) {
-            res.json({ "status": "failed", "message": error.message })
-        } else {
-            res.send(JSON.stringify(results));
-        }
-    });
+//upload-file 
+app.post('/upload-file', upload.array('photos', 5), (req, res) => {
+    console.log('req.body', req.body);
+    res.end();
 });
 
-//Route to get all course information when a student searches for courses
-app.get('/course', function (req, res) {
-    console.log("Inside course search handler");
-    let queryString = '';
-    console.log("course_term: " + req.query.term);
-    console.log("course_dept_code: " + req.query.department);
-    console.log("course_id: " + req.query.courseId);
-    console.log("course_id_operator: " + req.query.operator);
-    console.log("course_name: " + req.query.name);
-    if (req.query.term !== '') {
-        queryString += ' course_term= \'' + req.query.term + '\' AND';
-    }
-    if (req.query.department !== '') {
-        queryString += ' course_dept_code= \'' + req.query.department + '\' AND';
-    }
-    if (req.query.name !== '') {
-        queryString += ' course_name= \'' + req.query.name + '\' AND';
-    }
-    if (req.query.operator !== '' && req.query.courseId !== '') {
-        queryString += ' course_id';
-        if (req.query.operator === 'EQ') {
-            queryString += ' = ' + req.query.courseId + ' AND';
-        } else if (req.query.operator === 'CON') {
-            queryString += ' LIKE \'%' + req.query.courseId + '%\' AND';
-        } else if (req.query.operator === 'LTE') {
-            queryString += ' <= ' + req.query.courseId + ' AND';
-        } else if (req.query.operator === 'GTE') {
-            queryString += ' >=' + req.query.courseId + ' AND';
-        }
-    }
-    if (queryString !== '') {
-        if (queryString.slice(-4) === ' AND') {
-            queryString = queryString.slice(0, -4);
-            queryString = ' WHERE' + queryString + ';';
-        }
-    }
-    console.log(queryString);
-    connection.query('select * from course' + queryString, function (error, results, fields) {
-        if (error) {
-            res.status(500).send(error);
-        } else {
-            console.log(JSON.stringify(results));
-            res.send(JSON.stringify(results));
-        }
+//download-file
+app.post('/download-file/:file(*)', function(req, res){
+    console.log('Inside DOwnload File');
+    var file = req.params.file;
+    var filelocation = path.join(__dirname + '/uploads', file);
+    var img = fs.readFileSync(filelocation);
+    var base64img = new Buffer(img).toString('base64');
+    res.writeHead(200, {
+        'Content--type': 'image/jpg'
     });
-})
-
-//Route to get all course information with a uid
-app.get('/course/:uid', function (req, res) {
-    console.log("Inside course search handler");
-    connection.query('select * from course where course_uid=?', [req.params.uid], function (error, results, fields) {
-        if (error) {
-            res.status(500).send(error);
-        } else {
-            console.log(JSON.stringify(results));
-            res.send(JSON.stringify(results));
-        }
-    });
-})
-
-app.post('/course', function (req, res) {
-    console.log("Inside create course handler");
-    var loggedInuser = req.body.user;
-    let course_id = req.body.courseId;
-    let course_term = req.body.courseTerm;
-    let course_name = req.body.courseName;
-    let course_deptcode = req.body.courseDeptCode;
-    let course_dept = req.body.courseDept;
-    let course_desc = req.body.courseDesc;
-    let course_instructor = req.body.courseInstructor;
-    let course_room = req.body.courseRoom;
-    let course_capacity = req.body.courseCapacity;
-    let waitlist_capacity = req.body.waitlistCapacity;
-
-    console.log(loggedInuser);
-    connection.query('INSERT INTO course(course_id,course_term,course_name,course_dept,course_dept_code, ' +
-        'course_desc,course_room,course_capacity,waitlist_capacity,course_instructor,created_by) ' +
-        'VALUES (?,?,?,?,?,?,?,?,?,?,?,?);', [course_id, course_term, course_name, course_deptcode, course_dept, course_desc, course_room, course_capacity, waitlist_capacity, course_instructor, loggedInuser], function (error, results, fields) {
-            console.log(course_id);
-            if (error) {
-                res.status(500).send(error);
-            } else {
-                createfolder()
-
-            }
-        });
+    res.end(base64img);
 });
 
-createfolder = (courseId, courseTerm, res) => {
-    connection.query('select * from course where course_id=? and courseTerm=?', [courseId, courseTerm], function (error, results, fields) {
-        if (error || results.length !== 1) {
-            res.status(500).send(error);
-        } else {
-            mkdirp('/public/files/courses')
-            mkdirp('/public/files/assignments')
-            res.status(200).send("Success");
-        }
-    });
-}
 
 
 
-//start your server on port 3001
-module.exports = app.listen(3001);
-console.log("Server Listening on port 3001");
-
+module.exports = app;
+app.listen(3001);
