@@ -70,6 +70,9 @@ var logout = require('./routes/logout');
 //Route to get account
 var accountRouter = require('./routes/Account');
 var imgRouter = require('./routes/Img');
+var userCourseRouter = require('./routes/UserCourse');
+
+//Route to get enrolled/created course information when a user visits the course Page
 // var updateProfile = require('./routes/update-profile');
 // var addProperty = require('./routes/add-property');
 // var search = require('./routes/search');
@@ -86,8 +89,13 @@ var imgRouter = require('./routes/Img');
 app.use('/login', login);
 app.use('/signup', signup);
 app.use('/logout', logout);
+
+//Route for profile account page
 app.use('/account', accountRouter);
 app.use('/img', imgRouter);
+app.use('/usercourse', userCourseRouter);
+
+//Route to get enrolled/created course information when a user visits the course Page
 // app.use('/update-profile', updateProfile);
 // app.use('/add-property', addProperty);
 // app.use('/search', search);

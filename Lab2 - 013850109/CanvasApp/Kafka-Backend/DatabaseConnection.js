@@ -1,12 +1,163 @@
 const mongoose = require('mongoose');
-const autoIncrement = require("mongodb-autoincrement");
-mongoose.plugin(autoIncrement.mongoosePlugin);
+const autoIncrement = require("mongoose-auto-increment");
 const Schema = mongoose.Schema;
-mongoose.connect('mongodb://127.0.0.1:27017/canvas-app', { useNewUrlParser: true });
+mongoose.connect('mongodb://127.0.0.1:27017/canvas-app', { useNewUrlParser: true, poolSize: 10, });
+autoIncrement.initialize(mongoose.connection);
 mongoose.connection.on('error', error => console.log(error));
 mongoose.Promise = global.Promise;
 //mongoose.connect('mongodb://dbuser:@ds235807.mlab.com:35807/canvas');
 
+const userListSchema = new Schema({
+    emailId: {
+        type: String,
+        unique: true
+    }
+});
+userListSchema.plugin(autoIncrement.plugin, 'enrolled');
+
+const CourseSchema = new Schema({
+    course_id: {
+        type: Number,
+        required: true,
+    },
+    course_term: {
+        type: String,
+        required: true
+    },
+    course_name: {
+        type: String,
+        required: true
+    },
+    course_dept: {
+        type: String,
+        required: true
+    },
+    course_dept_code: {
+        type: String,
+        required: true
+    },
+    course_desc: {
+        type: String
+    },
+    course_room: {
+        type: String
+    },
+    course_capacity: {
+        type: Number,
+        required: true,
+    },
+    total_enrollment: {
+        type: Number,
+        required: true,
+        default:0
+    },
+    enrolled: [userListSchema],
+    waitlist_capacity: {
+        type: Number,
+        required: true,
+    },
+    total_waitlist: {
+        type: Number,
+        required: true,
+        default:0
+    },
+    waitlisted: [userListSchema],
+    course_dayandtime: {
+        type: String
+    },
+    course_instructor: {
+        type: String
+    },
+    course_syllabus: {
+        type: String 
+    },
+    created_by: {
+        type: String
+    },
+    assignments: {
+        type: Array
+    },
+    quizzes: {
+        type: Array
+    },
+    announcements: {
+        type: Array
+    }
+})
+
+CourseSchema.index({ course_id: 1, course_term: 1, course_dept_code: 1 }, { name: 'course_pkey', unique: true })
+CourseSchema.plugin(autoIncrement.plugin, 'course');
+
+const CourseModel = mongoose.model('course', CourseSchema);
+
+
+const userCourseSchema = new Schema({
+    course_uid: {
+        type: Number,
+        required: true
+    },
+    course_id: {
+        type: Number,
+        required: true,
+    },
+    course_term: {
+        type: String,
+        required: true
+    },
+    course_name: {
+        type: String,
+        required: true
+    },
+    course_dept: {
+        type: String,
+        required: true
+    },
+    course_dept_code: {
+        type: String,
+        required: true
+    },
+    isWaitlist:
+    {
+        type: Boolean,
+        required: true,
+        default: false
+    },
+    course_capacity: {
+        type: Number
+    },
+    total_enrollment: {
+        type: Number
+    },
+    waitlist_capacity: {
+        type: Number
+    },
+    total_waitlist: {
+        type: Number
+    },
+
+    assignment_submissions: new Schema({ 
+        name: 
+        {
+            type: String
+        }, 
+        timestamp: 
+        {
+            type: Date,
+            default: Date.now
+         },
+         score: 
+         {
+             type: Number
+        }, 
+        max_score: 
+        { 
+            type: Number 
+        }
+    })
+
+})
+
+const userCourseModel = mongoose.model('usercourse', userCourseSchema);
 
 const UserSchema = new Schema({
     emailId: {
@@ -56,84 +207,13 @@ const UserSchema = new Schema({
     img: {
         data: Buffer,
         contentType: String
-    }
+    },
+    course: [userCourseSchema]
 })
 
 UserSchema.index({ emailId: 1 }, { name: 'user_email_pkey', unique: true })
+UserSchema.plugin(autoIncrement.plugin, 'user');
 
+const UserModel = mongoose.model('user', UserSchema);
 
-const CourseSchema = new Schema({
-    course_id: {
-        type: Number,
-        required: true,
-    },
-    course_term: {
-        type: String,
-        required: true
-    },
-    course_name: {
-        type: String,
-        required: true
-    },
-    course_dept: {
-        type: String,
-        required: true
-    },
-    course_dept_code: {
-        type: String,
-        required: true
-    },
-    course_desc: {
-        type: String
-    },
-    course_room: {
-        type: String
-    },
-    course_capacity: {
-        type: Number,
-        required: true,
-    },
-    total_enrollment: {
-        type: Number,
-        required: true,
-    },
-    enrolled: {
-        type: Array
-    },
-    waitlist_capacity: {
-        type: Number,
-        required: true,
-    },
-    total_waitlist: {
-        type: Number,
-        required: true,
-    },
-    waitlisted: {
-        type: Array
-    },
-    course_dayandtime: {
-        type: String
-    },
-    course_instructor: {
-        type: String
-    },
-    created_by: {
-        type: String
-    },
-    assignments: {
-        type: Array
-    },
-    quizzes: {
-        type: Array
-    },
-    announcements: {
-        type: Array
-    },
-    enrolled
-})
-
-CourseSchema.index({ course_id: 1, course_term: 1, course_dept_code: 1 }, { name: 'course_pkey', unique: true })
-
-const CourseModel = mongoose.model('user', CourseSchema);
-
-module.exports = { UserModel, CourseModel };
+module.exports = { UserModel, CourseModel, userCourseModel };

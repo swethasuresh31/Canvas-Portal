@@ -170,22 +170,23 @@ class Account extends Component {
     console.log("started mount of account")
     await this.props.getProfileInformation();
     console.log("login: " + this.props.loginStateStore.result)
+    if(!this.props.profileStateStore.result) return;
     const result = this.props.profileStateStore.result.data;
     var keyData = Object.keys(this.props.profileStateStore.result.data);
 
     for (var i = 0; i < keyData.length; i++) {
       var name = keyData[i];
       console.log('result[i]', result[name])
-      this.setState({
-        [name]: result[name]
-      });
+      this.state[name] = result[name];
     }
+    this.forceUpdate();
   }
 
 
 
   render() {
-    if (localStorage.userToken) {
+    console.log(localStorage.userToken)
+    if (localStorage.userToken && localStorage.userToken !== "undefined") {
       if (this.state.isEditing === "true") {
         return (
           <div>

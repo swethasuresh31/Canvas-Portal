@@ -1,19 +1,13 @@
 import React, { Component } from 'react';
-import { Grid, GridRow, GridCol } from '@instructure/ui-layout'
-import theme from '@instructure/ui-themes/lib/canvas/base'
-import Navbar from '../LandingPage/Navbar';
 import { Redirect } from 'react-router';
-import { Table } from '@instructure/ui-elements';
-import Heading from '@instructure/ui-elements/lib/components/Heading';
-import cookie from 'react-cookies';
-import Cookies from 'universal-cookie';
-import axios from 'axios';
 import StudentCourseLanding from './StudentCourseLanding';
 import FacultyCourseLanding from './FacultyCourseLanding';
 
-const cookies = new Cookies();
+import { getCourseInformation } from '../../js/actions/CourseAction';
+import { connect } from 'react-redux';
 
-export default class CourseDetails extends Component {
+
+class CourseDetails extends Component {
 
     constructor(props) {
         super(props);
@@ -25,26 +19,16 @@ export default class CourseDetails extends Component {
         this.removeCourseRow = this.removeCourseRow.bind(this);
     }
 
-    componentDidMount() {
-        let role = '';
-        let user = '';
-        if (cookie.load('cookieS')) {
-            role = 'student';
-            user = cookies.get('cookieS')
+    async componentDidMount() {
 
-        } else if (cookie.load('cookieF')) {
-            role = 'faculty';
-            user = cookies.get('cookieF')
-        }
-        if (role !== '') {
-            axios.get('http://localhost:3001/usercourse/' + encodeURI(user) + '?role=' + role)
-                .then((response) => {
-                    console.log(response);
-                    if (response !== undefined)
-                        this.setState({ coursework: response.data })
-                })
-        }
-    }
+        await this.props.getCourseInformation();
+        console.log("course: " + this.props.courseStateStore.result.data)   
+        const result = this.props.courseStateStore.result.data;
+        this.setState({
+          coursework: result
+        })
+        console.log("coursework "+this.state.coursework);
+      }
 
     removeCourseRow = (courseUid) => {
         let index = this.state.coursework.findIndex(row => row.course_uid === courseUid)
@@ -58,12 +42,13 @@ export default class CourseDetails extends Component {
     };
 
     render() {
-        if (cookie.load('cookieF')) {
+        if (localStorage.userToken && localStorage.userToken !== "undefined") {
+            if (localStorage.role === 'faculty') {
             //Return faculty page
             return (
                 <FacultyCourseLanding coursework={this.state.coursework}></FacultyCourseLanding>
             );
-        } else if (cookie.load('cookieS')) {
+        } else if (localStorage.role === 'student') {
             //Return student page
             return (
                 <StudentCourseLanding coursework={this.state.coursework} removeCourseRow={this.removeCourseRow}></StudentCourseLanding>
@@ -71,5 +56,20 @@ export default class CourseDetails extends Component {
         } else {
             return (<div><Redirect to="/login" /></div>);
         }
+    }else{
+        return (<div><Redirect to="/login" /></div>);
     }
 }
+}
+
+const mapStateToProps = state => {
+    console.log(JSON.stringify(state))
+    return {
+      courseStateStore: state.course,
+      profileStateStore: state.profile,
+      loginStateStore: state.login
+    }
+  }
+  
+  //export default Profile;
+  export default connect(mapStateToProps, { getCourseInformation })(CourseDetails);

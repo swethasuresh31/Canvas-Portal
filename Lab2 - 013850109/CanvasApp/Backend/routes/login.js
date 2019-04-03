@@ -57,11 +57,11 @@ router.post('/', function (req, res) {
                 // });
                 
                 //res.status(200).json({success: true, Authorization: 'Bearer ' + token});
-                return res.json({ token:token,emailId:user.emailId,role:user.role });
+                return res.json({ token:token,emailId:user.emailId,role:user.role,name:user.name });
             }
             else{
                 console.log('Invalid Credentials!');
-                res.end('Invalid Credentials!');
+                res.status(400).end('Invalid Credentials!');
             }            
         }
     });

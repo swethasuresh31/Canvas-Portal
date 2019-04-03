@@ -1,23 +1,22 @@
-var chai = require('chai');
-var chaiHttp = require('chai-http');
-chai.use(chaiHttp);
-var canvasNode = require('../index');
-
 var assert = require('chai').assert;
+var app = require('../index');
+
+var chai = require('chai');
+chai.use(require('chai-http'));
 var expect = require('chai').expect;
-var connection = require('../db/connection');
-var agent = require('chai').request.agent(canvasNode);
+
+var agent = require('chai').request.agent(app);
 
 
-describe('Canvas-Application', function () {
+describe('HomeAway', function () {
 
-    it('POST /login', function () {
-        //this.timeout(50000);
-
+    it('POST /Login', function () {
+        this.timeout(50000);
+        // return chai.request.agent(app)
         agent.post('/login')
             .send({
-                username: 'student1',
-                password: 'student1'
+                Email: 'aehari2010@gmail.com',
+                Password: 'aearivoli'
             })
             .then(function (res) {
                 assert.equal(res.status, 200);
@@ -25,41 +24,44 @@ describe('Canvas-Application', function () {
             });
     });
 
-    it('GET /UserCourse', function () {
-        //this.timeout(50000);
-        let user= 'student1';
-        agent.get('/usercourse/'+user+'?role=student')
-             .then(function (res) {
-                assert.equal(res.status, 200);
-            });
-    });
-
-    it('GET /SearchCourse', function () {
-        //this.timeout(50000);
-        agent.get('/searchcourse')
-             .then(function (res) {
-                assert.equal(res.status, 200);
-            });
-    });
-
-    it('GET /Announcement', function () {
-        //this.timeout(50000);
-        let announcementUid= 1;
-        agent.get('/announcement/id/'+announcementUid)
-             .then(function (res) {
-                assert.equal(res.status, 200);
-            });
-    });
-
-    it('GET /Grades', function () {
-        //this.timeout(50000);
-        let user= 'student1';
-        let courseUid = 1;
-        agent.get('/grades/'+courseUid+'/'+user)
-             .then(function (res) {
-                assert.equal(res.status, 200);
-            });
-    });
+    // it('Post /Search', function () {
 
 
-})
+    //     agent.post('/search')
+    //         .send({
+    //             searchText: 'San Jose',
+    //             startDate: '10-01-2018',
+    //             endDate: '11-01-2018'
+    //         })
+    //         .then(function (res) {
+    //             expect(res).to.have.status(200);
+    //         });
+    // });
+
+    // it('Post Property Details', function () {
+
+    //     agent.post('/property-details')
+    //         .send({
+    //             PropertyId: "5"
+    //         })
+    //         .then(function (res) {
+    //             expect(res).to.have.status(200);
+    //         });
+
+    // });
+
+    // it('Get Trip Details', function () {
+
+    //     agent.post('/trip-details')           
+    //         .then(function (res) {
+    //             expect(res).to.have.status(200);
+    //         });
+    // });
+
+    // it('Get /Profile Details', function () {
+    //     agent.get('/profile-details')
+    //         .then(function (res) {
+    //             expect(res).to.have.status(200);
+    //         });
+    // });
+});

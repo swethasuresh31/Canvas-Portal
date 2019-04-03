@@ -25,7 +25,6 @@ let upload = multer({ storage });
 router.get('/', requireAuth, function (req, res) {
 
     console.log("Inside account get handler");
-    console.log("Inside account get handler");
     console.log('Request Body:', req.user);
 
 
