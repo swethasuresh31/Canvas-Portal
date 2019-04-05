@@ -15,9 +15,19 @@ const userListSchema = new Schema({
 });
 userListSchema.plugin(autoIncrement.plugin, 'enrolled');
 
+const permissionSchema = new Schema({
+    permissionCode: {
+        type: Number,
+        unique: true
+    },
+    isUsed: {
+        type: Boolean,
+    }
+});
+
 const CourseSchema = new Schema({
     course_id: {
-        type: Number,
+        type: String,
         required: true,
     },
     course_term: {
@@ -62,6 +72,7 @@ const CourseSchema = new Schema({
         default:0
     },
     waitlisted: [userListSchema],
+    permissionCodes: [permissionSchema],
     course_dayandtime: {
         type: String
     },
@@ -97,7 +108,7 @@ const userCourseSchema = new Schema({
         required: true
     },
     course_id: {
-        type: Number,
+        type: String,
         required: true,
     },
     course_term: {

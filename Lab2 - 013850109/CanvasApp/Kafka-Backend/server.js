@@ -6,6 +6,9 @@ var Account = require('./services/Account');
 var UpdateAccount = require('./services/UpdateAccount');
 var CourseDashboard = require('./services/CourseDashboard');
 var CreateCourse = require('./services/CreateCourse');
+var Permission = require('./services/Permission');
+var CourseMetadata = require('./services/CourseMetadata');
+var Course = require('./services/Course');
 
 function handleTopicRequest(topic_name, function_name){
 
@@ -44,3 +47,6 @@ handleTopicRequest("account-details", Account);
 handleTopicRequest("update-account", UpdateAccount);
 handleTopicRequest("course-dashboard", CourseDashboard);
 handleTopicRequest("create-course", CreateCourse);
+handleTopicRequest("permission", Permission);
+handleTopicRequest("course-metadata", CourseMetadata);
+handleTopicRequest("course", Course);
