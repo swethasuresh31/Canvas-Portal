@@ -70,6 +70,13 @@ var logout = require('./routes/logout');
 //Route to get account
 var accountRouter = require('./routes/Account');
 var imgRouter = require('./routes/Img');
+var courseRouter = require('./routes/Course');
+var userCourseRouter = require('./routes/UserCourse');
+var permissionRouter = require('./routes/Permission');
+var courseMetadataRouter = require('./routes/CourseMetadata');
+//Route to get permission code
+
+//Route to get enrolled/created course information when a user visits the course Page
 // var updateProfile = require('./routes/update-profile');
 // var addProperty = require('./routes/add-property');
 // var search = require('./routes/search');
@@ -86,8 +93,16 @@ var imgRouter = require('./routes/Img');
 app.use('/login', login);
 app.use('/signup', signup);
 app.use('/logout', logout);
+
+//Route for profile account page
 app.use('/account', accountRouter);
 app.use('/img', imgRouter);
+app.use('/course', courseRouter);
+app.use('/usercourse', userCourseRouter);
+app.use('/permission', permissionRouter);
+app.use('/coursemetadata', courseMetadataRouter);
+
+//Route to get enrolled/created course information when a user visits the course Page
 // app.use('/update-profile', updateProfile);
 // app.use('/add-property', addProperty);
 // app.use('/search', search);

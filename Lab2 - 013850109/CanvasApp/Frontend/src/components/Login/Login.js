@@ -94,12 +94,16 @@ class Login extends Component {
     render() {
         //redirect based on successful login
         let redirectVar = null;        
-
-        if (this.props.loginStateStore.result) {
-            if(this.props.loginStateStore.result.authFlag === true){
-                redirectVar = <Redirect to="/account" />
-            }
+        console.log(localStorage.userToken);
+        // if (this.props.loginStateStore.result) {
+        //     if(this.props.loginStateStore.result.authFlag === true){
+        //         redirectVar = <Redirect to="/" />
+        //     }
             
+        // }
+        console.log(JSON.stringify(this.props.loginStateStore))
+        if (localStorage.userToken && localStorage.userToken !== "undefined") {
+            redirectVar = <Redirect to="/" />
         }
 
         let errorPanel = null;

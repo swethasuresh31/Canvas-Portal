@@ -25,6 +25,7 @@ export default class Card extends Component {
     localStorage.removeItem('userToken')
     localStorage.removeItem('user')
     localStorage.removeItem('role')
+    localStorage.removeItem('name')
     
   }
 

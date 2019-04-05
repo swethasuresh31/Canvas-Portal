@@ -16,6 +16,7 @@ export function submitLogin(data) {
                 localStorage.setItem('userToken', response.data.token)
                 localStorage.setItem('user',response.data.emailId);
                 localStorage.setItem('role',response.data.role);
+                localStorage.setItem('name',response.data.name);
 
                   var resultData = {
                       emailId : response.data.emailId,

@@ -1,12 +1,11 @@
 import { GET_PROFILE_INFO, GET_PROFILE_INFO_ERROR, UPDATE_PROFILE_INFO,  UPDATE_PROFILE_INFO_ERROR } from '../actions/ProfileAction';
 
 var intialState = {
-    errorRedirect : false,
-    profileDetails: null
+    errorRedirect : false
 }
 
 
-export default async function(state = intialState, action){
+export default function(state = intialState, action){
     switch(action.type){
         case GET_PROFILE_INFO:
             console.log('GET_PROFILE_INFO Reducer');

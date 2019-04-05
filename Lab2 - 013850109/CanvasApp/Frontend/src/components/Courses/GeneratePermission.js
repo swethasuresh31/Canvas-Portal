@@ -1,16 +1,12 @@
 import React, { Component } from 'react';
 import Navbar from '../LandingPage/Navbar';
-import CourseCard from './CourseCard';
-import { Redirect } from 'react-router';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
-import Cookies from 'universal-cookie';
 import axios from 'axios';
 
-import { IconSearchLine } from '@instructure/ui-icons'
+import { getCourseInformation } from '../../js/actions/CourseAction';
+import { connect } from 'react-redux';
 
-const cookies = new Cookies();
-
-export default class SearchCourse extends Component {
+class GeneratePermission extends Component {
 
     constructor(props) {
         super(props);
@@ -26,15 +22,17 @@ export default class SearchCourse extends Component {
 
     }
 
-    componentWillMount() {
-        let user = cookies.get('cookieF');
-        axios.get('http://localhost:3001/usercourse/' + encodeURI(user) + '?role=faculty')
-            .then((response) => {
-                console.log(response);
-                if (response !== undefined)
-                    this.setState({ courses: response.data })
-            })
+    async componentWillMount() {
+
+        await this.props.getCourseInformation();
+        console.log("course: " + this.props.courseStateStore.result.data)   
+        const result = this.props.courseStateStore.result.data;
+        this.setState({
+            courses: result
+        })
+        console.log("courses "+this.state.coursework);
     }
+    
 
     onSelect(e) {
         this.setState({ selectedCourse: e.target.value, permissionCode: '' });
@@ -44,6 +42,7 @@ export default class SearchCourse extends Component {
     onGenerate(e) {
         this.setState({ errorMsg: '' })
         //generate the permission code for the course
+        axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
         axios.get('http://localhost:3001/permission/'+this.state.selectedCourse)
             .then((response) => {
                 console.log(response);
@@ -113,3 +112,14 @@ export default class SearchCourse extends Component {
 
     }
 }
+
+const mapStateToProps = state => {
+    console.log(JSON.stringify(state))
+    return {
+      courseStateStore: state.course,
+      profileStateStore: state.profile,
+      loginStateStore: state.login
+    }
+  }
+  
+export default connect(mapStateToProps, { getCourseInformation })(GeneratePermission);

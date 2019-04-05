@@ -48,74 +48,78 @@ export default class Courses extends Component {
 
     render() {
         let redirectVar = null;
-        if (cookie.load('cookieF')) {
-            //Return faculty page
-            return (
-                <div>
-                    {redirectVar}
-                    <div className="row">
-                        <div className="col col-sm-2">
-                            <Navbar selected="account" />
-                        </ div>
-                        <div className="col col-lg-8">
-                            <div className="row">
-                                <div className="col">
-                                    <SideNav
-                                        defaultSelectedPath="1"
-                                        theme={themeCourse}
-                                        onItemSelection={this.onItemSelection}
-                                    >
-                                        <Nav id="1"><Link to="/courseHome">Course List</Link></Nav>
-                                        <Nav id="2"><Link to="/courseCreate">Create Course</Link></Nav>
-                                        <Nav id="2"><Link to="/coursePC">Generate Permission Code</Link></Nav>
-                                    </SideNav>
-                                </div>
-                                <div className="col">
-                                    <br />
-                                    <Heading theme={{ borderPadding: "1rem" }} border="bottom">Faculty Courses</ Heading>
-                                </ div>
+        if (localStorage.userToken && localStorage.userToken !== "undefined") {
+            if (localStorage.role === 'faculty') {
+                //Return faculty page
+                return (
+                    <div>
+                        {redirectVar}
+                        <div className="row">
+                            <div className="col col-sm-2">
+                                <Navbar selected="account" />
                             </ div>
-                            <div className="row">
+                            <div className="col col-lg-8">
+                                <div className="row">
+                                    <div className="col">
+                                        <SideNav
+                                            defaultSelectedPath="1"
+                                            theme={themeCourse}
+                                            onItemSelection={this.onItemSelection}
+                                        >
+                                            <Nav id="1"><Link to="/courseHome">Course List</Link></Nav>
+                                            <Nav id="2"><Link to="/courseCreate">Create Course</Link></Nav>
+                                            <Nav id="2"><Link to="/coursePC">Generate Permission Code</Link></Nav>
+                                        </SideNav>
+                                    </div>
+                                    <div className="col">
+                                        <br />
+                                        <Heading theme={{ borderPadding: "1rem" }} border="bottom">Faculty Courses</ Heading>
+                                    </ div>
+                                </ div>
+                                <div className="row">
 
-                            </ div>
-                        </div>
-                    </div>
-                </div>
-            );
-        } else if (cookie.load('cookieS')) {
-            //Return student page
-            return (
-                <div className="container-fluid md-0 p-0">
-                    {redirectVar}
-                    <div className="row">
-                        <div className="col col-sm-1">
-                            <Navbar selected="courses" />
-                        </ div>
-                        <div className="col col-sm-2">
-                            <SideNav
-                                defaultSelectedPath="1"
-                                theme={themeCourse}
-                                onItemSelection={this.onItemSelection}
-                            >
-                                <Nav id="1"><Link to="/courseHome">Enrolled Courses</Link></Nav>
-                                <Nav id="2"><Link to="/courseSearch">Search Courses</Link></Nav>
-                                <Nav id="3"><Link to="/courseEnroll">Enroll Course</Link></Nav>
-                            </SideNav>
-                        </div>
-                        <div className="col col-lg-8">
-                            <div className="row">
-                                <div className="col">
-                                    <br />
-                                    <Heading theme={{ borderPadding: "1rem" }} border="bottom">Faculty Courses</ Heading>
                                 </ div>
-                            </ div>
-                            <div className="row">
-                                {this.state.courseComponent}
-                            </ div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            );
+                );
+            } else if (localStorage.role === 'student') {
+                //Return student page
+                return (
+                    <div className="container-fluid md-0 p-0">
+                        {redirectVar}
+                        <div className="row">
+                            <div className="col col-sm-1">
+                                <Navbar selected="courses" />
+                            </ div>
+                            <div className="col col-sm-2">
+                                <SideNav
+                                    defaultSelectedPath="1"
+                                    theme={themeCourse}
+                                    onItemSelection={this.onItemSelection}
+                                >
+                                    <Nav id="1"><Link to="/courseHome">Enrolled Courses</Link></Nav>
+                                    <Nav id="2"><Link to="/courseSearch">Search Courses</Link></Nav>
+                                    <Nav id="3"><Link to="/courseEnroll">Enroll Course</Link></Nav>
+                                </SideNav>
+                            </div>
+                            <div className="col col-lg-8">
+                                <div className="row">
+                                    <div className="col">
+                                        <br />
+                                        <Heading theme={{ borderPadding: "1rem" }} border="bottom">Faculty Courses</ Heading>
+                                    </ div>
+                                </ div>
+                                <div className="row">
+                                    {this.state.courseComponent}
+                                </ div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            } else {
+                return (<div><Redirect to="/login" /></div>);
+            }
         } else {
             return (<div><Redirect to="/login" /></div>);
         }

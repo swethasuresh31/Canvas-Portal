@@ -93,13 +93,14 @@ export default class SearchCourse extends Component {
     }
 
     componentDidMount() {
-        axios.get('http://localhost:3001/searchcourse')
+        axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
+        axios.get('http://localhost:3001/coursemetadata')
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)
                     this.setState({
-                        courseTerm: response.data[0],
-                        courseDepartment: response.data[1]
+                        courseTerm: response.data.terms,
+                        courseDepartment: response.data.departments
                     })
             })
 
@@ -122,6 +123,7 @@ export default class SearchCourse extends Component {
         console.log(this.state.searchOperand);
         this.setState({ errorMsg: '' })
         //retrieves the courses based on information entered
+        axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
         axios.get('http://localhost:3001/course?term=' + this.state.term + '&name=' + this.state.courseName + '&department=' +
             this.state.department + '&courseId=' + this.state.courseId + '&operator=' + this.state.searchOperand)
             .then((response) => {
@@ -163,7 +165,7 @@ export default class SearchCourse extends Component {
                                                 {
                                                     this.state.courseTerm.map(term => {
                                                         return (
-                                                            <option value={term.course_term}>{term.course_term}</option>
+                                                            <option value={term}>{term}</option>
                                                         )
                                                     })
                                                 }
@@ -178,7 +180,7 @@ export default class SearchCourse extends Component {
                                                 {
                                                     this.state.courseDepartment.map(department => {
                                                         return (
-                                                            <option value={department.course_dept_code}>{department.course_dept_code}</option>
+                                                            <option value={department}>{department}</option>
                                                         )
                                                     })
                                                 }

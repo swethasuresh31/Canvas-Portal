@@ -14,7 +14,7 @@ export default class CreateCourse extends Component {
         super(props);
         // Don't call this.setState() here!
         this.state = {
-            courseInstructor: '',
+            courseInstructor: localStorage.name,
             courseDeptCode: '',
             courseId: '',
             courseName: '',
@@ -148,16 +148,16 @@ export default class CreateCourse extends Component {
     }
 
     componentWillMount() {
-        var user = '';
-        if (cookie.load('cookieF')) {
-            user = cookies.get('cookieF')
-            axios.get('http://localhost:3001/user/id/' + encodeURI(user))
-                .then((response) => {
-                    console.log(response);
-                    if (response !== undefined)
-                        this.setState({ courseInstructor: response.data[0].name })
-                })
-        }
+        // var user = '';
+        // if (cookie.load('cookieF')) {
+        //     user = cookies.get('cookieF')
+        //     axios.get('http://localhost:3001/user/id/' + encodeURI(user))
+        //         .then((response) => {
+        //             console.log(response);
+        //             if (response !== undefined)
+        //                 this.setState({ courseInstructor: response.data[0].name })
+        //         })
+        // }
     }
 
     validate = () => {
@@ -227,8 +227,8 @@ export default class CreateCourse extends Component {
 
         this.setState({ errorMsg: '' })
 
-        if (cookie.load('cookieF')) {
-           var user = cookies.get('cookieF')
+        if (localStorage.role === 'faculty') {
+           var user = localStorage.user;
             const courseData = {
                 user: user,
                 courseInstructor: this.state.courseInstructor,
@@ -245,9 +245,10 @@ export default class CreateCourse extends Component {
                 courseDayAndTime: this.state.courseDayAndTime
 
             }
-
+            
             //post information into the course table
-            axios.post('http://localhost:3001/UserCourse/course', courseData)
+            axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
+            axios.post('http://localhost:3001/usercourse/course', courseData)
                 .then(response => {
                     console.log("Status Code : ", response.status);
                     if (response.status === 200) {
