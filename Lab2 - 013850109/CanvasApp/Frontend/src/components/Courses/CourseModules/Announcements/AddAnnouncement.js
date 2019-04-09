@@ -28,11 +28,12 @@ export default class AddAnnouncement extends Component {
     }
 
     componentWillMount() {
+        axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
         axios.get('http://localhost:3001/course/' + this.props.match.params.courseUid)
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)
-                    this.setState({ courseDet: response.data[0] })
+                    this.setState({ courseDet: response.data})
             })
     }
 
@@ -81,6 +82,7 @@ export default class AddAnnouncement extends Component {
         }
         let announcementsPage = "/coursedetails/" + this.props.match.params.courseUid + "/announcements";
         //retrieves the courses based on information entered
+        axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
         axios.post('http://localhost:3001/announcement/' + this.props.match.params.courseUid, data)
             .then((response) => {
                 console.log(response);
@@ -96,10 +98,10 @@ export default class AddAnnouncement extends Component {
 
 
     render() {
-        let homePath = "/coursedetails/" + this.state.courseDet.course_uid + "/home";
-        let path1 = "/coursedetails/" + this.state.courseDet.course_uid + "/announcements";
+        let homePath = "/coursedetails/" + this.state.courseDet._id + "/home";
+        let path1 = "/coursedetails/" + this.state.courseDet._id + "/announcements";
         let courseName = this.state.courseDet.course_term + ': ' + this.state.courseDet.course_dept_code + ' - ' + this.state.courseDet.course_id + ' - ' + this.state.courseDet.course_name
-        if (cookie.load('cookieF')) {
+        if (localStorage.role === 'faculty') {
             return (
                 <div className="container-fluid md-0 p-0">
                     {this.state.redirectVar}
@@ -152,7 +154,7 @@ export default class AddAnnouncement extends Component {
                 </div>
             );
         }
-        else if (cookie.load('cookieS')) {
+        else if (localStorage.role === 'student') {
             let announcementsPage = "/coursedetails/" + this.props.match.params.courseUid + "/announcements";
             return (<div><Redirect to={announcementsPage} /></div>);
         } else {

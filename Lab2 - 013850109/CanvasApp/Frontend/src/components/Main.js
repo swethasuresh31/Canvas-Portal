@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
 import Login from './Login/Login';
 import Account from './Account/Account';
-import Courses from './Courses/Courses';
 import UserCourseHome from './Courses/CourseModules/Home/CourseHome';
 import UserCourseAnnouncements from './Courses/CourseModules/Announcements/UserCourseAnnouncements';
 import AddAnnouncement from './Courses/CourseModules/Announcements/AddAnnouncement';
@@ -42,7 +41,6 @@ class Main extends Component {
 
                 <Route path="/" exact component={Dashboard} />
                 <Route path="/account" exact component={Account} />
-                <Route path="/courses" exact component={Courses} />
                 <Route path="/coursehome" exact component={CourseHome} />
                 <Route path="/login" exact component={Login} />
                 <Route path="/signup" exact component={Signup} />

@@ -96,6 +96,7 @@ export default class SearchCourse extends Component {
     updateNameAndCourseId = () => {
         console.log('Calling : ' + this.state.term + ' ' + this.state.department + ' ' + this.state.courseId)
         if (this.state.term !== '' && this.state.department !== '' && this.state.courseId !== '') {
+            axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
             axios.get('http://localhost:3001/course?term=' + this.state.term + '&name=&department=' +
                 this.state.department + '&courseId=' + this.state.courseId + '&operator=' + this.state.searchOperand)
                 .then((response) => {
@@ -103,7 +104,7 @@ export default class SearchCourse extends Component {
                     if (response !== undefined && response.status === 200 && response.data.length !== 0) {
                         this.setState({
                             courseName: response.data[0].course_name,
-                            courseUid: response.data[0].course_uid
+                            courseUid: response.data[0]._id
                         })
                     } else {
                         this.setState({
@@ -126,13 +127,14 @@ export default class SearchCourse extends Component {
     }
 
     componentDidMount() {
-        axios.get('http://localhost:3001/searchcourse')
+        axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
+        axios.get('http://localhost:3001/coursemetadata')
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)
                     this.setState({
-                        courseTerm: response.data[0],
-                        courseDepartment: response.data[1]
+                        courseTerm: response.data.terms,
+                        courseDepartment: response.data.departments
                     })
             })
 
@@ -154,12 +156,13 @@ export default class SearchCourse extends Component {
         console.log("validated");
         console.log('adding')
         let data = {
-            userId: cookies.get('cookieS'),
             courseUid: this.state.courseUid,
             permissionNumber: this.state.permissionNumber
         }
+        console.log(data)
         //retrieves the courses based on information entered
-        axios.put('http://localhost:3001/usercourse', data)
+        axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
+        axios.post('http://localhost:3001/usercourse', data)
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)
@@ -174,7 +177,6 @@ export default class SearchCourse extends Component {
 
 
     render() {
-
         if (this.state.prefilled) {
             return (
                 <div id="wrapper" style={{ 'margin-left': 'auto', 'margin-right': 'auto', width: '100%', position: 'fixed' }}>
@@ -269,7 +271,7 @@ export default class SearchCourse extends Component {
                                                     {
                                                         this.state.courseTerm.map(term => {
                                                             return (
-                                                                <option value={term.course_term}>{term.course_term}</option>
+                                                                <option value={term}>{term}</option>
                                                             )
                                                         })
                                                     }
@@ -284,7 +286,7 @@ export default class SearchCourse extends Component {
                                                     {
                                                         this.state.courseDepartment.map(department => {
                                                             return (
-                                                                <option value={department.course_dept_code}>{department.course_dept_code}</option>
+                                                                <option value={department}>{department}</option>
                                                             )
                                                         })
                                                     }

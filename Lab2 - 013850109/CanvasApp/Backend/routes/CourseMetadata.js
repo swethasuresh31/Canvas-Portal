@@ -1,4 +1,4 @@
-//submit booking.js - Submit booking route module
+//Course Metadata module
 var express = require('express');
 var router = express.Router();
 //Passport authentication

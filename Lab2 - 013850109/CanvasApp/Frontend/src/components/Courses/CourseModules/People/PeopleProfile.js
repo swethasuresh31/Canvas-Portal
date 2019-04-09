@@ -42,43 +42,42 @@ export default class UserCoursePeople extends Component {
     }
 
     componentWillMount() {
-        axios.get('http://localhost:3001/user/id/' + this.props.match.params.user)
+        axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
+        axios.get('http://localhost:3001/account/' + this.props.match.params.user)
             .then((response) => {
                 console.log(response);
                 //update the state with the response data
-                response.data.map(data => {
                     this.setState({
-                        name: data.name,
-                        emailId: data.email_id,
-                        phoneNo: data.phone_number,
-                        aboutMe: data.about_me,
-                        city: data.city,
-                        country: data.country,
-                        company: data.company,
-                        school: data.school,
-                        hometown: data.hometown,
-                        languages: data.languages,
-                        gender: data.gender
+                        name: response.data.name,
+                        emailId: response.data.emailId,
+                        phoneNo: response.data.phoneNumber,
+                        aboutMe: response.data.aboutMe,
+                        city: response.data.city,
+                        country: response.data.country,
+                        company: response.data.company,
+                        school: response.data.school,
+                        hometown: response.data.hometown,
+                        languages: response.data.languages,
+                        gender: response.data.gender
                     })
-                })
             });
 
             axios.get('http://localhost:3001/course/' + this.props.match.params.courseUid)
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)
-                    this.setState({ course: response.data[0] })
+                    this.setState({ course: response.data })
             })
     }
 
     render() {
-        let homePath = "/coursedetails/" + this.state.course.course_uid + "/home";
+        let homePath = "/coursedetails/" + this.state.course._id + "/home";
         let courseName = this.state.course.course_term + ': ' + this.state.course.course_dept_code + ' - ' + this.state.course.course_id + ' - ' + this.state.course.course_name
-        let path1 = "/coursedetails/" + this.state.course.course_uid + "/people";
-        let profileImg = "http://localhost:3001/account/img/" + encodeURI(this.state.emailId)
+        let path1 = "/coursedetails/" + this.state.course._id + "/people";
+        let profileImg = "http://localhost:3001/img/" + encodeURI(this.state.emailId)
         console.log(this.state.people[0])
         let redirectVar = null;
-        if (cookie.load('cookieF') || cookie.load('cookieS')) {
+        if (localStorage.user && localStorage.user !== undefined) {
             return (
                 <div className="container-fluid md-0 p-0">
                     {redirectVar}

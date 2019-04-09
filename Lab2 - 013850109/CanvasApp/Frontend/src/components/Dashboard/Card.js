@@ -13,7 +13,7 @@ export default class Card extends Component {
   }
 
   render() {
-    let coursePath= (this.props.course.isWaitlist) ? '#' :"/coursedetails/"+this.props.course._id+"/home"
+    let coursePath= (this.props.course.isWaitlist) ? '#' :"/coursedetails/"+this.props.course.course_uid+"/home"
     let isWaitlist= (this.props.course.isWaitlist) ? "(waitlist)" : ""
 
     return (

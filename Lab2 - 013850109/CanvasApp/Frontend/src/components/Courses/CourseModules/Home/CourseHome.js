@@ -5,8 +5,10 @@ import cookie from 'react-cookies';
 import { Redirect } from 'react-router';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
 import styled from "styled-components";
-import axios from 'axios';
 import { Breadcrumb, BreadcrumbLink } from '@instructure/ui-breadcrumb'
+
+import { getCourseHome } from '../../../../js/actions/CourseHomeAction';
+import { connect } from 'react-redux';
 
 
 
@@ -29,7 +31,7 @@ const themeCourse = {
 };
 
 
-export default class CourseHome extends Component {
+class CourseHome extends Component {
 
     constructor(props) {
         super(props);
@@ -39,20 +41,22 @@ export default class CourseHome extends Component {
         };
     }
 
-    componentWillMount() {
-        axios.get('http://localhost:3001/course/' + this.props.match.params.courseUid)
-            .then((response) => {
-                console.log(response);
-                if (response !== undefined)
-                    this.setState({ course: response.data[0] })
-            })
+    async componentWillMount() {
+        await this.props.getCourseHome(this.props.match.params.courseUid);
+        console.log("course: " + this.props.courseHomeStateStore.result.data)   
+        const result = this.props.courseHomeStateStore.result.data;
+        this.setState({
+            course: result
+        })
+        console.log("course home: "+this.state.course);
+        
     }
 
     render() {
-        let homePath = "/coursedetails/" + this.state.course.course_uid + "/home";
+        let homePath = "/coursedetails/" + this.state.course._id + "/home";
         let courseName = this.state.course.course_term + ': ' + this.state.course.course_dept_code + ' - ' + this.state.course.course_id + ' - ' + this.state.course.course_name
         console.log(courseName)
-        if (cookie.load('cookieF') || cookie.load('cookieS')) {
+        if (localStorage.userToken && localStorage.userToken !== "undefined") {
             return (
                 <div className="container-fluid md-0 p-0">
                     <div className="row">
@@ -105,3 +109,15 @@ export default class CourseHome extends Component {
 
     }
 }
+const mapStateToProps = state => {
+    console.log(JSON.stringify(state))
+    return {
+      courseHomeStateStore: state.courseHome,
+      courseStateStore: state.course,
+      profileStateStore: state.profile,
+      loginStateStore: state.login
+    }
+  }
+  
+  //export default Profile;
+  export default connect(mapStateToProps, { getCourseHome })(CourseHome);

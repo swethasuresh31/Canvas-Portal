@@ -10,7 +10,11 @@ mongoose.Promise = global.Promise;
 const userListSchema = new Schema({
     emailId: {
         type: String,
-        unique: true
+        unique: true,
+        sparse: true,
+    },
+    name: {
+        type: String
     }
 });
 userListSchema.plugin(autoIncrement.plugin, 'enrolled');
@@ -18,12 +22,110 @@ userListSchema.plugin(autoIncrement.plugin, 'enrolled');
 const permissionSchema = new Schema({
     permissionCode: {
         type: Number,
-        unique: true
+        unique: true,
+        sparse: true,
     },
     isUsed: {
         type: Boolean,
     }
 });
+
+const announcementSchema = new Schema({
+    header: {
+        type: String,
+        required: true,
+    },
+    body: {
+        type: String,
+        required: true,
+    },
+    timestamp: {
+        type: Date,
+        default: Date.now
+    },
+    created_by: {
+        type: String,
+        required: true,
+    },
+});
+
+const quizSchema = new Schema({
+    question_number: {
+        type: Number,
+        required: true,
+    },
+    question: {
+        type: String,
+        required: true,
+    },
+    first_option: {
+        type: String,
+        required: true,
+    },
+    second_option: {
+        type: String,
+        required: true,
+    },
+    third_option: {
+        type: String,
+        required: true,
+    },
+    fourth_option: {
+        type: String,
+        required: true,
+    },
+    answer: {
+        type: String,
+        required: true,
+    },
+})
+
+const courseworkSchema = new Schema({
+    name: {
+        type: String,
+        required: true,
+        unique: true,
+        sparse:true,
+    },
+    due_date: {
+        type: Date,
+        required: true,
+    },
+    total_points: {
+        type: Number,
+        required: true,
+    },
+    instructions: {
+        type: String,
+    },
+    questions: {
+        type: [quizSchema],
+        default: [],
+    }
+});
+
+const userCourseworkSchema = new Schema({
+    coursework_uid:{
+        type: String,
+    },
+    name: {
+        type: String,
+        required: true,
+    },
+    due_date: {
+        type: Date,
+        required: true,
+    },
+    total_points: {
+        type: Number,
+        required: true,
+    },
+    score:
+    {
+        type: Number
+    },
+});
+
 
 const CourseSchema = new Schema({
     course_id: {
@@ -59,9 +161,12 @@ const CourseSchema = new Schema({
     total_enrollment: {
         type: Number,
         required: true,
-        default:0
+        default: 0
     },
-    enrolled: [userListSchema],
+    enrolled: {
+        type: [userListSchema],
+        default: [],
+    },
     waitlist_capacity: {
         type: Number,
         required: true,
@@ -69,10 +174,16 @@ const CourseSchema = new Schema({
     total_waitlist: {
         type: Number,
         required: true,
-        default:0
+        default: 0
     },
-    waitlisted: [userListSchema],
-    permissionCodes: [permissionSchema],
+    waitlisted: {
+        type: [userListSchema],
+        default: [],
+    },
+    permissionCodes: {
+        type: [permissionSchema],
+        default: [],
+    },
     course_dayandtime: {
         type: String
     },
@@ -80,19 +191,22 @@ const CourseSchema = new Schema({
         type: String
     },
     course_syllabus: {
-        type: String 
+        type: String
     },
     created_by: {
         type: String
     },
-    assignments: {
-        type: Array
-    },
     quizzes: {
-        type: Array
+        type: [courseworkSchema],
+        default: [],
+    },
+    assignments: {
+        type: [courseworkSchema],
+        default: [],
     },
     announcements: {
-        type: Array
+        type: [announcementSchema],
+        default: [],
     }
 })
 
@@ -145,27 +259,10 @@ const userCourseSchema = new Schema({
     total_waitlist: {
         type: Number
     },
-
-    assignment_submissions: new Schema({ 
-        name: 
-        {
-            type: String
-        }, 
-        timestamp: 
-        {
-            type: Date,
-            default: Date.now
-         },
-         score: 
-         {
-             type: Number
-        }, 
-        max_score: 
-        { 
-            type: Number 
-        }
-    })
-
+    coursework_submissions: {
+        type: [userCourseworkSchema],
+        default: [],
+    }
 })
 
 const userCourseModel = mongoose.model('usercourse', userCourseSchema);
@@ -219,7 +316,10 @@ const UserSchema = new Schema({
         data: Buffer,
         contentType: String
     },
-    course: [userCourseSchema]
+    course: {
+        type: [userCourseSchema],
+        default: [],
+    },
 })
 
 UserSchema.index({ emailId: 1 }, { name: 'user_email_pkey', unique: true })

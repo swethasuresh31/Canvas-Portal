@@ -14,6 +14,8 @@ function handle_request(message, callback){
         else {
             console.log('UserModel', user);
 
+            var com = 'company'
+
             Model.UserModel.update({_id:user._id}, {$set: {
                 emailId: message.body.emailId,
                 name: message.body.name,
@@ -21,7 +23,7 @@ function handle_request(message, callback){
                 aboutMe:message.body.aboutMe,
                 city: message.body.city,
                 country: message.body.country,
-                company: message.body.company,
+                [com]: message.body.company,
                 school: message.body.school,
                 hometown: message.body.hometown,
                 languages: message.body.languages,

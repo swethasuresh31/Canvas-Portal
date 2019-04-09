@@ -248,7 +248,7 @@ export default class CreateCourse extends Component {
             
             //post information into the course table
             axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
-            axios.post('http://localhost:3001/usercourse/course', courseData)
+            axios.post('http://localhost:3001/course', courseData)
                 .then(response => {
                     console.log("Status Code : ", response.status);
                     if (response.status === 200) {

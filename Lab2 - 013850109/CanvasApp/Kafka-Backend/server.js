@@ -9,6 +9,14 @@ var CreateCourse = require('./services/CreateCourse');
 var Permission = require('./services/Permission');
 var CourseMetadata = require('./services/CourseMetadata');
 var Course = require('./services/Course');
+var AddCourse = require('./services/AddCourse');
+var DropCourse = require('./services/DropCourse');
+var CourseHome = require('./services/CourseHome');
+var GetCourseAnnouncements = require('./services/GetCourseAnnouncements');
+var GetCourseAnnouncement = require('./services/GetCourseAnnouncement');
+var AddCourseAnnouncement = require('./services/AddCourseAnnouncement');
+var AddCourseQuiz = require('./services/AddCourseQuiz');
+var UpdateQuizScore = require('./services/UpdateQuizScore');
 
 function handleTopicRequest(topic_name, function_name){
 
@@ -50,3 +58,11 @@ handleTopicRequest("create-course", CreateCourse);
 handleTopicRequest("permission", Permission);
 handleTopicRequest("course-metadata", CourseMetadata);
 handleTopicRequest("course", Course);
+handleTopicRequest("course-home", CourseHome);
+handleTopicRequest("add-course", AddCourse);
+handleTopicRequest("drop-course", DropCourse);
+handleTopicRequest("get-announcements", GetCourseAnnouncements);
+handleTopicRequest("get-announcement", GetCourseAnnouncement);
+handleTopicRequest("add-announcement", AddCourseAnnouncement);
+handleTopicRequest("add-quiz", AddCourseQuiz);
+handleTopicRequest("update-quizscore", UpdateQuizScore);

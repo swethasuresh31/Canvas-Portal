@@ -11,6 +11,9 @@ import { Avatar, Text, Table } from '@instructure/ui-elements'
 import { Link } from 'react-router-dom';
 import { IconXLine } from '@instructure/ui-icons';
 
+import { getCourseHome } from '../../../../js/actions/CourseHomeAction';
+import { connect } from 'react-redux';
+
 
 
 
@@ -32,13 +35,15 @@ const themeCourse = {
 };
 
 
-export default class UserCoursePeople extends Component {
+class UserCoursePeople extends Component {
 
     constructor(props) {
         super(props);
         // Don't call this.setState() here!
         this.state = {
             people: [],
+            enrolled: [],
+            waitlisted: [],
             course: ''
         };
         this.onDrop = this.onDrop.bind(this);
@@ -48,43 +53,53 @@ export default class UserCoursePeople extends Component {
     onDrop(user, courseUid, enrollmentStatus) {
         this.setState({ errorMsg: '' })
         //drops the courses based on information entered
+        axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
         axios.delete('http://localhost:3001/usercourse?user=' + encodeURI(user) + '&courseUid=' + courseUid + '&status=' + enrollmentStatus)
             .then((response) => {
                 console.log(response);
                 if (response !== undefined && response.status === 200) {
-                    let index = this.state.people.findIndex(row => row.email_id === user)
-                    console.log(index)
-                    var newPeople = [...this.state.people]
-                    newPeople.splice(index, 1);
-                    console.log(newPeople)
-                    this.setState({ people: newPeople });
+                    if(enrollmentStatus === 'Waitlist') {
+                        let index = this.state.waitlisted.findIndex(row => row.emailId === user)
+                        console.log(index)
+                        var newPeople = [...this.state.waitlisted]
+                        newPeople.splice(index, 1);
+                        console.log(newPeople)
+                        this.setState({ waitlisted: newPeople });
+                    } else {
+                        let index = this.state.enrolled.findIndex(row => row.emailId === user)
+                        console.log(index)
+                        var newPeople = [...this.state.enrolled]
+                        newPeople.splice(index, 1);
+                        console.log(newPeople)
+                        this.setState({ enrolled: newPeople });
+                    }
+                    
                 }
 
             })
 
     }
 
-    componentWillMount() {
-        axios.get('http://localhost:3001/user/course/' + this.props.match.params.courseUid)
-            .then((response) => {
-                console.log(response);
-                if (response !== undefined)
-                    this.setState({ people: response.data })
-            })
-        axios.get('http://localhost:3001/course/' + this.props.match.params.courseUid)
-            .then((response) => {
-                console.log(response);
-                if (response !== undefined)
-                    this.setState({ course: response.data[0] })
-            })
+    async componentWillMount() {
+        await this.props.getCourseHome(this.props.match.params.courseUid);
+        console.log("course: " + this.props.courseHomeStateStore.result.data)   
+        const result = this.props.courseHomeStateStore.result.data;
+        this.setState({
+            course: result,
+            enrolled: result.enrolled,
+            waitlisted: result.waitlisted
+                }, console.log("course: "+this.state))
+        
+        
     }
 
+
     render() {
-        console.log(this.state.people[0])
-        let homePath = "/coursedetails/" + this.state.course.course_uid + "/home";
+        let homePath = "/coursedetails/" + this.state.course._id + "/home";
         let courseName = this.state.course.course_term + ': ' + this.state.course.course_dept_code + ' - ' + this.state.course.course_id + ' - ' + this.state.course.course_name
+        console.log(this.state.course);
         let redirectVar = null;
-        if (cookie.load('cookieF')) {
+        if (localStorage.role === 'faculty') {
             return (
                 <div className="container-fluid md-0 p-0">
                     {redirectVar}
@@ -121,18 +136,35 @@ export default class UserCoursePeople extends Component {
                                         </thead>
                                         <tbody>
                                             {
-                                                this.state.people.map(person => {
-                                                    let personProfileLink = "/coursedetails/" + this.props.match.params.courseUid + "/people/" + encodeURI(person.email_id)
-                                                    let profileImg = "http://localhost:3001/account/img/" + encodeURI(person.email_id)
-                                                    let enrollmentStatus = (person.isWaitlist !== 0) ? "Waitlist" : "Enrolled";
+                                                this.state.enrolled.map(person => {
+                                                    let personProfileLink = "/coursedetails/" + this.props.match.params.courseUid + "/people/" + encodeURI(person.emailId)
+                                                    let profileImg = "http://localhost:3001/img/" + encodeURI(person.emailId)
+                                                    let enrollmentStatus = "Enrolled";
                                                     return (
                                                         <tr>
                                                             <td> <Avatar src={profileImg} name={person.name} size="snall" /></td>
                                                             <td><Link to={personProfileLink}>{person.name}</Link></td>
-                                                            <td> {person.course_term}: {person.course_dept_code}-{person.course_id}</td>
+                                                            <td> {this.state.course.course_term}: {this.state.course.course_dept_code}-{this.state.course.course_id}</td>
                                                             <td>Student</td>
                                                             <td>{enrollmentStatus}</td>
-                                                            <td><button type="button" class="btn btn-danger mx-2" onClick={() => this.onDrop(person.email_id, person.course_uid, enrollmentStatus)}><IconXLine /> Remove</button></td>
+                                                            <td><button type="button" class="btn btn-danger mx-2" onClick={() => this.onDrop(person.emailId, this.state.course._id, enrollmentStatus)}><IconXLine /> Remove</button></td>
+                                                        </tr>
+                                                    )
+                                                })
+                                            }
+                                            {
+                                                this.state.waitlisted.map(person => {
+                                                    let personProfileLink = "/coursedetails/" + this.props.match.params.courseUid + "/people/" + encodeURI(person.emailId)
+                                                    let profileImg = "http://localhost:3001/img/" + encodeURI(person.emailId)
+                                                    let enrollmentStatus = "Waitlist";
+                                                    return (
+                                                        <tr>
+                                                            <td> <Avatar src={profileImg} name={person.name} size="snall" /></td>
+                                                            <td><Link to={personProfileLink}>{person.name}</Link></td>
+                                                            <td> {this.state.course.course_term}: {this.state.course.course_dept_code}-{this.state.course.course_id}</td>
+                                                            <td>Student</td>
+                                                            <td>{enrollmentStatus}</td>
+                                                            <td><button type="button" class="btn btn-danger mx-2" onClick={() => this.onDrop(person.emailId, this.state.course._id, enrollmentStatus)}><IconXLine /> Remove</button></td>
                                                         </tr>
                                                     )
                                                 })
@@ -146,7 +178,7 @@ export default class UserCoursePeople extends Component {
                     </div>
                 </div>
             );
-        } else if (cookie.load('cookieS')) {
+        } else if (localStorage.role === 'student') {
             return (
                 <div className="container-fluid md-0 p-0">
                     {redirectVar}
@@ -181,14 +213,28 @@ export default class UserCoursePeople extends Component {
                                         </thead>
                                         <tbody>
                                             {
-                                                this.state.people.map(person => {
-                                                    let personProfileLink = "/coursedetails/" + this.props.match.params.courseUid + "/people/" + encodeURI(person.email_id)
-                                                    let profileImg = "http://localhost:3001/account/img/" + encodeURI(person.email_id)
+                                                this.state.enrolled.map(person => {
+                                                    let personProfileLink = "/coursedetails/" + this.props.match.params.courseUid + "/people/" + encodeURI(person.emailId)
+                                                    let profileImg = "http://localhost:3001/img/" + encodeURI(person.emailId)
                                                     return (
                                                         <tr>
                                                             <td> <Avatar src={profileImg} name={person.name} size="snall" /></td>
                                                             <td><Link to={personProfileLink}>{person.name}</Link></td>
-                                                            <td> {person.course_term}: {person.course_dept_code}-{person.course_id}</td>
+                                                            <td> {this.state.course.course_term}: {this.state.course.course_dept_code}-{this.state.course.course_id}</td>
+                                                            <td>Student</td>
+                                                        </tr>
+                                                    )
+                                                })
+                                            }
+                                            {
+                                                this.state.waitlisted.map(person => {
+                                                    let personProfileLink = "/coursedetails/" + this.props.match.params.courseUid + "/people/" + encodeURI(person.emailId)
+                                                    let profileImg = "http://localhost:3001/img/" + encodeURI(person.emailId)
+                                                    return (
+                                                        <tr>
+                                                            <td> <Avatar src={profileImg} name={person.name} size="snall" /></td>
+                                                            <td><Link to={personProfileLink}>{person.name}</Link></td>
+                                                            <td> {this.state.course.course_term}: {this.state.course.course_dept_code}-{this.state.course.course_id}</td>
                                                             <td>Student</td>
                                                         </tr>
                                                     )
@@ -210,3 +256,15 @@ export default class UserCoursePeople extends Component {
 
     }
 }
+const mapStateToProps = state => {
+    console.log(JSON.stringify(state))
+    return {
+      courseHomeStateStore: state.courseHome,
+      courseStateStore: state.course,
+      profileStateStore: state.profile,
+      loginStateStore: state.login
+    }
+  }
+  
+  //export default Profile;
+  export default connect(mapStateToProps, { getCourseHome })(UserCoursePeople);

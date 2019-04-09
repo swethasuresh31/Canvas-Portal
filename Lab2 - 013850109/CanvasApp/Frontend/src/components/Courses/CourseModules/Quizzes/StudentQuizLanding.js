@@ -7,10 +7,12 @@ import { Redirect } from 'react-router-dom'
 import { Link } from 'react-router-dom';
 import { IconQuizLine } from '@instructure/ui-icons'
 
+import { getCourseHome } from '../../../../js/actions/CourseHomeAction';
+import { connect } from 'react-redux';
 
 const cookies = new Cookies();
 
-export default class StudentQuizLanding extends Component {
+class StudentQuizLanding extends Component {
 
     constructor(props) {
         super(props);
@@ -21,13 +23,13 @@ export default class StudentQuizLanding extends Component {
         };
     }
 
-    componentWillMount() {
-        axios.get('http://localhost:3001/quiz/' + this.props.parentProps.match.params.courseUid)
-            .then((response) => {
-                console.log(response);
-                if (response !== undefined)
-                    this.setState({ quizzes: response.data })
-            })
+    async componentWillMount() {
+        await this.props.getCourseHome(this.props.parentProps.match.params.courseUid);
+        console.log("course: " + this.props.courseHomeStateStore.result.data)   
+        const result = this.props.courseHomeStateStore.result.data;
+        this.setState({
+            quizzes: result.quizzes
+        },console.log("quizzes "+this.state.quizzes));
     }
 
     takeQuiz = (courseworkUid, e) => {
@@ -46,18 +48,18 @@ export default class StudentQuizLanding extends Component {
                         <div class="list-group">
                             {
                                 this.state.quizzes.map(quiz => {
-                                    let takeQuizPath = "/coursedetails/" + this.props.parentProps.match.params.courseUid + "/quizzes/"+quiz.coursework_uid
+                                    let takeQuizPath = "/coursedetails/" + this.props.parentProps.match.params.courseUid + "/quizzes/"+quiz._id
                                     return (
-                                        <button type="button" class="list-group-item list-group-item-action" onClick={(e)=>this.takeQuiz(quiz.coursework_uid, e)}>
+                                        <button type="button" class="list-group-item list-group-item-action" onClick={(e)=>this.takeQuiz(quiz._id, e)}>
                                             <div class="row">
                                                 <div class="col-sm-1 align-self-center" style={{ width: "50px", maxWidth: "50px" }}><IconQuizLine /></div>
                                                 <div class="col">
                                                     <div class="row">
-                                                        <p class="font-weight-bold m-0">{quiz.coursework_name}</p>
+                                                        <p class="font-weight-bold m-0">{quiz.name}</p>
                                                     </div>
                                                     <div class="row">
                                                         <p class="font-weight-normal m-0 small">Due&nbsp;</p>
-                                                        <p class="font-weight-light m-0 small">{quiz.due_date}&nbsp;&nbsp;|&nbsp;&nbsp;</p>
+                                                        <p class="font-weight-light m-0 small">{new Date(quiz.due_date).toISOString().slice(0, 19).replace('T', ' ')}&nbsp;&nbsp;|&nbsp;&nbsp;</p>
                                                         <p class="font-weight-light m-0 small">{quiz.total_points} pts&nbsp;&nbsp;|&nbsp;</p>
                                                         <p class="font-weight-light m-0 small">{quiz.total_points} questions</p>
                                                     </div>
@@ -74,3 +76,15 @@ export default class StudentQuizLanding extends Component {
         );
     }
 }
+const mapStateToProps = state => {
+    console.log(JSON.stringify(state))
+    return {
+      courseHomeStateStore: state.courseHome,
+      courseStateStore: state.course,
+      profileStateStore: state.profile,
+      loginStateStore: state.login
+    }
+  }
+  
+  //export default Profile;
+  export default connect(mapStateToProps, { getCourseHome })(StudentQuizLanding);
