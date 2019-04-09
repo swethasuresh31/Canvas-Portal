@@ -1,4 +1,4 @@
-//submit booking.js - Submit booking route module
+//Announcement Module
 var express = require('express');
 var router = express.Router();
 //Passport authentication
@@ -9,22 +9,22 @@ var requireAuth = passport.authenticate('jwt', { session: false });
 //Kafka
 var kafka = require('../kafka/client');
 
-//owner dashboard details
+//Announcement Details
 
-router.get('/', requireAuth, function (req, res) {
-
-    console.log('Inside Course Search!');
-    if (req.user.role === 'student') {
-        kafka.make_request("course", req, function (err, result) {
+router.get('/:course_uid', requireAuth, function (req, res) {
+    
+    console.log("Inside Getting announcements for course Backend: " + req.params.course_uid)
+    if (req.user.role === 'student' || req.user.role === 'faculty') {
+        kafka.make_request("get-announcements", req, function (err, result) {
             if (err) {
-                console.log("Error in course search", err);
+                console.log("Error in getting announcements", err);
                 res.writeHead(400, {
                     'Content-type': 'text/plain'
                 });
-                res.end('Error in course search');
+                res.end('Error in getting announcements');
             }
             else {
-                console.log('Course Search Results: ', JSON.stringify(result));
+                console.log('Course Announcements Results: ', JSON.stringify(result));
                 res.writeHead(200, {
                     'Content-type': 'application/json'
                 });
@@ -37,44 +37,45 @@ router.get('/', requireAuth, function (req, res) {
         res.writeHead(400, {
             'Content-type': 'text/plain'
         });
-        res.end('Page is only accesible for student');
+        res.end('Page is only accesible for student or faculty');
     }
 });
 
-router.post('/',requireAuth, function (req, res) {
-    console.log("Inside create course handler");
 
-    kafka.make_request("create-course", req, function (err, result) {
+
+router.post('/:course_uid',requireAuth, function (req, res) {
+    console.log("Inside create announcement handler");
+
+    kafka.make_request("add-announcement", req, function (err, result) {
         if (result) {
-            console.log("Course saved successfully.");
-            res.end('Course saved successfully.');
+            console.log("announcement saved successfully.");
+            res.end('announcement saved successfully.');
         }
 
         if (err) {
-            console.log("Unable to create the course.", err);
-            res.end('Unable to create the course.');
+            console.log("Unable to create the announcement.", err);
+            res.end('Unable to create the announcement.');
         }
     });
 });
 
-router.get('/:course_uid', requireAuth, function (req, res) {
-    console.log("Inside course home handler");
+router.get('/:course_uid/id/:announcement_uid', requireAuth, function (req, res) {
+    console.log("Inside Getting announcements for announcement id Backend");
 
     if (req.user.role === 'student' || req.user.role === 'faculty') {
-        kafka.make_request("course-home", req, function (err, result) {
+        kafka.make_request("get-announcement", req, function (err, result) {
             if (err) {
-                console.log("Error in course home", err);
+                console.log("Error in getting announcement", err);
                 res.writeHead(400, {
                     'Content-type': 'text/plain'
                 });
-                res.end('Error in course home');
+                res.end('Error in getting announcement');
             }
             else {
-                console.log('Course Home Results: ', JSON.stringify(result));
+                console.log('Course Announcement Result: ', JSON.stringify(result));
                 res.writeHead(200, {
                     'Content-type': 'application/json'
                 });
-                
                 if(result === null) result = []
                 res.end(JSON.stringify(result));
             }

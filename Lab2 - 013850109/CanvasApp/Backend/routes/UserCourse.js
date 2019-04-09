@@ -1,4 +1,4 @@
-//submit booking.js - Submit booking route module
+//User Course Module
 var express = require('express');
 var router = express.Router();
 //Passport authentication
@@ -40,18 +40,42 @@ router.get('/:user', requireAuth, function (req, res) {
     }
 });
 
-router.post('/course',requireAuth, function (req, res) {
+router.post('/', requireAuth, function (req, res) {
     console.log("Inside create course handler");
 
-    kafka.make_request("create-course", req, function (err, result) {
+    kafka.make_request("add-course", req, function (err, result) {
         if (result) {
-            console.log("Course saved successfully.");
-            res.end('Course saved successfully.');
+            if (result.updateStatus === "Success") {
+                console.log("Course added successfully.");
+                res.end("Success");
+            } else {
+                res.status(500).send("Internal Server Error")
+            }
         }
 
         if (err) {
-            console.log("Unable to create the course.", err);
-            res.end('Unable to create the course.');
+            console.log("Unable to add the course.", err);
+            res.end('Unable to add the course.');
+        }
+    });
+});
+
+router.delete('/', requireAuth, function (req, res) {
+    console.log("Inside drop course handler");
+
+    kafka.make_request("drop-course", req, function (err, result) {
+        if (result) {
+            if (result.updateStatus === "Success") {
+                console.log("Course dropped successfully.");
+                res.end("Success");
+            } else {
+                res.status(500).send("Internal Server Error")
+            }
+        }
+
+        if (err) {
+            console.log("Unable to drop the course.", err);
+            res.end('Unable to drop the course.');
         }
     });
 });

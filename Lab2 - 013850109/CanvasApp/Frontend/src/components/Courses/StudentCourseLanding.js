@@ -27,12 +27,13 @@ export default class StudentCourseLanding extends Component {
 
     onDrop(courseUid, enrollmentStatus) {
         console.log("validated");
-        console.log(this.state.searchOperand);
         this.setState({ errorMsg: '' })
         //drops the courses based on information entered
-        axios.delete('http://localhost:3001/usercourse?user=' + encodeURI(this.state.user) + '&courseUid=' + courseUid + '&status=' + enrollmentStatus)
+        console.log("Course_UID:" + courseUid + "Status:" + enrollmentStatus);
+        axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
+        axios.delete('http://localhost:3001/usercourse?courseUid=' + courseUid + '&status=' + enrollmentStatus + '&user=' + localStorage.user)
             .then((response) => {
-                console.log(response);
+                console.log("Response:" +response);
                 if (response !== undefined && response.status === 200)
                     this.props.removeCourseRow(courseUid)
             })

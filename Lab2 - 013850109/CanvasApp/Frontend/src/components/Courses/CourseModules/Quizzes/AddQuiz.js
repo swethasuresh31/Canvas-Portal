@@ -14,10 +14,13 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Button } from '@instructure/ui-buttons'
 import { Link } from 'react-router-dom';
 
+import { getCourseHome } from '../../../../js/actions/CourseHomeAction';
+import { connect } from 'react-redux';
+
 
 const cookies = new Cookies();
 
-export default class AddQuiz extends Component {
+class AddQuiz extends Component {
 
     constructor(props) {
         super(props);
@@ -161,23 +164,23 @@ export default class AddQuiz extends Component {
             })
     }
 
-    componentWillMount() {
-        axios.get('http://localhost:3001/course/' + this.props.match.params.courseUid)
-            .then((response) => {
-                console.log(response);
-                if (response !== undefined)
-                    this.setState({ course: response.data[0] })
-            })
+    async componentWillMount() {
+        await this.props.getCourseHome(this.props.match.params.courseUid);
+        console.log("course: " + this.props.courseHomeStateStore.result.data)   
+        const result = this.props.courseHomeStateStore.result.data;
+        this.setState({
+            course: result
+        })
     }
 
     render() {
-        let homePath = "/coursedetails/" + this.state.course.course_uid + "/home";
+        let homePath = "/coursedetails/" + this.state.course._id + "/home";
         let courseName = this.state.course.course_term + ': ' + this.state.course.course_dept_code + ' - ' + this.state.course.course_id + ' - ' + this.state.course.course_name
-        let path1 = "/coursedetails/" + this.state.course.course_uid + "/quizzes";
+        let path1 = "/coursedetails/" + this.state.course._id + "/quizzes";
 
         
         console.log(this.state.questions)
-        if (cookie.load('cookieF')) {
+        if (localStorage.role === 'faculty') {
             return (
                 <div className="container-fluid md-0 p-0">
                     {this.state.redirectVar}
@@ -307,11 +310,20 @@ export default class AddQuiz extends Component {
                 </div>
             );
         }
-        else if (cookie.load('cookieS')) {
-            let announcementsPage = "/coursedetails/" + this.props.match.params.courseUid + "/announcements";
-            return (<div><Redirect to={announcementsPage} /></div>);
-        } else {
+        else {
             return (<div><Redirect to="/login" /></div>);
         }
     }
 }
+const mapStateToProps = state => {
+    console.log(JSON.stringify(state))
+    return {
+      courseHomeStateStore: state.courseHome,
+      courseStateStore: state.course,
+      profileStateStore: state.profile,
+      loginStateStore: state.login
+    }
+  }
+  
+  //export default Profile;
+  export default connect(mapStateToProps, { getCourseHome })(AddQuiz);

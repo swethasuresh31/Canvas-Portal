@@ -14,10 +14,12 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Button } from '@instructure/ui-buttons';
 import { Link } from 'react-router-dom';
 
+import { getCourseHome } from '../../../../js/actions/CourseHomeAction';
+import { connect } from 'react-redux';
 
 const cookies = new Cookies();
 
-export default class TakeQuiz extends Component {
+class TakeQuiz extends Component {
 
     constructor(props) {
         super(props);
@@ -25,7 +27,7 @@ export default class TakeQuiz extends Component {
         this.state = {
             dueDate: new Date(),
             redirectVar: '',
-            quizInfo: '',
+            quizInfo: [],
             questions: [],
             answers: [],
             course: ''
@@ -38,28 +40,47 @@ export default class TakeQuiz extends Component {
         this.forceUpdate()
     }
 
-    componentWillMount() {
-        axios.get('http://localhost:3001/quiz/' + this.props.match.params.courseUid + '/' + this.props.match.params.quizUid)
-            .then((response) => {
-                console.log(response);
-                if (response !== undefined)
-                    this.setState({ quizInfo: response.data[0] })
-            })
-            .then(
-                axios.get('http://localhost:3001/quiz/' + this.props.match.params.courseUid + '/questions/' + this.props.match.params.quizUid)
-                    .then((response) => {
-                        console.log(response);
-                        if (response !== undefined)
-                            this.setState({ questions: response.data, answers: new Array(response.data.length) }, () => this.state.answers.fill(''));
-                    })
-            )
-            axios.get('http://localhost:3001/course/' + this.props.match.params.courseUid)
-            .then((response) => {
-                console.log(response);
-                if (response !== undefined)
-                    this.setState({ course: response.data[0] })
-            })
-    }
+    async componentWillMount() {
+        await this.props.getCourseHome(this.props.match.params.courseUid);
+        console.log("course: " + this.props.courseHomeStateStore.result.data)   
+        const result = this.props.courseHomeStateStore.result.data;
+        this.setState({
+            course: result
+        })
+        this.state.course.quizzes.map(quiz => {
+            if(quiz._id === this.props.match.params.quizUid){
+                this.setState({
+                    quizInfo: quiz,
+                    questions: quiz.questions,
+                    answers: new Array(quiz.questions.length) }, () => this.state.answers.fill(''));
+            }
+        })
+
+    }    
+
+    // componentWillMount() {
+
+    //     axios.get('http://localhost:3001/quiz/' + this.props.match.params.courseUid + '/' + this.props.match.params.quizUid)
+    //         .then((response) => {
+    //             console.log(response);
+    //             if (response !== undefined)
+    //                 this.setState({ quizInfo: response.data[0] })
+    //         })
+    //         .then(
+    //             axios.get('http://localhost:3001/quiz/' + this.props.match.params.courseUid + '/questions/' + this.props.match.params.quizUid)
+    //                 .then((response) => {
+    //                     console.log(response);
+    //                     if (response !== undefined)
+    //                         this.setState({ questions: response.data, answers: new Array(response.data.length) }, () => this.state.answers.fill(''));
+    //                 })
+    //         )
+    //         axios.get('http://localhost:3001/course/' + this.props.match.params.courseUid)
+    //         .then((response) => {
+    //             console.log(response);
+    //             if (response !== undefined)
+    //                 this.setState({ course: response.data[0] })
+    //         })
+    // }
 
     evaluatePoints = () => {
         let points = 0;
@@ -75,13 +96,13 @@ export default class TakeQuiz extends Component {
         e.preventDefault();
         let points = this.evaluatePoints();
         let data = {
-            user: cookies.get('cookieS'),
-            totalPoints: points
+            score: points,
+            name: this.state.quizInfo.name
         }
         console.log(data)
         let quizzesPage = "/coursedetails/" + this.props.match.params.courseUid + "/quizzes";
         //adds the quiz based on information entered
-        axios.post('http://localhost:3001/quiz/' + this.props.match.params.courseUid + '/' + this.state.quizInfo.coursework_uid, data)
+        axios.post('http://localhost:3001/quiz/' + this.props.match.params.courseUid + '/result'  , data)
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)
@@ -96,15 +117,15 @@ export default class TakeQuiz extends Component {
 
     render() {
         console.log(this.state.questions)
-        let homePath = "/coursedetails/" + this.state.course.course_uid + "/home";
+        let homePath = "/coursedetails/" + this.state.course._id + "/home";
         let courseName = this.state.course.course_term + ': ' + this.state.course.course_dept_code + ' - ' + this.state.course.course_id + ' - ' + this.state.course.course_name
-        let path1 = "/coursedetails/" + this.state.course.course_uid + "/quizzes";
+        let path1 = "/coursedetails/" + this.state.course._id + "/quizzes";
 
-        if (cookie.load('cookieF')) {
+        if (localStorage.role === 'faculty') {
             let announcementsPage = "/coursedetails/" + this.props.match.params.courseUid + "/quizzes";
             return (<div><Redirect to={announcementsPage} /></div>);
         }
-        else if (cookie.load('cookieS')) {
+        else if (localStorage.role === 'student') {
             return (
                 <div className="container-fluid md-0 p-0">
                     {this.state.redirectVar}
@@ -132,7 +153,7 @@ export default class TakeQuiz extends Component {
                                         <div class="col">
                                             <div class="row">
                                                 <div class="col">
-                                                    <br /><Heading theme={{ borderPadding: "1rem", h2FontWeight: "700" }} border="bottom">{this.state.quizInfo.coursework_name}</Heading>
+                                                    <br /><Heading theme={{ borderPadding: "1rem", h2FontWeight: "700" }} border="bottom">{this.state.quizInfo.name}</Heading>
                                                 </div>
                                             </div>
                                             <div class="row m-1 p-1" style={{ borderBottom: "1px solid #ccc" }}>
@@ -217,3 +238,15 @@ export default class TakeQuiz extends Component {
         }
     }
 }
+const mapStateToProps = state => {
+    console.log(JSON.stringify(state))
+    return {
+      courseHomeStateStore: state.courseHome,
+      courseStateStore: state.course,
+      profileStateStore: state.profile,
+      loginStateStore: state.login
+    }
+  }
+  
+  //export default Profile;
+  export default connect(mapStateToProps, { getCourseHome })(TakeQuiz);

@@ -44,27 +44,29 @@ export default class ShowAnnouncement extends Component {
     }
 
     componentWillMount() {
-        axios.get('http://localhost:3001/announcement/id/' + this.props.match.params.announcementUid)
+        axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
+    axios.get('http://localhost:3001/course/' + this.props.match.params.courseUid)
+        .then((response) => {
+            console.log(response);
+            if (response !== undefined)
+                this.setState({ course: response.data })
+        })
+        axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
+        axios.get('http://localhost:3001/announcement/'+ this.props.match.params.courseUid +'/id/' + this.props.match.params.announcementUid)
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)
                     this.setState({ announcement: response.data })
             })
-        axios.get('http://localhost:3001/course/' + this.props.match.params.courseUid)
-            .then((response) => {
-                console.log(response);
-                if (response !== undefined)
-                    this.setState({ course: response.data[0] })
-            })
     }
 
     render() {
         let redirectVar = null;
-        let homePath = "/coursedetails/" + this.state.course.course_uid + "/home";
-        let path1 = "/coursedetails/" + this.state.course.course_uid + "/announcements";
+        let homePath = "/coursedetails/" + this.state.course._id + "/home";
+        let path1 = "/coursedetails/" + this.state.course._id + "/announcements";
         let courseName = this.state.course.course_term + ': ' + this.state.course.course_dept_code + ' - ' + this.state.course.course_id + ' - ' + this.state.course.course_name
         
-        if (cookie.load('cookieF') || cookie.load('cookieS')) {
+        if (localStorage.user) {
             return (
                 <div className="container-fluid md-0 p-0">
                     {redirectVar}
@@ -99,7 +101,7 @@ export default class ShowAnnouncement extends Component {
                                                 <div class="col">
                                                     <div class="row"><h5 class="card-title">{this.state.announcement.header}</h5></div>
                                                     <div class="row">{this.state.announcement.created_by}</div>
-                                                    <div class="row">{this.state.announcement.announcement_TS}</div>
+                                                    <div class="row">{this.state.announcement.timestamp}</div>
                                                 </div>
                                             </div>
                                             <br />

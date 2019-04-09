@@ -22,13 +22,13 @@ let storage = multer.diskStorage({
 });
 let upload = multer({ storage });
 
-router.get('/', requireAuth, function (req, res) {
+router.get('/:emailId', requireAuth, function (req, res) {
 
     console.log("Inside account get handler");
-    console.log('Request Body:', req.user);
+    console.log('Request Body:', req);
 
 
-        kafka.make_request("account-details", req.user, function(err, result){
+        kafka.make_request("account-details", req, function(err, result){
             if(err){
                 console.log("Unable to fetch user account details.", err);
                 res.writeHead(400, {

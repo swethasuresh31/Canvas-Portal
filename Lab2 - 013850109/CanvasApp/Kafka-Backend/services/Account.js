@@ -4,7 +4,7 @@ function handle_request(message, callback){
     console.log('Inside Kafka Method get account details. Message ', message);
     console.log('Inside Kafka Method get account details. Message ', message.emailId);
     Model.UserModel.findOne({
-        'emailId': decodeURI(message.emailId)
+        'emailId': decodeURI(message.params.emailId)
         }, (err, user) => {
 
             if (err) {
