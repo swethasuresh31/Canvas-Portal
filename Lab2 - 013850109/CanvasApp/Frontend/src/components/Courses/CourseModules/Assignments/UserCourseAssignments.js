@@ -11,6 +11,9 @@ import Cookies from 'universal-cookie';
 import StudentAssignmentLanding from './StudentAssignmentLanding'
 import FacultyAssignmentLanding from './FacultyAssignmentLanding'
 
+import { getCourseHome } from '../../../../js/actions/CourseHomeAction';
+import { connect } from 'react-redux';
+
 import {
     AppContainer as BaseAppContainer,
     ExampleNavigation as Navigation,
@@ -31,31 +34,33 @@ const themeCourse = {
 
 const cookies = new Cookies();
 
-export default class UserCourseAssignments extends Component {
+class UserCourseAssignments extends Component {
 
     constructor(props) {
         super(props);
         // Don't call this.setState() here!
         this.state = {
-            people: [],
-            course: ''
+            course: '',
+            assignments: [],
         };
     }
 
-    componentWillMount() {
-        axios.get('http://localhost:3001/course/' + this.props.match.params.courseUid)
-            .then((response) => {
-                console.log(response);
-                if (response !== undefined)
-                    this.setState({ course: response.data[0] })
+    async componentWillMount() {
+        await this.props.getCourseHome(this.props.match.params.courseUid);
+            console.log("course: " + this.props.courseHomeStateStore.result.data)   
+            const result = this.props.courseHomeStateStore.result.data;
+            this.setState({
+                course: result,
+                assignments: result.assignments
             })
     }
 
+
     render() {
         let redirectVar = null;
-        let homePath = "/coursedetails/" + this.state.course.course_uid + "/home";
+        let homePath = "/coursedetails/" + this.state.course._id + "/home";
         let courseName = this.state.course.course_term + ': ' + this.state.course.course_dept_code + ' - ' + this.state.course.course_id + ' - ' + this.state.course.course_name
-        if (cookie.load('cookieF')) {
+        if (localStorage.role === 'faculty') {
             return (
                 <div className="container-fluid md-0 p-0">
                     {redirectVar}
@@ -75,7 +80,7 @@ export default class UserCourseAssignments extends Component {
                                 <div className="col col-sm-2">
                                     <br />   <CourseNav courseUid={this.props.match.params.courseUid} selected="assignments" />
                                 </div>
-                                <FacultyAssignmentLanding parentProps={this.props} />
+                                <FacultyAssignmentLanding parentProps={this.props} assignments={this.state.assignments} />
                                 <div className="col">
                                     <div className="row">
 
@@ -86,7 +91,7 @@ export default class UserCourseAssignments extends Component {
                     </div>
                 </div>
             );
-        } else if (cookie.load('cookieS')) {
+        } else if (localStorage.role === 'student') { 
             return (
                 <div className="container-fluid md-0 p-0">
                     {redirectVar}
@@ -109,7 +114,7 @@ export default class UserCourseAssignments extends Component {
 
                                 <div className="col">
                                     <div className="row">
-                                        <StudentAssignmentLanding parentProps={this.props} />
+                                        <StudentAssignmentLanding parentProps={this.props} assignments={this.state.assignments} />
                                     </div>
                                 </div>
                             </div>
@@ -124,3 +129,15 @@ export default class UserCourseAssignments extends Component {
 
     }
 }
+const mapStateToProps = state => {
+    console.log(JSON.stringify(state))
+    return {
+      courseHomeStateStore: state.courseHome,
+      courseStateStore: state.course,
+      profileStateStore: state.profile,
+      loginStateStore: state.login
+    }
+  }
+  
+  //export default Profile;
+  export default connect(mapStateToProps, { getCourseHome })(UserCourseAssignments);

@@ -14,10 +14,13 @@ import "react-datepicker/dist/react-datepicker.css";
 import FormData from 'form-data'
 import { Button } from '@instructure/ui-buttons'
 
+import { getCourseHome } from '../../../../js/actions/CourseHomeAction';
+import { connect } from 'react-redux';
+
 
 const cookies = new Cookies();
 
-export default class TakeAssignment extends Component {
+class TakeAssignment extends Component {
 
     constructor(props) {
         super(props);
@@ -36,19 +39,21 @@ export default class TakeAssignment extends Component {
         this.onSubmit = this.onSubmit.bind(this);
     }
 
-    componentWillMount() {
-        axios.get('http://localhost:3001/assignment/' + this.props.match.params.courseUid + '/' + this.props.match.params.assignmentUid)
-            .then((response) => {
-                console.log(response);
-                if (response !== undefined)
-                    this.setState({ assignmentInfo: response.data[0], errorMsg: '' })
-            })
-        axios.get('http://localhost:3001/course/' + this.props.match.params.courseUid)
-            .then((response) => {
-                console.log(response);
-                if (response !== undefined)
-                    this.setState({ course: response.data[0] })
-            })
+    async componentWillMount() {
+        await this.props.getCourseHome(this.props.match.params.courseUid);
+        console.log("course: " + this.props.courseHomeStateStore.result.data)
+        const result = this.props.courseHomeStateStore.result.data;
+        this.setState({
+            course: result
+        })
+        this.state.course.assignments.map(assignment => {
+            if (assignment._id === this.props.match.params.assignmentUid) {
+                this.setState({
+                    assignmentInfo: assignment,
+                })
+
+            }
+        })
     }
 
     evaluatePoints = () => {
@@ -66,14 +71,15 @@ export default class TakeAssignment extends Component {
         console.log(this.fileInput.current.files[0])
         if (this.fileInput.current.files[0] !== undefined) {
             console.log(this.fileInput.current.files[0])
-            let filename = this.props.match.params.courseUid + '-' + this.state.assignmentInfo.coursework_uid + '-' + encodeURI(cookies.get('cookieS')) + '.' + this.fileInput.current.files[0].name.split('.').pop();
+            let filename = this.props.match.params.courseUid + '-' + this.state.assignmentInfo.name + '-' + localStorage.user + '-' + this.fileInput.current.files[0].name
             console.log(filename)
             let data = new FormData();
             data.append('file', this.fileInput.current.files[0], filename)
             console.log(data)
             let assignmentsPage = "/coursedetails/" + this.props.match.params.courseUid + "/assignments";
             //adds the assignment based on information entered
-            axios.post('http://localhost:3001/assignment/' + this.props.match.params.courseUid + '/' + this.state.assignmentInfo.coursework_uid + '/' + cookies.get('cookieS'), data)
+            axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
+            axios.post('http://localhost:3001/assignment/' + this.props.match.params.courseUid + '/' + this.state.assignmentInfo.name, data)
                 .then((response) => {
                     console.log(response);
                     if (response !== undefined)
@@ -92,15 +98,15 @@ export default class TakeAssignment extends Component {
 
 
     render() {
-        let homePath = "/coursedetails/" + this.state.course.course_uid + "/home";
-        let path1 = "/coursedetails/" + this.state.course.course_uid + "/assignments";
+        let homePath = "/coursedetails/" + this.state.course._id + "/home";
+        let path1 = "/coursedetails/" + this.state.course._id + "/assignments";
         let courseName = this.state.course.course_term + ': ' + this.state.course.course_dept_code + ' - ' + this.state.course.course_id + ' - ' + this.state.course.course_name
 
-        if (cookie.load('cookieF')) {
+        if (localStorage.role === 'faculty') {
             let announcementsPage = "/coursedetails/" + this.props.match.params.courseUid + "/assignments";
             return (<div><Redirect to={announcementsPage} /></div>);
         }
-        else if (cookie.load('cookieS')) {
+        else if (localStorage.role === 'student') {
             return (
                 <div className="container-fluid md-0 p-0">
                     {this.state.redirectVar}
@@ -113,7 +119,7 @@ export default class TakeAssignment extends Component {
                                 <Breadcrumb size="large">
                                     <BreadcrumbLink href={homePath}>{courseName}</BreadcrumbLink>
                                     <BreadcrumbLink href={path1}>Assignments</BreadcrumbLink>
-                                    <BreadcrumbLink>{this.state.assignmentInfo.coursework_name}</BreadcrumbLink>
+                                    <BreadcrumbLink>{this.state.assignmentInfo.name}</BreadcrumbLink>
                                 </Breadcrumb>
                             </Heading>
                             <div className="row">
@@ -128,7 +134,7 @@ export default class TakeAssignment extends Component {
                                         <div class="col">
                                             <div class="row">
                                                 <div class="col">
-                                                    <br /><Heading theme={{ borderPadding: "1rem", h2FontWeight: "700" }} border="bottom">{this.state.assignmentInfo.coursework_name}</Heading>
+                                                    <br /><Heading theme={{ borderPadding: "1rem", h2FontWeight: "700" }} border="bottom">{this.state.assignmentInfo.name}</Heading>
                                                 </div>
                                             </div>
                                             <div class="row m-1 p-1" style={{ borderBottom: "1px solid #ccc" }}>
@@ -166,3 +172,15 @@ export default class TakeAssignment extends Component {
         }
     }
 }
+const mapStateToProps = state => {
+    console.log(JSON.stringify(state))
+    return {
+      courseHomeStateStore: state.courseHome,
+      courseStateStore: state.course,
+      profileStateStore: state.profile,
+      loginStateStore: state.login
+    }
+  }
+  
+  //export default Profile;
+  export default connect(mapStateToProps, { getCourseHome })(TakeAssignment);

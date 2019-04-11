@@ -17,6 +17,8 @@ var GetCourseAnnouncement = require('./services/GetCourseAnnouncement');
 var AddCourseAnnouncement = require('./services/AddCourseAnnouncement');
 var AddCourseQuiz = require('./services/AddCourseQuiz');
 var UpdateQuizScore = require('./services/UpdateQuizScore');
+var AddCourseAssignment = require('./services/AddCourseAssignment');
+var GetStudentGrade = require('./services/GetStudentGrade');
 
 function handleTopicRequest(topic_name, function_name){
 
@@ -66,3 +68,5 @@ handleTopicRequest("get-announcement", GetCourseAnnouncement);
 handleTopicRequest("add-announcement", AddCourseAnnouncement);
 handleTopicRequest("add-quiz", AddCourseQuiz);
 handleTopicRequest("update-quizscore", UpdateQuizScore);
+handleTopicRequest("add-assignment", AddCourseAssignment);
+handleTopicRequest("get-studentgrade", GetStudentGrade);

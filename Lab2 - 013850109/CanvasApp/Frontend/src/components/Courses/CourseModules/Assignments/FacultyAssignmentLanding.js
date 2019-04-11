@@ -21,15 +21,6 @@ export default class FacultyAssignmentLanding extends Component {
         };
     }
 
-    componentWillMount() {
-        axios.get('http://localhost:3001/assignment/' + this.props.parentProps.match.params.courseUid)
-            .then((response) => {
-                console.log(response);
-                if (response !== undefined)
-                    this.setState({ assignments: response.data })
-            })
-    }
-
     viewSubmissions = (courseworkUid, e) => {
         let takeAssignmentPage = "/coursedetails/"+this.props.parentProps.match.params.courseUid+"/assignments/submissions/"+courseworkUid;
         this.setState({
@@ -53,7 +44,7 @@ export default class FacultyAssignmentLanding extends Component {
                     <div className="col">
                         <div class="list-group">
                             {
-                                this.state.assignments.map(assignment => {
+                                this.props.assignments.map(assignment => {
                                     let viewSubmissionsPath = "/coursedetails/" + this.props.parentProps.match.params.courseUid + "/assignments/"+assignment.coursework_uid
                                     return (
                                         <button type="button" class="list-group-item list-group-item-action" disabled>
@@ -61,11 +52,11 @@ export default class FacultyAssignmentLanding extends Component {
                                                 <div class="col-sm-1 align-self-center" style={{ width: "50px", maxWidth: "50px" }}><IconAssignmentLine /></div>
                                                 <div class="col">
                                                     <div class="row">
-                                                        <p class="font-weight-bold m-0">{assignment.coursework_name}</p>
+                                                        <p class="font-weight-bold m-0">{assignment.name}</p>
                                                     </div>
                                                     <div class="row">
                                                         <p class="font-weight-normal m-0 small">Due&nbsp;</p>
-                                                        <p class="font-weight-light m-0 small">{assignment.due_date}&nbsp;&nbsp;|&nbsp;&nbsp;</p>
+                                                        <p class="font-weight-light m-0 small">{new Date(assignment.due_date).toISOString().slice(0, 19).replace('T', ' ')}&nbsp;&nbsp;|&nbsp;&nbsp;</p>
                                                         <p class="font-weight-light m-0 small">{assignment.total_points} pts</p>
                                                     </div>
                                                 </div>

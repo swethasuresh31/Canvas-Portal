@@ -32,6 +32,7 @@ export default class FacultyFilesLanding extends Component {
 
     fileSelectHandler(fileKey) {
         setTimeout(() => {
+            axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
             const response = {
               file: 'http://localhost:3001/files/' + this.props.parentProps.match.params.courseUid + '/' + encodeURI(fileKey.key),
             };
@@ -41,6 +42,7 @@ export default class FacultyFilesLanding extends Component {
     }
 
     componentWillMount() {
+        axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
         axios.get('http://localhost:3001/files/' + this.props.parentProps.match.params.courseUid)
             .then((response) => {
                 console.log(response);
@@ -60,6 +62,7 @@ export default class FacultyFilesLanding extends Component {
         data.append('file', this.fileInput.current.files[0], filename)
         console.log(data)
         //adds the assignment based on information entered
+        axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
         axios.post('http://localhost:3001/files/' + this.props.parentProps.match.params.courseUid, data)
             .then((response) => {
                 console.log(response);

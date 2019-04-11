@@ -40,6 +40,7 @@ export default class StudentFilesLanding extends Component {
     }
 
     componentWillMount() {
+        axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
         axios.get('http://localhost:3001/files/' + this.props.parentProps.match.params.courseUid)
             .then((response) => {
                 console.log(response);
