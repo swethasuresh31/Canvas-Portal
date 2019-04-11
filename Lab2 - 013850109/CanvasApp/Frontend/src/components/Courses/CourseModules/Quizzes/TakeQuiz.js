@@ -102,6 +102,7 @@ class TakeQuiz extends Component {
         console.log(data)
         let quizzesPage = "/coursedetails/" + this.props.match.params.courseUid + "/quizzes";
         //adds the quiz based on information entered
+        axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
         axios.post('http://localhost:3001/quiz/' + this.props.match.params.courseUid + '/result'  , data)
             .then((response) => {
                 console.log(response);

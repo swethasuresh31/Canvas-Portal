@@ -6,7 +6,7 @@ import Navbar from '../LandingPage/Navbar';
 import { Redirect } from 'react-router';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
 import axios from 'axios';
-
+import Reorder from 'react-reorder'
 import { getDashboardInformation } from '../../js/actions/DashboardAction';
 import { connect } from 'react-redux';
 
@@ -21,6 +21,14 @@ class Dashboard extends Component {
       coursework: []
     };
   }
+
+  // class ListItem extends React.Component {
+  //   render() {
+  //       return (
+  //         <Card course={this.props.item} />
+  //       );
+  //   }
+  // }
 
   async componentDidMount() {
 
@@ -53,15 +61,25 @@ class Dashboard extends Component {
                 </ div>
               </ div>
               <div className="row" style={{ marginLeft: "15px" }}>
-              <div className="card-deck d-flex flex-wrap">
-              {
-                this.state.coursework.map(course => {
-                  return (
-                    <Card course={course} />
-                  )
-                })
-              }
-            </ div>
+              
+              <Reorder
+              // The key of each object in your list to use as the element key
+              itemKey='name'
+              // The milliseconds to hold an item for before dragging begins
+              holdTime='0'
+              // The list to display
+              list={this.state.coursework}
+              // A template to display for each list item
+              template={Card}
+              // Function that is called once a reorder has been performed
+              callback={this.callback}
+              // Class to be applied to the outer list element
+              listClass='card-deck d-flex flex-wrap'
+              // Class to be applied to each list item's wrapper element
+              itemClass='div'
+/>
+
+              
               </ div>
             </ div>
           </ div>

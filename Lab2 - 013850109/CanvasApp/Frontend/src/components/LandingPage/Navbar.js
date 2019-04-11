@@ -4,7 +4,7 @@ import { Img } from '@instructure/ui-elements'
 import { Avatar, Text } from '@instructure/ui-elements'
 import { ScreenReaderContent } from '@instructure/ui-a11y'
 import logo from '../../img/sjsu-header-logo-alt.png'
-import { IconUserLine, IconDashboardLine, IconCoursesLine, IconDeactivateUserLine } from '@instructure/ui-icons'
+import { IconUserLine, IconDashboardLine, IconCoursesLine, IconDeactivateUserLine, IconInboxLine } from '@instructure/ui-icons'
 import cookie from 'react-cookies';
 import Cookies from 'universal-cookie';
 
@@ -83,6 +83,17 @@ export default class Card extends Component {
             icon={<IconCoursesLine />}
             label="Courses"
             href="/coursehome"
+            theme={{
+              backgroundColor: '#0055a2',
+              hoverBackgroundColor: '#FFFFFF'
+
+            }}
+          />
+          <NavigationItem
+            selected={this.props.selected === "inbox"}
+            icon={<IconInboxLine />}
+            label="Inbox"
+            href="/message"
             theme={{
               backgroundColor: '#0055a2',
               hoverBackgroundColor: '#FFFFFF'

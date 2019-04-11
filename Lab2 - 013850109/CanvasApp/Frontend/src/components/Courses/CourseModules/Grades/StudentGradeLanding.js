@@ -25,21 +25,19 @@ export default class StudentGradeLanding extends Component {
     }
 
     componentWillMount() {
-        let user;
-        if (cookie.load('cookieS')){
-            user = cookies.get('cookieS');
-        }
-        axios.get('http://localhost:3001/grades/' + this.props.parentProps.match.params.courseUid + '/'+encodeURI(user))
+        axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
+        axios.get('http://localhost:3001/grades/' + this.props.parentProps.match.params.courseUid)
             .then((response) => {
                 console.log(response);
                 let scoredMarks = 0;
                 let totalMarks = 0;
                 let percentScore = 0;
                 if (response !== undefined)
-                    response.data.forEach(score => {
-                        if(score.scored_points !== null){
-                            scoredMarks += score.scored_points;
-                            totalMarks += score.total_points;
+                    console.log(response.data);
+                    response.data.map(coursework => {   
+                    if(coursework.score !== undefined){
+                            scoredMarks += coursework.score;
+                            totalMarks += coursework.total_points;
                         }
                     });
                     if(totalMarks !== 0){
@@ -76,12 +74,12 @@ export default class StudentGradeLanding extends Component {
                         {
                             
                             this.state.gradeDetails.map(gradeDetail => {
-                                let scoredPoint = (gradeDetail.scored_points !== null) ? gradeDetail.scored_points : "-";
-                                let status = (gradeDetail.scored_points !== null) ? "graded" : "not yet graded";
+                                let scoredPoint = (gradeDetail.score !== undefined) ? gradeDetail.score : "-";
+                                let status = (gradeDetail.score !== undefined) ? "graded" : "not yet graded";
                                 return (
                                     <tr>
-                                        <td>{gradeDetail.coursework_name}</td>
-                                        <td>{gradeDetail.due_date}</td>
+                                        <td>{gradeDetail.name}</td>
+                                        <td>{new Date(gradeDetail.due_date).toISOString().slice(0, 10).replace('T', ' ')} by {new Date(gradeDetail.due_date).toISOString().slice(12, 16).replace('T', ' ')}</td>
                                         <td><br />{status}<br /><br /></td>
                                         <td>{scoredPoint}</td>
                                         <td>{gradeDetail.total_points}</td>

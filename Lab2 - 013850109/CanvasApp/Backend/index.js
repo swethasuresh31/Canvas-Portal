@@ -76,6 +76,9 @@ var permissionRouter = require('./routes/Permission');
 var courseMetadataRouter = require('./routes/CourseMetadata');
 var announcementRouter = require('./routes/Announcement');
 var quizRouter = require('./routes/Quiz');
+var filesRouter = require('./routes/Files');
+var assignmentsRouter = require('./routes/Assignments');
+var GradesRouter = require('./routes/Grades');
 //Route to get permission code
 
 //Route to get enrolled/created course information when a user visits the course Page
@@ -105,6 +108,9 @@ app.use('/permission', permissionRouter);
 app.use('/coursemetadata', courseMetadataRouter);
 app.use('/announcement', announcementRouter);
 app.use('/quiz', quizRouter);
+app.use('/files', filesRouter);
+app.use('/assignment', assignmentsRouter);
+app.use('/grades', GradesRouter);
 
 
 //Route to get enrolled/created course information when a user visits the course Page
