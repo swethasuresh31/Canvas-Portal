@@ -72,7 +72,7 @@ checkStudentAlreadyWailisted = async (user, course, res) => {
             var updateResult = await Model.CourseModel.update({ '_id': course._id }, {
                 $pull: { waitlisted: { emailId: user.emailId } },
                 $push: { enrolled: { emailId: user.emailId, name: user.name, role: user.role } },
-                $inc: {  total_waitlist: -1, total_enrollment: 1 },
+                $inc: { total_waitlist: -1, total_enrollment: 1 },
             })
             if (updateResult && updateResult.nModified === 1) {
                 var prof = await Model.UserModel.findOne({ 'emailId': course.created_by })
@@ -163,10 +163,42 @@ insertStudentCourse = async (user, course, isWaitlist, res) => {
                     course_name: course.course_name,
                     course_dept_code: course.course_dept_code,
                     course_dept: course.course_dept,
-                    isWaitlist: isWaitlist
+                    isWaitlist: isWaitlist,
+                    coursework_submissions: []
                 }
             }
         })
+
+        if (!isWaitlist) {
+            console.log("---------------------------------------------------------------------------------------------") 
+            for (var i = 0; i < course.assignments.length; i++) {
+
+                var updatedUser = await Model.UserModel.update({ _id: user._id, 'course.course_uid':course._id }, {
+                    $push: {
+                        'course.$.coursework_submissions':
+                        {
+                            name: course.assignments[i].name,
+                            due_date: course.assignments[i].due_date,
+                            total_points: course.assignments[i].total_points,
+                        }
+                    },
+                })
+            }
+            for (var i = 0; i < course.quizzes.length; i++) {
+
+                var updatedUser = await Model.UserModel.update({ _id: user._id, 'course.course_uid':course._id }, {
+                    $push: {
+                        'course.$.coursework_submissions':
+                        {
+                            name: course.quizzes[i].name,
+                            due_date: course.quizzes[i].due_date,
+                            total_points: course.quizzes[i].total_points,
+                        }
+                    },
+                })
+            }
+
+        }
         res(null, { updateStatus: "Success", user: updatedUser })
     }
     catch (error) {

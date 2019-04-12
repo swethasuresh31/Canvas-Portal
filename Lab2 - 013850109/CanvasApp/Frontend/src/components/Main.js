@@ -26,6 +26,8 @@ import SearchCourse from './Courses/SearchCourse';
 import CreateCourse from './Courses/CreateCourse';
 import GeneratePermission from './Courses/GeneratePermission';
 import Signup from './Signup/Signup';
+import MessageInbox from './Message/MessageInbox';
+import MessageSent from './Message/MessageSent';
 
 import Dashboard from './Dashboard/Dashboard';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -67,6 +69,9 @@ class Main extends Component {
                 <Route path="/coursedetails/:courseUid/assignments/submissions/:assignmentUid/:user" exact component={GradeAssignment} />
                 <Route path="/coursedetails/:courseUid/assignments/add" exact component={AddAssignment} />
                 <Route path="/coursedetails/:courseUid/assignments/take/:assignmentUid" exact component={TakeAssignment} />
+                <Route path="/message/inbox" exact component={MessageInbox} />
+                <Route path="/message/sent" exact component={MessageSent} />
+
             </div>
         )
     }

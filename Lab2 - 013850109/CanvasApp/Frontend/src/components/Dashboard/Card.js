@@ -13,9 +13,6 @@ export default class Card extends Component {
   }
 
   render() {
-    console.log("---------------------------------------------------------------------------------------------")
-    console.log(this.props)
-    console.log("---------------------------------------------------------------------------------------------")
     let coursePath= (this.props.item.isWaitlist) ? '#' :"/coursedetails/"+this.props.item.course_uid+"/home"
     let isWaitlist= (this.props.item.isWaitlist) ? "(waitlist)" : ""
 
@@ -25,11 +22,15 @@ export default class Card extends Component {
         onMouseOver={() => this.setState({ cardStyle: "card shadow-lg" })} 
         onMouseOut={() => this.setState({ cardStyle: "card shadow-sm" })}
         onClick={()=>{}}>
+        <a style={{textDecoration: "none"}} href={coursePath}>
         <div class="card-header" style={{ height: "10rem", backgroundColor: "#0055a2" }}>
         </div>
+        </a>
         <div class="card-body">
-          <p class="card-title"><a href={coursePath} class="card-link font-weight-bold">{this.props.item.course_dept_code}-{this.props.item.course_id}</a> {isWaitlist}</p>
-          <p class="card-subtitle"> {this.props.item.course_name}<br />{this.props.item.course_term}</p>
+        <a style={{textDecoration: "none"}} href={coursePath}>
+        <p class="card-title"><p class="card-link font-weight-bold">{this.props.item.course_dept_code}-{this.props.item.course_id}</p> {isWaitlist}</p>
+        <p class="card-subtitle"> {this.props.item.course_name}<br />{this.props.item.course_term}</p>
+        </a>
           <div class="d-flex justify-content-around pt-4" style={{ fontSize: "20px" }}>
             <a href="#" class="card-link text-dark"><IconAnnouncementLine /></a>
             <a href="#" class="card-link text-dark"><IconAssignmentLine /></a>

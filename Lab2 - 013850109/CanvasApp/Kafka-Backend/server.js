@@ -13,12 +13,17 @@ var AddCourse = require('./services/AddCourse');
 var DropCourse = require('./services/DropCourse');
 var CourseHome = require('./services/CourseHome');
 var GetCourseAnnouncements = require('./services/GetCourseAnnouncements');
+var GetMessages = require('./services/GetMessages');
+var GetSentMessages = require('./services/GetSentMessages');
 var GetCourseAnnouncement = require('./services/GetCourseAnnouncement');
 var AddCourseAnnouncement = require('./services/AddCourseAnnouncement');
 var AddCourseQuiz = require('./services/AddCourseQuiz');
 var UpdateQuizScore = require('./services/UpdateQuizScore');
 var AddCourseAssignment = require('./services/AddCourseAssignment');
 var GetStudentGrade = require('./services/GetStudentGrade');
+var GetStudentsAssignment = require('./services/GetStudentsAssignment');
+var GetStudentAssignment = require('./services/GetStudentAssignment');
+var UpdateAssignmentScore = require('./services/UpdateAssignmentScore');
 
 function handleTopicRequest(topic_name, function_name){
 
@@ -64,9 +69,14 @@ handleTopicRequest("course-home", CourseHome);
 handleTopicRequest("add-course", AddCourse);
 handleTopicRequest("drop-course", DropCourse);
 handleTopicRequest("get-announcements", GetCourseAnnouncements);
+handleTopicRequest("get-messages", GetMessages);
+handleTopicRequest("get-sentmessages", GetSentMessages);
 handleTopicRequest("get-announcement", GetCourseAnnouncement);
 handleTopicRequest("add-announcement", AddCourseAnnouncement);
 handleTopicRequest("add-quiz", AddCourseQuiz);
 handleTopicRequest("update-quizscore", UpdateQuizScore);
 handleTopicRequest("add-assignment", AddCourseAssignment);
 handleTopicRequest("get-studentgrade", GetStudentGrade);
+handleTopicRequest("get-studentsassignment", GetStudentsAssignment);
+handleTopicRequest("get-student-assignment", GetStudentAssignment);
+handleTopicRequest("update-assignmentscore", UpdateAssignmentScore);

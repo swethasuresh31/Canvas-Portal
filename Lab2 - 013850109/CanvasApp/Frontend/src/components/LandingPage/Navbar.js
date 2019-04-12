@@ -93,7 +93,7 @@ export default class Card extends Component {
             selected={this.props.selected === "inbox"}
             icon={<IconInboxLine />}
             label="Inbox"
-            href="/message"
+            href="/message/inbox"
             theme={{
               backgroundColor: '#0055a2',
               hoverBackgroundColor: '#FFFFFF'
