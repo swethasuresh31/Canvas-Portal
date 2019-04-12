@@ -215,6 +215,29 @@ CourseSchema.plugin(autoIncrement.plugin, 'course');
 
 const CourseModel = mongoose.model('course', CourseSchema);
 
+const messageSchema = new Schema({
+    subject: {
+        type: String,
+        required: true,
+    },
+    body: {
+        type: String,
+        required: true,
+    },
+    timestamp: {
+        type: Date,
+        default: Date.now
+    },
+    recipient: {
+        type: String,
+        required: true,
+    },
+    sender: {
+        type: String,
+        required: true,
+    },
+});
+
 
 const userCourseSchema = new Schema({
     course_uid: {
@@ -320,6 +343,15 @@ const UserSchema = new Schema({
         type: [userCourseSchema],
         default: [],
     },
+    inbox:{
+        type: [messageSchema],
+        default:[],
+    },
+    sent:{
+        type: [messageSchema],
+        default:[],
+    },
+
 })
 
 UserSchema.index({ emailId: 1 }, { name: 'user_email_pkey', unique: true })

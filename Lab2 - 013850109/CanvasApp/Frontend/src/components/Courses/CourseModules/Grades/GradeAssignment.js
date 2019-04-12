@@ -36,6 +36,7 @@ export default class TakeAssignment extends Component {
             course: ''
         };
         this.onDocumentLoadSuccess = this.onDocumentLoadSuccess.bind(this);
+        this.onDocumentLoadError = this.onDocumentLoadError.bind(this);
         this.pointsOnChangeHandler = this.pointsOnChangeHandler.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
     }
@@ -49,6 +50,13 @@ export default class TakeAssignment extends Component {
         if (this.state.numPages !== numPages)
             this.setState({
                 numPages: numPages,
+                errorMessage: ''
+            });
+    };
+
+    onDocumentLoadError = (document) => {
+            this.setState({
+                errorMessage: 'No submission found for student: '
             });
     };
 
@@ -58,6 +66,7 @@ export default class TakeAssignment extends Component {
 
     componentWillMount() {
         let fileURL = 'http://localhost:3001/studentassignment/file/' + this.props.match.params.courseUid + '/' + this.props.match.params.assignmentUid + '/' + encodeURI(this.props.match.params.user);
+        axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
         axios.get('http://localhost:3001/studentassignment/' + this.props.match.params.courseUid + '/' + this.props.match.params.assignmentUid + '/' + encodeURI(this.props.match.params.user))
             .then((response) => {
                 console.log(response);
@@ -67,11 +76,12 @@ export default class TakeAssignment extends Component {
                         file: fileURL
                     })
             })
+            axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
         axios.get('http://localhost:3001/course/' + this.props.match.params.courseUid)
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)
-                    this.setState({ course: response.data[0] })
+                    this.setState({ course: response.data })
             })
     }
 
@@ -82,9 +92,9 @@ export default class TakeAssignment extends Component {
             assignmentInfo: this.state.assignmentInfo
         }
         console.log(data)
-        let assignmentsPage = "/coursedetails/" + this.props.match.params.courseUid + "/assignments";
+        let assignmentsPage = "/coursedetails/" + this.props.match.params.courseUid + "/assignments/submissions/" + this.props.match.params.assignmentUid;
         //adds the assignment based on information entered
-        axios.post('http://localhost:3001/studentassignment/' + this.props.match.params.courseUid + '/' + this.state.assignmentInfo.coursework_uid + '/' + this.state.assignmentInfo.studentcoursework_uid, data)
+        axios.post('http://localhost:3001/studentassignment/' + this.props.match.params.courseUid + '/' + this.props.match.params.assignmentUid + '/' + encodeURI(this.state.assignmentInfo.student_emailId), data)
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)
@@ -98,16 +108,16 @@ export default class TakeAssignment extends Component {
 
 
     render() {
-        let homePath = "/coursedetails/" + this.state.course.course_uid + "/home";
-        let path1 = "/coursedetails/" + this.state.course.course_uid + "/grades";
-        let path2 = "/coursedetails/" + this.state.course.course_uid + "/assignments/submissions/" + this.state.assignmentInfo.coursework_uid;
+        let homePath = "/coursedetails/" + this.props.match.params.courseUid + "/home";
+        let path1 = "/coursedetails/" + this.props.match.params.courseUid + "/grades";
+        let path2 = "/coursedetails/" + this.props.match.params.courseUid + "/assignments/submissions/" + this.props.match.params.assignmentUid;
         let courseName = this.state.course.course_term + ': ' + this.state.course.course_dept_code + ' - ' + this.state.course.course_id + ' - ' + this.state.course.course_name
 
-        if (cookie.load('cookieS')) {
+        if (localStorage.role === 'student') {
             let announcementsPage = "/coursedetails/" + this.props.match.params.courseUid + "/assignments";
             return (<div><Redirect to={announcementsPage} /></div>);
         }
-        else if (cookie.load('cookieF')) {
+        else if (localStorage.role === 'faculty') {
             return (
                 <div className="container-fluid md-0 p-0">
                     {this.state.redirectVar}
@@ -120,7 +130,7 @@ export default class TakeAssignment extends Component {
                                 <Breadcrumb size="large">
                                     <BreadcrumbLink href={homePath}>{courseName}</BreadcrumbLink>
                                     <BreadcrumbLink href={path1}>Grades</BreadcrumbLink>
-                                    <BreadcrumbLink href={path2}>{this.state.assignmentInfo.coursework_name}</BreadcrumbLink>
+                                    <BreadcrumbLink href={path2}>{this.state.assignmentInfo.assignment_name}</BreadcrumbLink>
                                     <BreadcrumbLink>{this.props.match.params.user}</BreadcrumbLink>
                                 </Breadcrumb>
                             </Heading>
@@ -136,6 +146,7 @@ export default class TakeAssignment extends Component {
                                             <Document
                                                 file={{ url: this.state.file }}
                                                 onLoadSuccess={this.onDocumentLoadSuccess}
+                                                onLoadError = {this.onDocumentLoadError}
                                             >
                                                 {Array.from(
                                                     new Array(this.state.numPages),
@@ -146,11 +157,12 @@ export default class TakeAssignment extends Component {
                                                     ),
                                                 )}
                                             </Document>
+                                            {this.state.errorMessage}
                                         </div>
                                         <div class="col-3 border-left">
                                             <form>
                                                 <p class="font-weight-bold">Assessment</p>
-                                                <p class="font-weight-normal">Grade out of {this.state.assignmentInfo.total_points}</p>
+                                                <p class="font-weight-normal">Grade out of {this.state.assignmentInfo.assignment_total}</p>
                                                 <input type="number" onChange={this.pointsOnChangeHandler} />
                                                 <div>{this.state.errorMsg}</div><br />
                                                 <button type="button" class="btn btn-primary btn-md mx-2" style={{ backgroundColor: '#0055a2' }} onClick={this.onSubmit} >Submit</button>

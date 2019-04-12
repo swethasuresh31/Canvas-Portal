@@ -29,7 +29,7 @@ export default class AnnouncementCard extends Component {
                     <td style={{verticalAlign:"middle", width:"100px", maxWidth:"100px"}}><Avatar src={profileImg} name={this.props.announcement.created_by} size="medium" /></td>
                     <td>
                     <p><Link to={announcementPath} class="font-weight-bold">{this.props.announcement.header}</Link></p>
-                    <p class="font-weight-light">{this.props.announcement.timestamp}</p>
+                    <p class="font-weight-light">{new Date(this.props.announcement.timestamp).toISOString().slice(0, 16).replace('T', ' ')}</p>
                     <p>{displaytext}</p>
                     </td>
                 </tr>

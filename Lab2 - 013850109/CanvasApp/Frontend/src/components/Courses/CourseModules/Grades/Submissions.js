@@ -42,28 +42,30 @@ export default class Submissions extends Component {
     }
 
     componentWillMount() {
+        axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
         axios.get('http://localhost:3001/studentassignment/'+ this.props.match.params.courseUid + '/' + this.props.match.params.assignmentUid)
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)
                     this.setState({ assignments: response.data })
             })
+            axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
             axios.get('http://localhost:3001/course/' + this.props.match.params.courseUid)
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)
-                    this.setState({ course: response.data[0] })
+                    this.setState({ course: response.data })
             })
     }
 
     render() {
-        let homePath = "/coursedetails/" + this.state.course.course_uid + "/home";
-        let path1 = "/coursedetails/" + this.state.course.course_uid + "/grades";
+        let homePath = "/coursedetails/" + this.state.course._id + "/home";
+        let path1 = "/coursedetails/" + this.state.course._id + "/grades";
         let courseName = this.state.course.course_term + ': ' + this.state.course.course_dept_code + ' - ' + this.state.course.course_id + ' - ' + this.state.course.course_name
 
         console.log(this.state.assignments[0])
         let redirectVar = null;
-        if (cookie.load('cookieF')) {
+        if (localStorage.role === 'faculty') {
             return (
                 <div className="container-fluid md-0 p-0">
                     {redirectVar}
@@ -100,13 +102,14 @@ export default class Submissions extends Component {
                                         <tbody>
                                             {
                                                 this.state.assignments.map(assignment => {
-                                                    let assignmentSubmissionLink = "/coursedetails/"+this.props.match.params.courseUid+"/assignments/submissions/"+this.props.match.params.assignmentUid+"/" + encodeURI(assignment.email_id)
+                                                    let assignmentSubmissionLink = "/coursedetails/"+this.props.match.params.courseUid+"/assignments/submissions/"+this.props.match.params.assignmentUid+"/" + encodeURI(assignment.student_emailId)
+                                                    let profileImg = "http://localhost:3001/img/" + encodeURI(assignment.student_emailId)
                                                     return (
                                                         <tr>
-                                                            <td> <Avatar name={assignment.name} size="small" /></td>
-                                                            <td><Link to={assignmentSubmissionLink}>{assignment.name}</Link></td>
-                                                            <td><Link to={assignmentSubmissionLink}>{assignment.coursework_name}</Link></td>
-                                                            <td>{assignment.scored_points}</td>
+                                                            <td> <Avatar src={profileImg} name={assignment.student_name} size="small" /></td>
+                                                            <td><Link to={assignmentSubmissionLink} style={{textDecoration:"none"}}>{assignment.student_name}</Link></td>
+                                                            <td><Link to={assignmentSubmissionLink} style={{textDecoration:"none"}}>{assignment.assignment_name}</Link></td>
+                                                            <td>{assignment.assignment_score}</td>
                                                         </tr>
                                                     )
                                                 })
@@ -121,7 +124,7 @@ export default class Submissions extends Component {
                 </div>
             );
         }
-        else if (cookie.load('cookieS')) {
+        else if (localStorage.role === 'student') {
             let announcementsPage = "/coursedetails/" + this.props.match.params.courseUid + "/assignments";
             return (<div><Redirect to={announcementsPage} /></div>);
         }

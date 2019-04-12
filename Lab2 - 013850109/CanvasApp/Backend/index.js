@@ -78,7 +78,9 @@ var announcementRouter = require('./routes/Announcement');
 var quizRouter = require('./routes/Quiz');
 var filesRouter = require('./routes/Files');
 var assignmentsRouter = require('./routes/Assignments');
+var StudentsAssignmentRouter = require('./routes/StudentsAssignment');
 var GradesRouter = require('./routes/Grades');
+var MessagesRouter = require('./routes/Messages');
 //Route to get permission code
 
 //Route to get enrolled/created course information when a user visits the course Page
@@ -110,7 +112,9 @@ app.use('/announcement', announcementRouter);
 app.use('/quiz', quizRouter);
 app.use('/files', filesRouter);
 app.use('/assignment', assignmentsRouter);
+app.use('/studentassignment', StudentsAssignmentRouter);
 app.use('/grades', GradesRouter);
+app.use('/message', MessagesRouter);
 
 
 //Route to get enrolled/created course information when a user visits the course Page

@@ -66,7 +66,7 @@ class Dashboard extends Component {
               // The key of each object in your list to use as the element key
               itemKey='name'
               // The milliseconds to hold an item for before dragging begins
-              holdTime='0'
+              holdTime='200'
               // The list to display
               list={this.state.coursework}
               // A template to display for each list item
