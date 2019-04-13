@@ -22,7 +22,7 @@ export function getProfileInformation() {
             .then((response) => {
                 console.log("came here")
                 result.data = response.data;
-                result.data.img = "http://' + rooturl + ':3001/img/" + encodeURI(response.data.emailId);
+                result.data.img = "http://" + rooturl + ":3001/img/" + encodeURI(response.data.emailId);
                 console.log("in return of get");
             })
             .catch((err) => {
