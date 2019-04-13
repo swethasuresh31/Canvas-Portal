@@ -11,7 +11,7 @@ import {
 
 const AppContainer = styled(BaseAppContainer)`
   height: calc(100vh - 40px);
-  padding:20px;
+  padding:40px;
 `;
 
 const themeCourse = {

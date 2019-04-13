@@ -20,7 +20,7 @@ export default class MessageCard extends Component {
         };
     }
     render() {
-        //let announcementPath="/coursedetails/"+this.props.courseUid+"/announcement/"+this.props.announcement._id
+        let messagePath="/message/"+this.props.type+ "/id/"+this.props.message._id;
         //let announcement = this.props.announcement
         let profileImg = "http://localhost:3001/img/" + encodeURI(this.props.message.sender)
         let displaytext = (this.props.message.body.length < 100) ? this.props.message.body : this.props.message.body.substring(0,100)+'...'
@@ -28,7 +28,7 @@ export default class MessageCard extends Component {
                 <tr>
                     <td style={{verticalAlign:"middle", width:"100px", maxWidth:"100px"}}><Avatar src={profileImg} name={this.props.message.sender} size="medium" /></td>
                     <td>
-                    <p><Link to="#" class="font-weight-bold">{this.props.message.subject}</Link><span class="font-weight-light float-right">{new Date(this.props.message.timestamp).toISOString().slice(0, 16).replace('T', ' ')}</span></p>
+                    <p><Link to={messagePath} class="font-weight-bold">{this.props.message.subject}</Link><span class="font-weight-light float-right">{new Date(this.props.message.timestamp).toISOString().slice(0, 16).replace('T', ' ')}</span></p>
                     <p>{displaytext}</p>
                     </td>
                 </tr>

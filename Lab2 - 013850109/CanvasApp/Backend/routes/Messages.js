@@ -72,50 +72,50 @@ router.get('/sent', requireAuth, function (req, res) {
 });
 
 
-// router.post('/:course_uid',requireAuth, function (req, res) {
-//     console.log("Inside create announcement handler");
+router.post('/',requireAuth, function (req, res) {
+    console.log("Inside send message handler");
 
-//     kafka.make_request("add-announcement", req, function (err, result) {
-//         if (result) {
-//             console.log("announcement saved successfully.");
-//             res.end('announcement saved successfully.');
-//         }
+    kafka.make_request("send-message", req, function (err, result) {
+        if (result) {
+            console.log("Message sent successfully.");
+            res.end('"Message sent successfully."');
+        }
 
-//         if (err) {
-//             console.log("Unable to create the announcement.", err);
-//             res.end('Unable to create the announcement.');
-//         }
-//     });
-// });
+        if (err) {
+            console.log("Unable to send message.", err);
+            res.end('Unable to send message.');
+        }
+    });
+});
 
-// router.get('/:course_uid/id/:announcement_uid', requireAuth, function (req, res) {
-//     console.log("Inside Getting announcements for announcement id Backend");
+router.get('/:type/id/:message_id', requireAuth, function (req, res) {
+    console.log("Inside Getting Message Backend");
 
-//     if (req.user.role === 'student' || req.user.role === 'faculty') {
-//         kafka.make_request("get-announcement", req, function (err, result) {
-//             if (err) {
-//                 console.log("Error in getting announcement", err);
-//                 res.writeHead(400, {
-//                     'Content-type': 'text/plain'
-//                 });
-//                 res.end('Error in getting announcement');
-//             }
-//             else {
-//                 console.log('Course Announcement Result: ', JSON.stringify(result));
-//                 res.writeHead(200, {
-//                     'Content-type': 'application/json'
-//                 });
-//                 if(result === null) result = []
-//                 res.end(JSON.stringify(result));
-//             }
-//         });
-//     } else {
-//         console.log("No role mentioned for the user");
-//         res.writeHead(400, {
-//             'Content-type': 'text/plain'
-//         });
-//         res.end('Page is only accesible for student or faculty');
-//     }
-// })
+    if (req.user.role === 'student' || req.user.role === 'faculty') {
+        kafka.make_request("get-message", req, function (err, result) {
+            if (err) {
+                console.log("Error in getting message", err);
+                res.writeHead(400, {
+                    'Content-type': 'text/plain'
+                });
+                res.end('Error in getting message');
+            }
+            else {
+                console.log('Message Result: ', JSON.stringify(result));
+                res.writeHead(200, {
+                    'Content-type': 'application/json'
+                });
+                if(result === null) result = []
+                res.end(JSON.stringify(result));
+            }
+        });
+    } else {
+        console.log("No role mentioned for the user");
+        res.writeHead(400, {
+            'Content-type': 'text/plain'
+        });
+        res.end('Page is only accesible for student or faculty');
+    }
+})
 
 module.exports = router;

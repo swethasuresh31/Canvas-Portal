@@ -24,6 +24,8 @@ var GetStudentGrade = require('./services/GetStudentGrade');
 var GetStudentsAssignment = require('./services/GetStudentsAssignment');
 var GetStudentAssignment = require('./services/GetStudentAssignment');
 var UpdateAssignmentScore = require('./services/UpdateAssignmentScore');
+var SendMessage = require('./services/SendMessage');
+var GetMessage = require('./services/GetMessage');
 
 function handleTopicRequest(topic_name, function_name){
 
@@ -80,3 +82,5 @@ handleTopicRequest("get-studentgrade", GetStudentGrade);
 handleTopicRequest("get-studentsassignment", GetStudentsAssignment);
 handleTopicRequest("get-student-assignment", GetStudentAssignment);
 handleTopicRequest("update-assignmentscore", UpdateAssignmentScore);
+handleTopicRequest("send-message", SendMessage);
+handleTopicRequest("get-message", GetMessage);

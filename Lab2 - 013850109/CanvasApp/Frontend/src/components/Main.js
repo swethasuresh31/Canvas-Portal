@@ -28,6 +28,8 @@ import GeneratePermission from './Courses/GeneratePermission';
 import Signup from './Signup/Signup';
 import MessageInbox from './Message/MessageInbox';
 import MessageSent from './Message/MessageSent';
+import CreateMessage from './Message/CreateMessage';
+import ShowMessage from './Message/ShowMessage';
 
 import Dashboard from './Dashboard/Dashboard';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -71,6 +73,8 @@ class Main extends Component {
                 <Route path="/coursedetails/:courseUid/assignments/take/:assignmentUid" exact component={TakeAssignment} />
                 <Route path="/message/inbox" exact component={MessageInbox} />
                 <Route path="/message/sent" exact component={MessageSent} />
+                <Route path="/message/create" exact component={CreateMessage} />
+                <Route path="/message/:type/id/:message_id" exact component={ShowMessage} />
 
             </div>
         )
