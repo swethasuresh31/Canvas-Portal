@@ -1,4 +1,5 @@
-import axios from "axios";
+import axios from 'axios'
+import {rooturl} from '../../config/settings';
 export const SEARCH_COURSE = "SEARCH_COURSE";
 export const SEARCH_COURSE_ERROR = "SEARCH_COURSE_ERROR";
 
@@ -16,7 +17,7 @@ export function searchCourse(data) {
         console.log('jwt ' + localStorage.getItem('userToken'))
         axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
         
-        await axios.get('http://localhost:3001/course?term=' + data.term + '&name=' + data.name + '&department=' +
+        await axios.get('http://' + rooturl + ':3001/course?term=' + data.term + '&name=' + data.name + '&department=' +
             data.department + '&courseId=' + data.courseId + '&operator=' + data.operator)
             .then((response) => {
                 result.data = response.data;

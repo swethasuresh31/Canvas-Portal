@@ -1,4 +1,5 @@
-import axios from "axios";
+import axios from 'axios'
+import {rooturl} from '../../config/settings';
 export const GET_COURSE_HOME = "GET_COURSE_HOME";
 export const GET_COURSE_HOME_ERROR = "GET_COURSE_HOME_ERROR";
 
@@ -16,7 +17,7 @@ export function getCourseHome(course_uid) {
         console.log('jwt ' + localStorage.getItem('userToken'))
         axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
         
-        await axios.get('http://localhost:3001/course/' + course_uid)
+        await axios.get('http://' + rooturl + ':3001/course/' + course_uid)
             .then((response) => {
                 result.data = response.data;
                 console.log("In success return of get Course Home:"+result);

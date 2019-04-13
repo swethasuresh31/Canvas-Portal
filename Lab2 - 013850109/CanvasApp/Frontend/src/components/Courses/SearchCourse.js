@@ -8,7 +8,8 @@ import { Table } from '@instructure/ui-elements';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
 import cookie from 'react-cookies';
 import Cookies from 'universal-cookie';
-import axios from 'axios';
+import axios from 'axios'
+import {rooturl} from '../../config/settings';
 
 import { searchCourse } from '../../js/actions/SearchCourseAction';
 import { connect } from 'react-redux';
@@ -98,7 +99,7 @@ class SearchCourse extends Component {
 
     componentDidMount() {
         axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
-        axios.get('http://localhost:3001/coursemetadata')
+        axios.get('http://' + rooturl + ':3001/coursemetadata')
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)

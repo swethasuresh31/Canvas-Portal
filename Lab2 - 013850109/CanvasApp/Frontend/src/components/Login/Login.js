@@ -3,7 +3,7 @@ import './Login.css';
 import logo from '../../img/sjsu-full-logo.png'
 import headerLogo from '../../img/sjsu-header-logo.png'
 // import SignUp from '../Signup/Signup.js'
-import axios from 'axios';
+import axios from 'axios'
 import cookie from 'react-cookies';
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom'

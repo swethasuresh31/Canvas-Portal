@@ -4,6 +4,7 @@ import { Img } from '@instructure/ui-elements'
 import { Avatar, Text } from '@instructure/ui-elements'
 import { ScreenReaderContent } from '@instructure/ui-a11y'
 import logo from '../../img/sjsu-header-logo-alt.png'
+import {rooturl} from '../../config/settings'
 import { IconUserLine, IconDashboardLine, IconCoursesLine, IconDeactivateUserLine, IconInboxLine } from '@instructure/ui-icons'
 import cookie from 'react-cookies';
 import Cookies from 'universal-cookie';
@@ -31,7 +32,7 @@ export default class Card extends Component {
 
   render() {
     let user = localStorage.getItem('user');
-    let profileImg = "http://localhost:3001/img/" + encodeURI(user)
+    let profileImg = 'http://' + rooturl + ':3001/img/' + encodeURI(user)
     return (
       <div class="position-fixed" style={{ height: "100vh" }}>
         <Navigation

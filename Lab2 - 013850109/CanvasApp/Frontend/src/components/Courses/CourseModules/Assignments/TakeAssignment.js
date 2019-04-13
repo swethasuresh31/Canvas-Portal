@@ -5,7 +5,8 @@ import cookie from 'react-cookies';
 import { Redirect } from 'react-router';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
 import styled from "styled-components";
-import axios from 'axios';
+import axios from 'axios'
+import {rooturl} from '../../../../config/settings';
 import { Breadcrumb, BreadcrumbLink } from '@instructure/ui-breadcrumb'
 import Cookies from 'universal-cookie';
 import DatePicker from "react-datepicker";
@@ -79,7 +80,7 @@ class TakeAssignment extends Component {
             let assignmentsPage = "/coursedetails/" + this.props.match.params.courseUid + "/assignments";
             //adds the assignment based on information entered
             axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
-            axios.post('http://localhost:3001/assignment/' + this.props.match.params.courseUid + '/' + this.state.assignmentInfo.name, data)
+            axios.post('http://' + rooturl + ':3001/assignment/' + this.props.match.params.courseUid + '/' + this.state.assignmentInfo.name, data)
                 .then((response) => {
                     console.log(response);
                     if (response !== undefined)

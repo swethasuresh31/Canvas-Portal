@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import axios from 'axios';
+import axios from 'axios'
+import {rooturl} from '../../config/settings';
 import cookie from 'react-cookies';
 import { Avatar, Text, Table } from '@instructure/ui-elements'
 import Cookies from 'universal-cookie';
@@ -22,7 +23,7 @@ export default class MessageCard extends Component {
     render() {
         let messagePath="/message/"+this.props.type+ "/id/"+this.props.message._id;
         //let announcement = this.props.announcement
-        let profileImg = "http://localhost:3001/img/" + encodeURI(this.props.message.sender)
+        let profileImg = "http://" + rooturl + ":3001/img/" + encodeURI(this.props.message.sender)
         let displaytext = (this.props.message.body.length < 100) ? this.props.message.body : this.props.message.body.substring(0,100)+'...'
         return (
                 <tr>

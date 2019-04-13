@@ -5,7 +5,6 @@ import cookie from 'react-cookies';
 import { Redirect } from 'react-router';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
 import styled from "styled-components";
-import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { Breadcrumb, BreadcrumbLink } from '@instructure/ui-breadcrumb';
 

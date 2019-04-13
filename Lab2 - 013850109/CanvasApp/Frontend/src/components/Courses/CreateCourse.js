@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import Navbar from '../LandingPage/Navbar';
 import { Redirect } from 'react-router';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
-import axios from 'axios';
+import axios from 'axios'
+import {rooturl} from '../../config/settings';
 import cookie from 'react-cookies';
 import Cookies from 'universal-cookie';
 
@@ -151,7 +152,7 @@ export default class CreateCourse extends Component {
         // var user = '';
         // if (cookie.load('cookieF')) {
         //     user = cookies.get('cookieF')
-        //     axios.get('http://localhost:3001/user/id/' + encodeURI(user))
+        //     axios.get('http://' + rooturl + ':3001/user/id/' + encodeURI(user))
         //         .then((response) => {
         //             console.log(response);
         //             if (response !== undefined)
@@ -248,7 +249,7 @@ export default class CreateCourse extends Component {
             
             //post information into the course table
             axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
-            axios.post('http://localhost:3001/course', courseData)
+            axios.post('http://' + rooturl + ':3001/course', courseData)
                 .then(response => {
                     console.log("Status Code : ", response.status);
                     if (response.status === 200) {

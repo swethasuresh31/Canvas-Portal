@@ -7,8 +7,8 @@ import { IconEditLine } from '@instructure/ui-icons'
 import cookie from 'react-cookies';
 import Cookies from 'universal-cookie';
 import { Redirect } from 'react-router';
-import axios from 'axios';
-
+import axios from 'axios'
+import {rooturl} from '../../config/settings';
 import { getProfileInformation, updateProfileInformation } from '../../js/actions/ProfileAction';
 import { connect } from 'react-redux';
 
@@ -128,12 +128,12 @@ class Account extends Component {
       console.log(data)
       //adds the image based on information entered
       axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
-      await axios.post('http://localhost:3001/account/img', data)
+      await axios.post('http://' + rooturl + ':3001/account/img', data)
         .then((response) => {
           console.log(response);
           if (response !== undefined)
             if (response.status === 200) {
-              this.setState({ img: "http://localhost:3001/img/" + encodeURI(this.state.emailId) })
+              this.setState({ img: "http://" + rooturl + ":3001/img/" + encodeURI(this.state.emailId) })
             }
         })
     }

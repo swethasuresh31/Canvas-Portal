@@ -1,7 +1,4 @@
 import React, { Component } from 'react';
-import axios from 'axios';
-import cookie from 'react-cookies';
-import { Avatar, Text, Table } from '@instructure/ui-elements'
 import Cookies from 'universal-cookie';
 import { Redirect } from 'react-router-dom'
 import { Link } from 'react-router-dom';

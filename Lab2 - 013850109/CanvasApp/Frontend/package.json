@@ -58,7 +58,6 @@
       "enzyme-to-json/serializer"
     ]
   },
-  "proxy": "http://localhost:3001",
   "devDependencies": {
     "react-redux": "^6.0.1",
     "redux": "^4.0.1",

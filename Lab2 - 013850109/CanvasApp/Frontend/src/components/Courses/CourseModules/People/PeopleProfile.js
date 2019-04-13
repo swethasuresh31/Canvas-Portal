@@ -5,7 +5,8 @@ import cookie from 'react-cookies';
 import { Redirect } from 'react-router';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
 import styled from "styled-components";
-import axios from 'axios';
+import axios from 'axios'
+import {rooturl} from '../../../../config/settings';
 import { Avatar, Text, Table } from '@instructure/ui-elements'
 import { Breadcrumb, BreadcrumbLink } from '@instructure/ui-breadcrumb'
 import Cookies from 'universal-cookie';
@@ -43,7 +44,7 @@ export default class UserCoursePeople extends Component {
 
     componentWillMount() {
         axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
-        axios.get('http://localhost:3001/account/' + this.props.match.params.user)
+        axios.get('http://' + rooturl + ':3001/account/' + this.props.match.params.user)
             .then((response) => {
                 console.log(response);
                 //update the state with the response data
@@ -62,7 +63,7 @@ export default class UserCoursePeople extends Component {
                     })
             });
 
-            axios.get('http://localhost:3001/course/' + this.props.match.params.courseUid)
+            axios.get('http://' + rooturl + ':3001/course/' + this.props.match.params.courseUid)
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)
@@ -74,7 +75,7 @@ export default class UserCoursePeople extends Component {
         let homePath = "/coursedetails/" + this.state.course._id + "/home";
         let courseName = this.state.course.course_term + ': ' + this.state.course.course_dept_code + ' - ' + this.state.course.course_id + ' - ' + this.state.course.course_name
         let path1 = "/coursedetails/" + this.state.course._id + "/people";
-        let profileImg = "http://localhost:3001/img/" + encodeURI(this.state.emailId)
+        let profileImg = "http://" + rooturl + ":3001/img/" + encodeURI(this.state.emailId)
         console.log(this.state.people[0])
         let redirectVar = null;
         if (localStorage.user && localStorage.user !== undefined) {

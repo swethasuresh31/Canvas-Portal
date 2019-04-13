@@ -6,7 +6,8 @@ import cookie from 'react-cookies';
 import { Redirect } from 'react-router';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
 import styled from "styled-components";
-import axios from 'axios';
+import axios from 'axios'
+import {rooturl} from '../../config/settings';
 import { Link } from 'react-router-dom';
 
 import { Breadcrumb, BreadcrumbLink } from '@instructure/ui-breadcrumb';
@@ -170,7 +171,7 @@ class MessageInbox extends Component {
         let inboxPage = "/message/inbox";
         //sends message to the recipient
         axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
-        axios.post('http://localhost:3001/message/', data)
+        axios.post('http://' + rooturl + ':3001/message/', data)
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)

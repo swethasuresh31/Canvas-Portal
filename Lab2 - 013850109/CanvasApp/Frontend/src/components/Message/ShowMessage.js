@@ -6,7 +6,8 @@ import cookie from 'react-cookies';
 import { Redirect } from 'react-router';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
 import styled from "styled-components";
-import axios from 'axios';
+import axios from 'axios'
+import {rooturl} from '../../config/settings';
 import { Link } from 'react-router-dom';
 import { Avatar, Text, Table } from '@instructure/ui-elements';
 
@@ -59,7 +60,7 @@ class MessageInbox extends Component {
             inbox: result.inbox
         })
         axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
-        axios.get('http://localhost:3001/message/'+ this.props.match.params.type + "/id/" + this.props.match.params.message_id)
+        axios.get('http://' + rooturl + ':3001/message/'+ this.props.match.params.type + "/id/" + this.props.match.params.message_id)
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)
@@ -90,7 +91,7 @@ class MessageInbox extends Component {
 
     render() {
         let redirectVar = null;
-        let profileImg = "http://localhost:3001/img/" + encodeURI(this.state.message.sender);
+        let profileImg = "http://" + rooturl + ":3001/img/" + encodeURI(this.state.message.sender);
         // let homePath = "/coursedetails/" + this.state.course._id + "/home";
         // let courseName = this.state.course.course_term + ': ' + this.state.course.course_dept_code + ' - ' + this.state.course.course_id + ' - ' + this.state.course.course_name
         // let addAnnouncementPath = "/coursedetails/" + this.props.match.params.courseUid + "/announcements/add"

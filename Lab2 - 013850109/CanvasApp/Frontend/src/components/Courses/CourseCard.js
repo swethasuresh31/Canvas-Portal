@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Table } from '@instructure/ui-elements'
-import axios from 'axios';
+import axios from 'axios'
 import cookie from 'react-cookies';
 import Cookies from 'universal-cookie';
 import { Redirect } from 'react-router-dom'

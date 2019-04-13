@@ -7,7 +7,7 @@ import { Table } from '@instructure/ui-elements';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
 import cookie from 'react-cookies';
 import Cookies from 'universal-cookie';
-import axios from 'axios';
+import axios from 'axios'
 import { IconAddLine } from '@instructure/ui-icons'
 import { Link } from 'react-router-dom';
 

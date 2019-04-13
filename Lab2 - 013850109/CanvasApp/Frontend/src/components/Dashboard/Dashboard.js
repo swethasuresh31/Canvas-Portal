@@ -5,7 +5,8 @@ import Card from './Card';
 import Navbar from '../LandingPage/Navbar';
 import { Redirect } from 'react-router';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
-import axios from 'axios';
+import axios from 'axios'
+import {rooturl} from '../../config/settings';
 import Reorder from 'react-reorder'
 import { getDashboardInformation } from '../../js/actions/DashboardAction';
 import { connect } from 'react-redux';
