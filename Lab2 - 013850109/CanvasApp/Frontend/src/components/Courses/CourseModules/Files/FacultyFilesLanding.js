@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import axios from 'axios';
+import axios from 'axios'
+import {rooturl} from '../../../../config/settings';
 import cookie from 'react-cookies';
 import { Avatar, Text, Table } from '@instructure/ui-elements'
 import Cookies from 'universal-cookie';
@@ -34,7 +35,7 @@ export default class FacultyFilesLanding extends Component {
         setTimeout(() => {
             axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
             const response = {
-              file: 'http://localhost:3001/files/' + this.props.parentProps.match.params.courseUid + '/' + encodeURI(fileKey.key),
+              file: 'http://' + rooturl + ':3001/files/' + this.props.parentProps.match.params.courseUid + '/' + encodeURI(fileKey.key),
             };
             window.open(response.file,'_blank');
             window.focus();
@@ -43,7 +44,7 @@ export default class FacultyFilesLanding extends Component {
 
     componentWillMount() {
         axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
-        axios.get('http://localhost:3001/files/' + this.props.parentProps.match.params.courseUid)
+        axios.get('http://' + rooturl + ':3001/files/' + this.props.parentProps.match.params.courseUid)
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)
@@ -63,7 +64,7 @@ export default class FacultyFilesLanding extends Component {
         console.log(data)
         //adds the assignment based on information entered
         axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
-        axios.post('http://localhost:3001/files/' + this.props.parentProps.match.params.courseUid, data)
+        axios.post('http://' + rooturl + ':3001/files/' + this.props.parentProps.match.params.courseUid, data)
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)

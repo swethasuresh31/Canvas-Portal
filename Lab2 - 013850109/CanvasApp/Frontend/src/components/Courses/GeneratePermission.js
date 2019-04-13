@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import Navbar from '../LandingPage/Navbar';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
-import axios from 'axios';
+import axios from 'axios'
+import {rooturl} from '../../config/settings';
 
 import { getCourseInformation } from '../../js/actions/CourseAction';
 import { connect } from 'react-redux';
@@ -43,7 +44,7 @@ class GeneratePermission extends Component {
         this.setState({ errorMsg: '' })
         //generate the permission code for the course
         axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
-        axios.get('http://localhost:3001/permission/'+this.state.selectedCourse)
+        axios.get('http://' + rooturl + ':3001/permission/'+this.state.selectedCourse)
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)

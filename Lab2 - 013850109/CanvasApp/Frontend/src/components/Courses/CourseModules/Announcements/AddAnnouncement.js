@@ -5,7 +5,8 @@ import cookie from 'react-cookies';
 import { Redirect } from 'react-router';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
 import styled from "styled-components";
-import axios from 'axios';
+import axios from 'axios'
+import {rooturl} from '../../../../config/settings';
 import { Breadcrumb, BreadcrumbLink } from '@instructure/ui-breadcrumb'
 import Cookies from 'universal-cookie';
 import { Link } from 'react-router-dom';
@@ -29,7 +30,7 @@ export default class AddAnnouncement extends Component {
 
     componentWillMount() {
         axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
-        axios.get('http://localhost:3001/course/' + this.props.match.params.courseUid)
+        axios.get('http://' + rooturl + ':3001/course/' + this.props.match.params.courseUid)
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)
@@ -83,7 +84,7 @@ export default class AddAnnouncement extends Component {
         let announcementsPage = "/coursedetails/" + this.props.match.params.courseUid + "/announcements";
         //retrieves the courses based on information entered
         axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
-        axios.post('http://localhost:3001/announcement/' + this.props.match.params.courseUid, data)
+        axios.post('http://' + rooturl + ':3001/announcement/' + this.props.match.params.courseUid, data)
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)

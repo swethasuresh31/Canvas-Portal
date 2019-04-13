@@ -5,7 +5,8 @@ import cookie from 'react-cookies';
 import { Redirect } from 'react-router';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
 import styled from "styled-components";
-import axios from 'axios';
+import axios from 'axios'
+import {rooturl} from '../../../../config/settings';
 import { Breadcrumb, BreadcrumbLink } from '@instructure/ui-breadcrumb'
 import { Avatar, Text, Table } from '@instructure/ui-elements';
 import { Link } from 'react-router-dom';
@@ -45,14 +46,14 @@ export default class ShowAnnouncement extends Component {
 
     componentWillMount() {
         axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
-    axios.get('http://localhost:3001/course/' + this.props.match.params.courseUid)
+    axios.get('http://' + rooturl + ':3001/course/' + this.props.match.params.courseUid)
         .then((response) => {
             console.log(response);
             if (response !== undefined)
                 this.setState({ course: response.data })
         })
         axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
-        axios.get('http://localhost:3001/announcement/'+ this.props.match.params.courseUid +'/id/' + this.props.match.params.announcementUid)
+        axios.get('http://' + rooturl + ':3001/announcement/'+ this.props.match.params.courseUid +'/id/' + this.props.match.params.announcementUid)
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)

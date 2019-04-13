@@ -5,7 +5,8 @@ import cookie from 'react-cookies';
 import { Redirect } from 'react-router';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
 import styled from "styled-components";
-import axios from 'axios';
+import axios from 'axios'
+import {rooturl} from '../../../../config/settings';
 import { Breadcrumb, BreadcrumbLink } from '@instructure/ui-breadcrumb'
 import Cookies from 'universal-cookie';
 import DatePicker from "react-datepicker";
@@ -54,8 +55,8 @@ export default class TakeAssignment extends Component {
     }
 
     componentWillMount() {
-        let fileURL = 'http://localhost:3001/studentassignment/file/' + this.props.match.params.courseUid + '/' + this.props.match.params.assignmentUid + '/' + encodeURI(this.props.match.params.user);
-        axios.get('http://localhost:3001/studentassignment/' + this.props.match.params.courseUid + '/' + this.props.match.params.assignmentUid + '/' + encodeURI(this.props.match.params.user))
+        let fileURL = 'http://' + rooturl + ':3001/studentassignment/file/' + this.props.match.params.courseUid + '/' + this.props.match.params.assignmentUid + '/' + encodeURI(this.props.match.params.user);
+        axios.get('http://' + rooturl + ':3001/studentassignment/' + this.props.match.params.courseUid + '/' + this.props.match.params.assignmentUid + '/' + encodeURI(this.props.match.params.user))
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)
@@ -64,7 +65,7 @@ export default class TakeAssignment extends Component {
                         file: fileURL
                     })
             })
-            axios.get('http://localhost:3001/course/' + this.props.match.params.courseUid)
+            axios.get('http://' + rooturl + ':3001/course/' + this.props.match.params.courseUid)
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)
@@ -81,7 +82,7 @@ export default class TakeAssignment extends Component {
         console.log(data)
         let assignmentsPage = "/coursedetails/" + this.props.match.params.courseUid + "/assignments";
         //adds the assignment based on information entered
-        axios.post('http://localhost:3001/studentassignment/' + this.props.match.params.courseUid + '/' + this.state.assignmentInfo.coursework_uid + '/' + this.state.assignmentInfo.studentcoursework_uid, data)
+        axios.post('http://' + rooturl + ':3001/studentassignment/' + this.props.match.params.courseUid + '/' + this.state.assignmentInfo.coursework_uid + '/' + this.state.assignmentInfo.studentcoursework_uid, data)
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)

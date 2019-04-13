@@ -8,7 +8,8 @@ import { Table } from '@instructure/ui-elements';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
 import cookie from 'react-cookies';
 import Cookies from 'universal-cookie';
-import axios from 'axios';
+import axios from 'axios'
+import {rooturl} from '../../config/settings';
 
 import { IconSearchLine } from '@instructure/ui-icons'
 
@@ -97,7 +98,7 @@ export default class SearchCourse extends Component {
         console.log('Calling : ' + this.state.term + ' ' + this.state.department + ' ' + this.state.courseId)
         if (this.state.term !== '' && this.state.department !== '' && this.state.courseId !== '') {
             axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
-            axios.get('http://localhost:3001/course?term=' + this.state.term + '&name=&department=' +
+            axios.get('http://' + rooturl + ':3001/course?term=' + this.state.term + '&name=&department=' +
                 this.state.department + '&courseId=' + this.state.courseId + '&operator=' + this.state.searchOperand)
                 .then((response) => {
                     console.log(response);
@@ -128,7 +129,7 @@ export default class SearchCourse extends Component {
 
     componentDidMount() {
         axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
-        axios.get('http://localhost:3001/coursemetadata')
+        axios.get('http://' + rooturl + ':3001/coursemetadata')
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)
@@ -162,7 +163,7 @@ export default class SearchCourse extends Component {
         console.log(data)
         //retrieves the courses based on information entered
         axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
-        axios.post('http://localhost:3001/usercourse', data)
+        axios.post('http://' + rooturl + ':3001/usercourse', data)
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)

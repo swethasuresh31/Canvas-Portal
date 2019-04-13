@@ -6,7 +6,8 @@ import { Redirect } from 'react-router';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
 import { Breadcrumb, BreadcrumbLink } from '@instructure/ui-breadcrumb'
 import styled from "styled-components";
-import axios from 'axios';
+import axios from 'axios'
+import {rooturl} from '../../../../config/settings';
 import { Avatar, Text, Table } from '@instructure/ui-elements'
 import { Link } from 'react-router-dom';
 
@@ -43,14 +44,14 @@ export default class Submissions extends Component {
 
     componentWillMount() {
         axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
-        axios.get('http://localhost:3001/studentassignment/'+ this.props.match.params.courseUid + '/' + this.props.match.params.assignmentUid)
+        axios.get('http://' + rooturl + ':3001/studentassignment/'+ this.props.match.params.courseUid + '/' + this.props.match.params.assignmentUid)
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)
                     this.setState({ assignments: response.data })
             })
             axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
-            axios.get('http://localhost:3001/course/' + this.props.match.params.courseUid)
+            axios.get('http://' + rooturl + ':3001/course/' + this.props.match.params.courseUid)
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)
@@ -103,7 +104,7 @@ export default class Submissions extends Component {
                                             {
                                                 this.state.assignments.map(assignment => {
                                                     let assignmentSubmissionLink = "/coursedetails/"+this.props.match.params.courseUid+"/assignments/submissions/"+this.props.match.params.assignmentUid+"/" + encodeURI(assignment.student_emailId)
-                                                    let profileImg = "http://localhost:3001/img/" + encodeURI(assignment.student_emailId)
+                                                    let profileImg = "http://" + rooturl + ":3001/img/" + encodeURI(assignment.student_emailId)
                                                     return (
                                                         <tr>
                                                             <td> <Avatar src={profileImg} name={assignment.student_name} size="small" /></td>

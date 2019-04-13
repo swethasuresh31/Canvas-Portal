@@ -1,4 +1,5 @@
-import axios from "axios";
+import axios from 'axios'
+import {rooturl} from '../../config/settings';
 export const GET_PROFILE_INFO = "GET_PROFILE_INFO";
 export const GET_PROFILE_INFO_ERROR = "GET_PROFILE_INFO_ERROR";
 export const UPDATE_PROFILE_INFO = "GET_PROFILE_INFO";
@@ -17,11 +18,11 @@ export function getProfileInformation() {
         var errorRedirect = false;
         console.log('jwt ' + localStorage.getItem('userToken'))
         axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
-        await axios.get('http://localhost:3001/account/' + localStorage.user)
+        await axios.get('http://' + rooturl + ':3001/account/' + localStorage.user)
             .then((response) => {
                 console.log("came here")
                 result.data = response.data;
-                result.data.img = "http://localhost:3001/img/" + encodeURI(response.data.emailId);
+                result.data.img = "http://' + rooturl + ':3001/img/" + encodeURI(response.data.emailId);
                 console.log("in return of get");
             })
             .catch((err) => {
@@ -46,7 +47,7 @@ export function updateProfileInformation(data){
 
         axios.defaults.withCredentials = true;
         axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
-        await axios.post('http://localhost:3001/account', data)
+        await axios.post('http://' + rooturl + ':3001/account', data)
             .then(response => {
                 if (response.status === 200) {
                     var resultData={

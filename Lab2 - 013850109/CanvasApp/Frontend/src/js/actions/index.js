@@ -1,4 +1,5 @@
-import axios from "axios";
+import axios from 'axios'
+import {rooturl} from '../../config/settings';
 export const LOGIN_AUTHORIZATION = "LOGIN_AUTHORIZATION";
 export const SIGNUP = "SIGNUP";
 export const SIGNUP_USER_ALREADY_PRESENT = "SIGN_USER_ALREADY_PRESENT";
@@ -9,7 +10,7 @@ export function submitLogin(data) {
   return function (dispatch) {
       console.log('Inside Login');
       axios.defaults.withCredentials = true;
-      axios.post('http://localhost:3001/login', data)
+      axios.post('http://' + rooturl + ':3001/login', data)
           .then(response => {
               console.log(response);
               if (response.status === 200) {
@@ -55,7 +56,7 @@ export function signup(data) {
     return function (dispatch) {
         console.log('Inside Signup');
         axios.defaults.withCredentials = true;
-        axios.post('http://localhost:3001/signup', data)
+        axios.post('http://' + rooturl + ':3001/signup', data)
             .then(response => {
                 console.log('response', response.data);
                 if (response.status === 200) {

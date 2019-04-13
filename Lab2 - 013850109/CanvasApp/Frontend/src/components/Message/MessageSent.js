@@ -6,7 +6,6 @@ import cookie from 'react-cookies';
 import { Redirect } from 'react-router';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
 import styled from "styled-components";
-import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { Breadcrumb, BreadcrumbLink } from '@instructure/ui-breadcrumb';
 
@@ -71,7 +70,7 @@ class MessageSent extends Component {
                             </Heading>
                             <div className="row">
                                 <div className="col">
-                                <a href="#" class="btn btn-primary btn-lg active  m-3 p-2" style={{ backgroundColor: '#0055a2' }} role="button" aria-pressed="true"><IconAddLine /> Compose Message</a>
+                                <a href="/message/create" class="btn btn-primary btn-lg active  m-3 p-2" style={{ backgroundColor: '#0055a2' }} role="button" aria-pressed="true"><IconAddLine /> Compose Message</a>
                                 </div>
                                 </div>
                                 <div className="row">
@@ -87,7 +86,7 @@ class MessageSent extends Component {
                                         <table className="table">
                                             <tbody>
                                                 {
-                                                    this.state.sent.map(message => <MessageCard message={message} />
+                                                    this.state.sent.map(message => <MessageCard message={message} type="sent"/>
                                                     )
                                                 }
                                             </tbody>

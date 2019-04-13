@@ -5,7 +5,8 @@ import cookie from 'react-cookies';
 import { Redirect } from 'react-router';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
 import styled from "styled-components";
-import axios from 'axios';
+import axios from 'axios'
+import {rooturl} from '../../../../config/settings';
 import { Breadcrumb, BreadcrumbLink } from '@instructure/ui-breadcrumb'
 import { Avatar, Text, Table } from '@instructure/ui-elements'
 import { Link } from 'react-router-dom';
@@ -54,7 +55,7 @@ class UserCoursePeople extends Component {
         this.setState({ errorMsg: '' })
         //drops the courses based on information entered
         axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
-        axios.delete('http://localhost:3001/usercourse?user=' + encodeURI(user) + '&courseUid=' + courseUid + '&status=' + enrollmentStatus)
+        axios.delete('http://' + rooturl + ':3001/usercourse?user=' + encodeURI(user) + '&courseUid=' + courseUid + '&status=' + enrollmentStatus)
             .then((response) => {
                 console.log(response);
                 if (response !== undefined && response.status === 200) {
@@ -138,7 +139,7 @@ class UserCoursePeople extends Component {
                                             {
                                                 this.state.enrolled.map(person => {
                                                     let personProfileLink = "/coursedetails/" + this.props.match.params.courseUid + "/people/" + encodeURI(person.emailId)
-                                                    let profileImg = "http://localhost:3001/img/" + encodeURI(person.emailId)
+                                                    let profileImg = "http://" + rooturl + ":3001/img/" + encodeURI(person.emailId)
                                                     let enrollmentStatus = "Enrolled";
                                                     return (
                                                         <tr>
@@ -155,7 +156,7 @@ class UserCoursePeople extends Component {
                                             {
                                                 this.state.waitlisted.map(person => {
                                                     let personProfileLink = "/coursedetails/" + this.props.match.params.courseUid + "/people/" + encodeURI(person.emailId)
-                                                    let profileImg = "http://localhost:3001/img/" + encodeURI(person.emailId)
+                                                    let profileImg = "http://" + rooturl + ":3001/img/" + encodeURI(person.emailId)
                                                     let enrollmentStatus = "Waitlist";
                                                     return (
                                                         <tr>
@@ -215,7 +216,7 @@ class UserCoursePeople extends Component {
                                             {
                                                 this.state.enrolled.map(person => {
                                                     let personProfileLink = "/coursedetails/" + this.props.match.params.courseUid + "/people/" + encodeURI(person.emailId)
-                                                    let profileImg = "http://localhost:3001/img/" + encodeURI(person.emailId)
+                                                    let profileImg = "http://" + rooturl + ":3001/img/" + encodeURI(person.emailId)
                                                     return (
                                                         <tr>
                                                             <td> <Avatar src={profileImg} name={person.name} size="snall" /></td>
@@ -229,7 +230,7 @@ class UserCoursePeople extends Component {
                                             {
                                                 this.state.waitlisted.map(person => {
                                                     let personProfileLink = "/coursedetails/" + this.props.match.params.courseUid + "/people/" + encodeURI(person.emailId)
-                                                    let profileImg = "http://localhost:3001/img/" + encodeURI(person.emailId)
+                                                    let profileImg = "http://" + rooturl + ":3001/img/" + encodeURI(person.emailId)
                                                     return (
                                                         <tr>
                                                             <td> <Avatar src={profileImg} name={person.name} size="snall" /></td>

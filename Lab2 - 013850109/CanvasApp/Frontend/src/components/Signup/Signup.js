@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import '../Login/Login.css';
 import logo from '../../img/sjsu-full-logo.png'
 import headerLogo from '../../img/sjsu-header-logo.png'
-import axios from 'axios';
-import cookie from 'react-cookies';
 import { Redirect } from 'react-router';
 
 import { connect } from 'react-redux';
@@ -133,7 +131,7 @@ class Signup extends Component {
     //     //set the with credentials to true
     //     axios.defaults.withCredentials = true;
     //     //make a post request with the user data
-    //     axios.post('http://localhost:3001/signup', data)
+    //     axios.post('http://' + rooturl + ':3001/signup', data)
     //         .then(response => {
     //             console.log("Status Code : ", response.status);
     //             if (response.status === 200) {

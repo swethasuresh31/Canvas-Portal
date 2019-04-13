@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import axios from 'axios';
+import axios from 'axios'
+import {rooturl} from '../../../../config/settings';
 import cookie from 'react-cookies';
 import { Avatar, Text, Table } from '@instructure/ui-elements'
 import Cookies from 'universal-cookie';
@@ -22,7 +23,7 @@ export default class AnnouncementCard extends Component {
     render() {
         let announcementPath="/coursedetails/"+this.props.courseUid+"/announcement/"+this.props.announcement._id
         //let announcement = this.props.announcement
-        let profileImg = "http://localhost:3001/img/" + encodeURI(this.props.announcement.created_by)
+        let profileImg = "http://" + rooturl + ":3001/img/" + encodeURI(this.props.announcement.created_by)
         let displaytext = (this.props.announcement.body.length < 100) ? this.props.announcement.body : this.props.announcement.body.substring(0,100)+'...'
         return (
                 <tr>

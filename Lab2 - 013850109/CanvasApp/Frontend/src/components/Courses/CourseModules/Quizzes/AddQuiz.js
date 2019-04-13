@@ -5,7 +5,8 @@ import cookie from 'react-cookies';
 import { Redirect } from 'react-router';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
 import styled from "styled-components";
-import axios from 'axios';
+import axios from 'axios'
+import {rooturl} from '../../../../config/settings';
 import { Breadcrumb, BreadcrumbLink } from '@instructure/ui-breadcrumb'
 import Cookies from 'universal-cookie';
 import DatePicker from "react-datepicker";
@@ -151,7 +152,7 @@ class AddQuiz extends Component {
         console.log(data)
         let quizzesPage = "/coursedetails/" + this.props.match.params.courseUid + "/quizzes";
         //adds the quiz based on information entered
-        axios.post('http://localhost:3001/quiz/' + this.props.match.params.courseUid, data)
+        axios.post('http://' + rooturl + ':3001/quiz/' + this.props.match.params.courseUid, data)
             .then((response) => {
                 console.log(response);
                 if (response !== undefined)

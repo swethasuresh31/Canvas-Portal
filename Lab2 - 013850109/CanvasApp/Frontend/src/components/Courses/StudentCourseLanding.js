@@ -7,7 +7,8 @@ import { Table } from '@instructure/ui-elements';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
 import cookie from 'react-cookies';
 import Cookies from 'universal-cookie';
-import axios from 'axios';
+import axios from 'axios'
+import {rooturl} from '../../config/settings';
 import { IconSearchLine, IconAddLine, IconTrashLine } from '@instructure/ui-icons';
 import { Link } from 'react-router-dom';
 
@@ -31,7 +32,7 @@ export default class StudentCourseLanding extends Component {
         //drops the courses based on information entered
         console.log("Course_UID:" + courseUid + "Status:" + enrollmentStatus);
         axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
-        axios.delete('http://localhost:3001/usercourse?courseUid=' + courseUid + '&status=' + enrollmentStatus + '&user=' + localStorage.user)
+        axios.delete('http://' + rooturl + ':3001/usercourse?courseUid=' + courseUid + '&status=' + enrollmentStatus + '&user=' + localStorage.user)
             .then((response) => {
                 console.log("Response:" +response);
                 if (response !== undefined && response.status === 200)

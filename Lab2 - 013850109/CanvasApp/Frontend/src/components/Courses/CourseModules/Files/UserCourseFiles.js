@@ -6,7 +6,7 @@ import { Redirect } from 'react-router';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
 import styled from "styled-components";
 import { Breadcrumb, BreadcrumbLink } from '@instructure/ui-breadcrumb'
-import axios from 'axios';
+import axios from 'axios'
 import Cookies from 'universal-cookie';
 import FacultyFilesLanding from './FacultyFilesLanding';
 import StudentFilesLanding from './StudentFilesLanding';

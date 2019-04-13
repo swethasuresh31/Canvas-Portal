@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import axios from 'axios';
+import axios from 'axios'
+import {rooturl} from '../../../../config/settings';
 import cookie from 'react-cookies';
 import { Avatar, Text, Table } from '@instructure/ui-elements'
 import Cookies from 'universal-cookie';
@@ -26,7 +27,7 @@ export default class StudentGradeLanding extends Component {
 
     componentWillMount() {
         axios.defaults.headers.common['Authorization'] = 'jwt ' + localStorage.getItem('userToken');
-        axios.get('http://localhost:3001/grades/' + this.props.parentProps.match.params.courseUid)
+        axios.get('http://' + rooturl + ':3001/grades/' + this.props.parentProps.match.params.courseUid)
             .then((response) => {
                 console.log(response);
                 let scoredMarks = 0;
