@@ -256,7 +256,12 @@ export default class CreateCourse extends Component {
                         this.setState({
                             redirectVar: <Redirect to="/coursehome" />
                         })
-                    } else {
+                    } else if(response.status === 210){
+                        console.log('Course already exists');
+                        this.setState({
+                            errorMsg: 'Course already exists! '
+                        })
+                     }else {
                         this.setState({
                             errorMsg: 'Unable to create course! ' + response.data
                         })

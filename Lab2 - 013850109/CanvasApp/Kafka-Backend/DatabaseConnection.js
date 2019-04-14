@@ -12,7 +12,6 @@ mongoose.Promise = global.Promise;
 const userListSchema = new Schema({
     emailId: {
         type: String,
-        unique: true,
         sparse: true,
     },
     name: {

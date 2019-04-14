@@ -43,7 +43,7 @@ class Main extends Component {
             <div>
                 {/*Render Different Component based on Route*/}
 
-                <Route path="/" exact component={Dashboard} />
+                <Route path="/dashboard" exact component={Dashboard} />
                 <Route path="/account" exact component={Account} />
                 <Route path="/coursehome" exact component={CourseHome} />
                 <Route path="/login" exact component={Login} />

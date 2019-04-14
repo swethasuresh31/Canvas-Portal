@@ -48,3 +48,11 @@
 }
 .back { text-align: left; margin-top:10px;}
 .back a {color: #444444; font-size: 13px;text-decoration: none;}
+
+.pagination-container{
+  padding: 5%;
+  align:"center"
+}
+.center-content{
+  text-align: center;
+}
