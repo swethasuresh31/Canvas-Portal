@@ -1,7 +1,7 @@
 // Link.react.test.js
 import React from 'react';
-import Signup from '../Signup/Signup';
-import Login from '../Login/Login';
+import Card from '../Dashboard/Card';
+import MessageNav from '../Message/MessageNav';
 import CourseNav from '../Courses/CourseModules/CourseNav';
 import renderer from 'react-test-renderer';
 
@@ -12,17 +12,18 @@ import { mount, shallow, render } from 'enzyme';
 configure({ adapter: new Adapter() });
 
 
-it('sign up should exist', () => {
-  const component = mount( <Signup />);
+it('Dashboard should exist 1', () => {
+  const item = {}
+  const component = mount( <Card item={item}/>);
   expect(component.exists()).toBe(true);
 });
 
-it('login should render correctly', () => {
-  const component = mount( <Login />);
+it('message navigation should render correctly 1', () => {
+  const component = mount( <MessageNav />);
   expect(component.exists()).toBe(true);
 });
 
-it('CourseNav should render correctly', () => {
+it('CourseNav should render correctly 1', () => {
   const component = mount( <CourseNav />);
   expect(component.exists()).toBe(true);
 });
