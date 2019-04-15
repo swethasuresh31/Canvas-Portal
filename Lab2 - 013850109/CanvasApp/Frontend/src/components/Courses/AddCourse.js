@@ -174,6 +174,12 @@ export default class SearchCourse extends Component {
                         console.log(this.state.redirectVar);
                     }
             })
+            .catch((error) => {
+                console.log(error.response);
+                this.setState({
+                    errorMsg: error.response.data
+                })
+            });
     }
 
 
@@ -226,7 +232,7 @@ export default class SearchCourse extends Component {
                                                 </div>
                                                 <input type="text" class="form-control" id="inputGroupSelect05" value={this.state.permissionNumber} onChange={this.permissionChangeHandler} />
                                             </div>
-                                            <div>{this.state.errorMsg}</div><br />
+                                            <div  class="font-italic text-danger" >{this.state.errorMsg}</div><br />
                                             <div class="row input-group mb-3 justify-content-center">
                                                 <button type="button" class="btn btn-secondary btn-md mx-2 disabled" >Cancel</button>
                                                 <button type="button" class="btn btn-primary btn-md mx-2" style={{ backgroundColor: '#0055a2' }} onClick={this.onAdd} >Add</button>
@@ -311,7 +317,7 @@ export default class SearchCourse extends Component {
                                                 </div>
                                                 <input type="text" class="form-control" id="inputGroupSelect05" value={this.state.permissionNumber} onChange={this.permissionChangeHandler} />
                                             </div>
-                                            <div>{this.state.errorMsg}</div><br />
+                                            <div  class="font-italic text-danger" >{this.state.errorMsg}</div><br />
                                             <div class="row input-group mb-3 justify-content-center">
                                                 <button type="button" class="btn btn-secondary btn-md mx-2" onClick={() => this.clearForm()}>Clear</button>
                                                 <button type="button" class="btn btn-primary btn-md mx-2" style={{ backgroundColor: '#0055a2' }} onClick={this.onAdd} >Add</button>

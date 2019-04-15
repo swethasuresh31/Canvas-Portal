@@ -7,6 +7,11 @@ async function handle_request(message, callback) {
 
 
     try {
+        var courseFind = await Model.CourseModel.findOne({course_id:message.body.courseId,course_term:message.body.courseTerm,course_dept_code:message.body.courseDeptCode});
+        if(courseFind){
+            callback(null,null);
+        }
+
         var course = new Model.CourseModel({
             course_id: message.body.courseId,
             course_term: message.body.courseTerm,

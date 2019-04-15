@@ -11,10 +11,17 @@ async function handle_request(req, res) {
         console.log(req.user.emailId + " " + courseUid + " " + permissionNumber)
         var course = await Model.CourseModel.findById(courseUid)
         var user = await Model.UserModel.findById(req.user._id)
+        console.log("checkStudentAlreadyEnrolled")
+        for (var i=0; i < user.course.length; i++) {
+            if (user.course[i].course_uid === course._id &&
+                (user.course[i].isWaitlist === false || permissionNumber === 'undefined' || permissionNumber === '')) {
+                    throw "course already enrolled"
+            }
+        }
 
         console.log(course)
         console.log(user)
-        if (permissionNumber === 'undefined') {
+        if (permissionNumber === 'undefined' || permissionNumber === '') {
             checkAvailability(user, course, permissionNumber, res)
         }
         else {
@@ -22,6 +29,7 @@ async function handle_request(req, res) {
         }
     }
     catch (error) {
+        console.log(error);
         res(error, null);
     }
 }
@@ -146,6 +154,7 @@ updateEnrollment = async (user, course, res) => {
         insertStudentCourse(user, course, false, res)
     }
     catch (error) {
+        console.log(error)
         res(error, null);
     }
 }
@@ -169,11 +178,11 @@ insertStudentCourse = async (user, course, isWaitlist, res) => {
             }
         })
 
-        if (!isWaitlist) {
-            console.log("---------------------------------------------------------------------------------------------") 
+        if (!isWaitlist && updatedUser.nModified > 0) {
+            console.log("---------------------------------------------------------------------------------------------")
             for (var i = 0; i < course.assignments.length; i++) {
 
-                var updatedUser = await Model.UserModel.update({ _id: user._id, 'course.course_uid':course._id }, {
+                var updatedUser = await Model.UserModel.update({ _id: user._id, 'course.course_uid': course._id }, {
                     $push: {
                         'course.$.coursework_submissions':
                         {
@@ -186,7 +195,7 @@ insertStudentCourse = async (user, course, isWaitlist, res) => {
             }
             for (var i = 0; i < course.quizzes.length; i++) {
 
-                var updatedUser = await Model.UserModel.update({ _id: user._id, 'course.course_uid':course._id }, {
+                var updatedUser = await Model.UserModel.update({ _id: user._id, 'course.course_uid': course._id }, {
                     $push: {
                         'course.$.coursework_submissions':
                         {

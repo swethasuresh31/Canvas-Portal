@@ -44,18 +44,17 @@ router.post('/', requireAuth, function (req, res) {
     console.log("Inside create course handler");
 
     kafka.make_request("add-course", req, function (err, result) {
-        if (result) {
+        if (result !== null) {
             if (result.updateStatus === "Success") {
                 console.log("Course added successfully.");
                 res.end("Success");
             } else {
+                console.log(result);
                 res.status(500).send("Internal Server Error")
             }
-        }
-
-        if (err) {
+        }else {
             console.log("Unable to add the course.", err);
-            res.end('Unable to add the course.');
+            res.status(500).end("Course Already Enrolled");
         }
     });
 });

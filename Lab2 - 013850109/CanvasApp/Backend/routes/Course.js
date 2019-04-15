@@ -48,6 +48,9 @@ router.post('/',requireAuth, function (req, res) {
         if (result) {
             console.log("Course saved successfully.");
             res.end('Course saved successfully.');
+        } else if(result === null){
+            console.log("Course already exists.");
+            res.status(210).end('Course already exists!');
         }
 
         if (err) {

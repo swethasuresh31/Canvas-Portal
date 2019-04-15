@@ -18,9 +18,9 @@ router.post('/', function (req, res) {
             console.log("User saved successfully.");
             res.end('Adding a user successful!');
         }
-        else if(result == null){
+        else if(result === null){
             console.log("User already exists.");
-            res.end('Dupplicate user!');
+            res.status(210).end('Dupplicate user!');
         }
 
         if(err){

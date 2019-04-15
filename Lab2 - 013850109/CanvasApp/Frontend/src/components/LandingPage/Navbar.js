@@ -50,7 +50,7 @@ export default class Card extends Component {
             selected={this.props.selected === "icon"}
             icon={<Img src={logo}> </Img>}
             label={<ScreenReaderContent>Home</ScreenReaderContent>}
-            href="/"
+            href="/dashboard"
             theme={{
               backgroundColor: '#FFFFFF',
               hoverBackgroundColor: '#FFFFFF'
@@ -72,7 +72,7 @@ export default class Card extends Component {
             selected={this.props.selected === "dashboard"}
             icon={<IconDashboardLine />}
             label="Dashboard"
-            href="/"
+            href="/dashboard"
             theme={{
               backgroundColor: '#0055a2',
               hoverBackgroundColor: '#FFFFFF'
