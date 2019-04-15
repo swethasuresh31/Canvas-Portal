@@ -129,8 +129,9 @@ class MessageInbox extends Component {
         
                 console.log("course: " + this.props.courseHomeStateStore.result.data)   
                 const result1 = this.props.courseHomeStateStore.result.data;
+                var created = [ result1.created_by ]
                 this.setState({
-                    people: result1.enrolled,
+                    people: [...result1.enrolled,...created],
                     courseId: val,
                     errorMsg: ''
         }, () => {
