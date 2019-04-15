@@ -222,14 +222,12 @@ class UserCoursePeople extends Component {
                                         </tbody>
                                     </Table>
                                     {(() => {
-                                        if (this.state.peopleFiltered.length !== 0) {
                                             return (
                                                 <div className="row  d-flex justify-content-center">
                                                     <button className="btn btn-primary btn-md" style={{ backgroundColor: '#0055a2' }} id="prev" onClick={this.handlePagination}>Prev</button>
                                                     <button className="btn btn-primary btn-md btn-md mx-2" style={{ backgroundColor: '#0055a2' }} id="next" onClick={this.handlePagination} >Next</button>
                                                 </div>
                                             );
-                                        }
                                     })()
                                     }
                                 </div>
@@ -289,14 +287,12 @@ class UserCoursePeople extends Component {
                                         </tbody>
                                     </Table>
                                     {(() => {
-                                        if (this.state.peopleFiltered.length !== 0) {
                                             return (
                                                 <div className="row  d-flex justify-content-center">
                                                     <button className="btn btn-primary btn-md" style={{ backgroundColor: '#0055a2' }} id="prev" onClick={this.handlePagination}>Prev</button>
                                                     <button className="btn btn-primary btn-md btn-md mx-2" style={{ backgroundColor: '#0055a2' }} id="next" onClick={this.handlePagination} >Next</button>
                                                 </div>
                                             );
-                                        }
                                     })()
                                     }
                                 </div>
