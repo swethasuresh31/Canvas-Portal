@@ -102,7 +102,7 @@ export default class ShowAnnouncement extends Component {
                                                 <div class="col">
                                                     <div class="row"><h5 class="card-title">{this.state.announcement.header}</h5></div>
                                                     <div class="row">{this.state.announcement.created_by}</div>
-                                                    <div class="row">{new Date(this.state.announcement.timestamp).toISOString().slice(0, 16).replace('T', ' ')}</div>
+                                                    <div class="row">{this.state.announcement.timestamp}</div>
                                                 </div>
                                             </div>
                                             <br />
