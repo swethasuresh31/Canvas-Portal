@@ -8,6 +8,8 @@ async function handle_request(message, callback) {
 
     console.log("Adding assignment for course: " + message.params.course_uid)
     try {
+        var course = await Model.CourseModel.find({'_id': message.params.course_uid, 'assignments.name' : message.body.assignmentName})
+        if(course) throw "assignment already exists"
         //fetching course details
         console.log("fetching course details");
         var course = await Model.CourseModel.findById(message.params.course_uid);
@@ -29,7 +31,7 @@ async function handle_request(message, callback) {
         }
     }
     catch (error) {
-        console.error("Kafka backend - unable to save the assignment details");
+        console.error("Kafka backend - unable to save the assignment details: " + error);
         callback(error, null);
     }
 }
