@@ -10,6 +10,7 @@ async function handle_request(message, callback) {
 
         //check if quiz exists
         var course = await Model.CourseModel.findOne({'_id': message.params.course_uid, 'quizzes.name' : message.body.quizName})
+        console.log(JSON.stringify(course))
         if(course) throw "quiz already exists"
         //fetching course details
         console.log("fetching course details");
