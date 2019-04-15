@@ -97,7 +97,7 @@ export default class ShowAnnouncement extends Component {
                                         <div class="card-body">
                                             <div class="row">
                                                 <div className="col pr-0 mr-0" style={{ maxWidth: "100px" }}>
-                                                    <Avatar name={this.state.announcement.created_by} size="medium" />
+                                                    <Avatar src={this.state.announcement.created_by} size="medium" />
                                                 </div>
                                                 <div class="col">
                                                     <div class="row"><h5 class="card-title">{this.state.announcement.header}</h5></div>
