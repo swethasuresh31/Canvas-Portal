@@ -8,7 +8,7 @@ async function handle_request(message, callback) {
 
     console.log("Adding assignment for course: " + message.params.course_uid)
     try {
-        var course = await Model.CourseModel.find({'_id': message.params.course_uid, 'assignments.name' : message.body.assignmentName})
+        var course = await Model.CourseModel.findOne({'_id': message.params.course_uid, 'assignments.name' : message.body.assignmentName})
         if(course) throw "assignment already exists"
         //fetching course details
         console.log("fetching course details");
