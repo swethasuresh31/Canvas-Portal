@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const autoIncrement = require("mongoose-auto-increment");
 const Schema = mongoose.Schema;
-mongoose.connect('mongodb://127.0.0.1:27017/canvas-app', { useNewUrlParser: true, poolSize: 1});
+mongoose.connect('mongodb://127.0.0.1:27017/canvas-app', { useNewUrlParser: true});
 // mongoose.connect('mongodb+srv://dbuser:dbuserpwd@canvas-app-tbdky.mongodb.net/canvas-app?retryWrites=true');
 autoIncrement.initialize(mongoose.connection);
 mongoose.connection.on('error', error => console.log(error));
