@@ -135,7 +135,7 @@ class MessageInbox extends Component {
                                     <div class="card-body">
                                         <div class="row">
                                             <div className="col pr-0 mr-0" style={{ maxWidth: "100px" }}>
-                                                <Avatar name={profileImg} size="medium" />
+                                                <Avatar src={profileImg} size="medium" />
                                             </div>
                                             <div class="col">
                                                 <div class="row"><h5 class="card-title">{this.state.message.subject}</h5></div>
