@@ -110,21 +110,18 @@ class UserCoursePeople extends Component {
             .then((response) => {
                 console.log(response);
                 if (response !== undefined && response.status === 200) {
-                    if (enrollmentStatus === 'Waitlist') {
-                        let index = this.state.waitlisted.findIndex(row => row.emailId === user)
+                        let index = this.state.people.findIndex(row => row.emailId === user)
                         console.log(index)
-                        var newPeople = [...this.state.waitlisted]
+                        var newPeople = [...this.state.people]
                         newPeople.splice(index, 1);
                         console.log(newPeople)
-                        this.setState({ waitlisted: newPeople });
-                    } else {
-                        let index = this.state.enrolled.findIndex(row => row.emailId === user)
-                        console.log(index)
-                        var newPeople = [...this.state.enrolled]
-                        newPeople.splice(index, 1);
-                        console.log(newPeople)
-                        this.setState({ enrolled: newPeople });
-                    }
+                        var peopleFiltered = newPeople.filter(function (course) {
+                            var index = newPeople.indexOf(course);
+                            return index >= 0 && index <= 1;
+                        }, () => {
+                            console.log(peopleFiltered);
+                        });
+                        this.setState({ people: newPeople, peopleFiltered: peopleFiltered });
 
                 }
 
