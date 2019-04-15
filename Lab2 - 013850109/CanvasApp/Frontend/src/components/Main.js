@@ -46,6 +46,7 @@ class Main extends Component {
                 <Route path="/dashboard" exact component={Dashboard} />
                 <Route path="/account" exact component={Account} />
                 <Route path="/coursehome" exact component={CourseHome} />
+                <Route path="/" exact component={Login} />
                 <Route path="/login" exact component={Login} />
                 <Route path="/signup" exact component={Signup} />
                 <Route path="/enrollCourse" exact component={AddCourse} />

@@ -72,7 +72,7 @@ class TakeAssignment extends Component {
         console.log(this.fileInput.current.files[0])
         if (this.fileInput.current.files[0] !== undefined) {
             console.log(this.fileInput.current.files[0])
-            let filename = this.props.match.params.courseUid + '-' + this.state.assignmentInfo.name + '-' + localStorage.user + '-' + this.fileInput.current.files[0].name
+            let filename = this.props.match.params.courseUid + '-' + this.state.assignmentInfo.name + '-' + localStorage.user + '.' + this.fileInput.current.files[0].name.split('.').pop();
             console.log(filename)
             let data = new FormData();
             data.append('file', this.fileInput.current.files[0], filename)
