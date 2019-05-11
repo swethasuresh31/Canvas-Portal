@@ -1,0 +1,339 @@
+body {
+    position: relative;
+    font-family: "proxima nova", Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 1.4;
+    background-color: #f9f9f9;
+    min-width: 100%;
+    min-height: 100%;
+    color: #777;
+    overflow: auto;
+}
+
+.content {
+    min-height: 100%;
+    min-width: 300px;
+    display: inline-block;
+    width: 100%;
+    font-family: "proxima nova", Arial, Helvetica, sans-serif;
+  }
+  
+.content:after {
+    content: '';
+    display: block;
+    height: 30px;
+  }
+  
+.content .applogin-banner {
+    position: relative;
+    margin-bottom: 10px;
+    min-width: 300px;
+
+  }
+  
+.content .applogin-banner .applogin-background {
+    background-color: #fff;
+    opacity: 0.9;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    box-shadow: 0 0 2px 1px rgba(175, 175, 175, 0.3);
+  }
+  
+  .content .applogin-banner .applogin-container {
+    position: relative;
+    width: 400px;
+    min-width: 300px;
+    margin: 0 auto;
+    padding: 20px 0;
+    box-sizing: border-box;
+    text-align: center;
+  }
+  
+  @media only screen and (max-width: 400px) {
+    .content .applogin-banner .applogin-container {
+      width: 100%;
+    }
+  }
+  
+  @media only screen and (max-height: 750px) {
+    .content .applogin-banner .applogin-container {
+      padding: 10px 0;
+    }
+  }
+  
+  @media only screen and (max-height: 660px) {
+  .content .applogin-banner .applogin-container {
+      padding: 5px 0;
+    }
+  }
+  
+  .content .applogin-banner .applogin-container h1 {
+    font-size: 24px;
+    font-weight: lighter;
+    line-height: 26px;
+  }
+  
+  @media only screen and (max-height: 660px) {
+    .content .applogin-banner .applogin-container p {
+      display: none;
+    }
+  }
+  
+  .content .applogin-banner .applogin-app-logo {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 5px;
+  }
+  
+ .content .applogin-banner .applogin-app-logo img {
+    max-height: 26px;
+  }
+
+  #sjsu-sign-in {
+    font-family: "proxima nova", Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 1.4;
+    background-color: #f9f9f9;
+    color: #777;
+    position: relative;
+    overflow: auto;
+    border-radius: 3px;
+    border-style: solid;
+    border-width: 1px;
+    height: auto;
+    margin: 100px auto 8px;
+    width: 400px;
+    min-width: 300px;
+}
+
+  #sjsu-sign-in.auth-container.main-container {
+    background-color: #fff;
+    border-color: #ddd #ddd #d8d8d8;
+    box-shadow: 0 2px 0 rgba(175, 175, 175, 0.12);
+}
+#sjsu-sign-in.auth-container.main-container {
+    font-family: "proxima nova", Arial, Helvetica, sans-serif;
+    color: #777;
+}
+
+#sjsu-sign-in.auth-container .sjsu-sign-in-header {
+    border-bottom-color: #ddd;
+}
+#sjsu-sign-in.auth-container .sjsu-sign-in-header {
+    color: #5e5e5e;
+}
+#sjsu-sign-in.no-beacon .auth-header {
+    padding-bottom: 30px;
+}
+#sjsu-sign-in .auth-header {
+    padding: 30px 90px 75px;
+    position: relative;
+    border-bottom: 1px solid #ddd;
+    z-index: 10;
+    -webkit-transition: padding-bottom 0.4s;
+    transition: padding-bottom 0.4s;
+}
+
+#sjsu-sign-in.no-beacon .auth-content {
+    padding-top: 20px;
+}
+
+#sjsu-sign-in .auth-content {
+    padding: 60px 42px 20px;
+    -webkit-transition: padding-top 0.4s;
+    transition: padding-top 0.4s;
+}
+
+#sjsu-sign-in .auth-content .auth-content-inner {
+    position: relative;
+}
+
+#sjsu-sign-in html, #sjsu-sign-in body, #sjsu-sign-in div, #sjsu-sign-in span, #sjsu-sign-in applet, #sjsu-sign-in object, #sjsu-sign-in iframe, #sjsu-sign-in h1, #sjsu-sign-in h2, #sjsu-sign-in h3, #sjsu-sign-in h4, #sjsu-sign-in h5, #sjsu-sign-in h6, #sjsu-sign-in p, #sjsu-sign-in blockquote, #sjsu-sign-in pre, #sjsu-sign-in a, #sjsu-sign-in abbr, #sjsu-sign-in acronym, #sjsu-sign-in address, #sjsu-sign-in big, #sjsu-sign-in cite, #sjsu-sign-in code, #sjsu-sign-in del, #sjsu-sign-in dfn, #sjsu-sign-in em, #sjsu-sign-in img, #sjsu-sign-in ins, #sjsu-sign-in kbd, #sjsu-sign-in q, #sjsu-sign-in s, #sjsu-sign-in samp, #sjsu-sign-in small, #sjsu-sign-in strike, #sjsu-sign-in strong, #sjsu-sign-in sub, #sjsu-sign-in sup, #sjsu-sign-in tt, #sjsu-sign-in var, #sjsu-sign-in b, #sjsu-sign-in u, #sjsu-sign-in i, #sjsu-sign-in center, #sjsu-sign-in dl, #sjsu-sign-in dt, #sjsu-sign-in dd, #sjsu-sign-in ol, #sjsu-sign-in ul, #sjsu-sign-in li, #sjsu-sign-in fieldset, #sjsu-sign-in form, #sjsu-sign-in label, #sjsu-sign-in legend, #sjsu-sign-in table, #sjsu-sign-in caption, #sjsu-sign-in tbody, #sjsu-sign-in tfoot, #sjsu-sign-in thead, #sjsu-sign-in tr, #sjsu-sign-in th, #sjsu-sign-in td {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+    background: transparent;
+}
+
+#sjsu-sign-in .o-form-edit-mode .o-form-content {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+#sjsu-sign-in .o-form-theme {
+    background: transparent;
+    box-shadow: none;
+    padding: 0 0 14px;
+    border-radius: 0;
+    border: none;
+}
+
+#sjsu-sign-in.auth-container h2, #sjsu-sign-in.auth-container h3 {
+    font-weight: 600;
+    color: #5e5e5e;
+}
+
+#sjsu-sign-in .o-form-head {
+    font-size: 15px;
+    line-height: 1.5;
+    margin-top: 10px;
+    text-align: center;
+    text-transform: none;
+    margin: 0 0 15px;
+    padding: 0;
+}
+
+#sjsu-sign-in .o-form-fieldset {
+    display: block;
+}
+
+#sjsu-sign-in .o-form-fieldset {
+    height: auto;
+    word-wrap: break-word;
+    margin-bottom: 15px;
+}
+
+#sjsu-sign-in .o-form-label-top .o-form-label, #sjsu-sign-in .o-form-label-top .o-form-input {
+    width: 100%;
+}
+#sjsu-sign-in .o-form-label, #sjsu-sign-in .o-form-input {
+    float: left;
+}
+
+#sjsu-sign-in .o-form .o-form-input .o-form-control {
+    position: relative;
+}
+#sjsu-sign-in.auth-container .sjsu-form-input-field {
+    background-color: #fff;
+    border-color: #bbb;
+}
+#sjsu-sign-in .o-form .input-fix, #sjsu-sign-in .o-form .textarea-fix {
+    height: 40px;
+    border: 1px solid #bbb;
+    display: inline-block;
+    float: left;
+}
+#sjsu-sign-in .o-form .input-fix, #sjsu-sign-in .o-form .textarea-fix {
+    border-radius: 3px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+form .input-fix input[type="tel"], #sjsu-sign-in .o-form .input-fix input[type="number"], #sjsu-sign-in .o-form .input-fix input[type="password"] {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 6px 8px;
+    line-height: 16px;
+    border: none;
+    background: transparent;
+    box-sizing: border-box;
+}
+#sjsu-sign-in.auth-container .sjsu-form-input-field input {
+    font-family: "proxima nova", Arial, Helvetica, sans-serif;
+    color: #5e5e5e;
+}
+#sjsu-sign-in .o-form .input-fix input, #sjsu-sign-in .o-form .textarea-fix input {
+    font-size: 14px;
+}
+
+#sjsu-sign-in .o-form .o-form-input .input-icon + input {
+    padding-left: 30px;
+}
+#sjsu-sign-in .o-form .o-form-input .input-tooltip + input, #sjsu-sign-in .o-form .o-form-input .input-icon + input {
+    padding-right: 30px;
+}
+#sjsu-sign-in .o-form .input-fix input[type="text"], 
+#sjsu-sign-in .o-form .input-fix input[type="textbox"], 
+#sjsu-sign-in .o-form .input-fix input[type="email"], 
+#sjsu-sign-in .o-form .input-fix input[type="tel"], 
+#sjsu-sign-in .o-form .input-fix input[type="number"], 
+#sjsu-sign-in .o-form .input-fix input[type="password"] {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 6px 8px;
+    line-height: 16px;
+    border: none;
+    background: transparent;
+    box-sizing: border-box;
+}
+#sjsu-sign-in.auth-container .sjsu-form-input-field input {
+    font-family: "proxima nova", Arial, Helvetica, sans-serif;
+    color: #5e5e5e;
+}
+
+#sjsu-sign-in .o-form-button-bar {
+    background: transparent;
+    border: none;
+    padding: 0 0 25px;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+#sjsu-sign-in.auth-container input[type="submit"], #sjsu-sign-in.auth-container input[type="button"] {
+    font-family: "proxima nova", Arial, Helvetica, sans-serif;
+}
+#sjsu-sign-in.auth-container .button-primary {
+    color: #fff;
+    background-color: #007dc1;
+    background: -webkit-linear-gradient(#007dc1, #0073b2);
+    background: linear-gradient(#007dc1, #0073b2);
+    border-color: #004b75;
+    border-bottom-color: #00456a;
+    box-shadow: rgba(0, 0, 0, 0.15) 0 1px 0, rgba(255, 255, 255, 0.1) 0 1px 0 0 inset;
+}
+
+#sjsu-sign-in .o-form-button-bar .button {
+    display: block;
+    width: 100%;
+    height: 50px;
+}
+#sjsu-sign-in .o-form .o-form-label, #sjsu-sign-in .o-form label, #sjsu-sign-in .o-form input, #sjsu-sign-in .o-form textarea {
+    font-size: 14px;
+}
+#sjsu-sign-in .button, #sjsu-sign-in .button.link-button {
+    display: inline-block;
+    height: 40px;
+    line-height: 36px;
+    padding: 0 15px;
+    border: 1px solid;
+    border-radius: 3px;
+    font-size: 14px;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+}
+
+#sjsu-sign-in .o-form-fieldset:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font: inherit;
+    vertical-align: baseline;
+    background: transparent;
+}
+
+.clearfix:before, .clearfix:after {
+    display: block;
+    height: 0;
+    clear: both;
+    content: '.';
+    visibility: hidden;
+}
