@@ -1,15 +1,10 @@
 import React, { Component } from 'react';
-import { Grid, GridRow, GridCol } from '@instructure/ui-layout'
-import theme from '@instructure/ui-themes/lib/canvas/base'
 import Navbar from '../LandingPage/Navbar';
-import { Redirect } from 'react-router';
 import { Table } from '@instructure/ui-elements';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
-import cookie from 'react-cookies';
 import Cookies from 'universal-cookie';
 import axios from 'axios';
 import { IconSearchLine, IconAddLine, IconTrashLine } from '@instructure/ui-icons';
-import { Link } from 'react-router-dom';
 
 const cookies = new Cookies();
 
@@ -55,11 +50,7 @@ export default class StudentCourseLanding extends Component {
                             </div>
                             <div className="row">
                                 <div className="col">
-                                    <div class="float-right">
-                                        <br /><a href="/enrollCourse" class="btn btn-primary btn-lg active  mx-3 px-2"  style={{backgroundColor:'#0055a2'}} role="button" aria-pressed="true"><IconAddLine /> Add Course</a>
-                                        <a href="/searchCourse" class="btn btn-primary btn-lg active  mx-3 px-2"  style={{backgroundColor:'#0055a2'}} role="button" aria-pressed="true"><IconSearchLine /> Search Course</a>
-                                        </div>
-                                </div>
+                                    </div>
                             </div>
                             <br /><br />
                             <div className="row">
@@ -71,22 +62,20 @@ export default class StudentCourseLanding extends Component {
                                             <th scope="col">Course</th>
                                             <th scope="col">Term</th>
                                             <th scope="col">Enrollment Status</th>
-                                            <th scope="col">Drop</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {
                                             this.props.coursework.map(course => {
-                                                let enrollmentStatus = (course.isWaitlist !== 0) ? "Waitlist" : "Enrolled";
-                                                let linkpath = (course.isWaitlist !== 0) ? '#' : '/coursedetails/' + course.course_uid;
+                                                console.log("Waitlist status" + course.is_waitlist)
+                                                let enrollmentStatus = (course.is_waitlist !== false) ? "Waitlist" : "Enrolled";
+                                                let linkpath = (course.is_waitlist !== false) ? '#' : '/coursedetails/' + course.course_uid;
                                                 return (
                                                     <tr>
-                                                        <td><a href={linkpath} >{course.course_dept_code}-{course.course_id} - {course.course_name}</a></td>
+                                                        <td>{course.course_dept_code}-{course.course_id} - {course.course_name}</td>
                                                         <td>{course.course_term}</td>
                                                         <td>{enrollmentStatus}</td>
-                                                        <td>
-                                            <button type="button" class="btn btn-danger mx-2" onClick={() => this.onDrop(course.course_uid, enrollmentStatus)} ><IconTrashLine /> Drop</button>
-                                        </td>
+                                                        
                                                     </tr>
                                                 )
                                             })

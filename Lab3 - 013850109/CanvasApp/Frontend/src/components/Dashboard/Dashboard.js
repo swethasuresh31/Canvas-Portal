@@ -1,17 +1,16 @@
 import React, { Component } from 'react';
-import { Grid, GridRow, GridCol } from '@instructure/ui-layout'
-import theme from '@instructure/ui-themes/lib/canvas/base'
+
 import Card from './Card';
 import Navbar from '../LandingPage/Navbar';
-import cookie from 'react-cookies';
 import { Redirect } from 'react-router';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
 import Cookies from 'universal-cookie';
-import axios from 'axios';
+import { courses } from '../queries/queries';
+import { withApollo } from 'react-apollo';
 
 const cookies = new Cookies();
 
-export default class Dashboard extends Component {
+class Dashboard extends Component {
 
   constructor(props) {
     super(props);
@@ -24,27 +23,38 @@ export default class Dashboard extends Component {
 
   componentDidMount() {
     let role = '';
-    let user = '';
-    if (cookie.load('cookieS')) {
-      user = cookies.get('cookieS')
-      role = 'student';
-    } else if (cookie.load('cookieF')) {
-      user = cookies.get('cookieF')
-      role = 'faculty';
-    }
-    if (role !== '' && user !== '') {
-     
-      axios.get('http://localhost:3001/usercourse/' + encodeURI(user) + '?role=' + role)
-        .then((response) => {
-          console.log(response);
-          if (response !== undefined)
-            this.setState({ coursework: response.data })
-        })
-    }
+        if (localStorage.isStudent === "1") {
+            console.log("Role: Student")
+            role = 'student';
+            
+        } else if (localStorage.isStudent === "0") {
+            console.log("Role: Faculty")
+            role = 'faculty';
+        }
+        if (role !== '') {
+            this.props.client.query({
+                query: courses,
+                variables: {
+                  username: localStorage.getItem("emailId"),
+                  isStudent: parseInt(localStorage.isStudent,10)
+                }
+              }).then((response) => {
+                console.log('Response profile', response.data);
+                let result = response.data.courses;
+                if(result)
+                this.setState({
+                    coursework: result.courses
+                })
+          
+            });
+          
+          
+              console.log('data:', this.props.data);
+            
+        }
   }
 
   render() {
-    let redirectVar = null;
     if (localStorage.isAuthenticated) {
       //Return faculty page
       return (
@@ -81,3 +91,4 @@ export default class Dashboard extends Component {
     }
   }
 }
+export default withApollo(Dashboard);

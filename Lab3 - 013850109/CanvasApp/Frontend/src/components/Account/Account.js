@@ -8,11 +8,14 @@ import cookie from 'react-cookies';
 import Cookies from 'universal-cookie';
 import { Redirect } from 'react-router';
 import axios from 'axios';
+import { graphql, compose } from 'react-apollo';
+import { profile } from '../queries/queries';
+import { updateProfile } from '../mutations/mutations';
+import { withApollo } from 'react-apollo';
 
 const cookies = new Cookies();
 
-
-export default class Account extends Component {
+class Account extends Component {
 
   constructor(props) {
     super(props);
@@ -20,10 +23,11 @@ export default class Account extends Component {
 
     this.state = {
       accountData: [],
-      name: '',
-      emailId: '',
-      phoneNo: '',
-      aboutMe: '',
+      first_name: '',
+      last_name: '',
+      email_id: '',
+      phone_number: '',
+      about_me: '',
       city: '',
       country: '',
       company: '',
@@ -34,7 +38,8 @@ export default class Account extends Component {
       img: ''
     }
     //Bind the handlers to this class
-    this.nameChangeHandler = this.nameChangeHandler.bind(this);
+    this.firstNameChangeHandler = this.firstNameChangeHandler.bind(this);
+    this.lastNameChangeHandler = this.lastNameChangeHandler.bind(this);
     this.phoneNoChangeHandler = this.phoneNoChangeHandler.bind(this);
     this.aboutMeChangeHandler = this.aboutMeChangeHandler.bind(this);
     this.cityChangeHandler = this.cityChangeHandler.bind(this);
@@ -49,20 +54,26 @@ export default class Account extends Component {
   }
 
   //name change handler to update state variable with the text entered by the user
-  nameChangeHandler = (e) => {
+  firstNameChangeHandler = (e) => {
+    this.state.name = e.target.value
+    this.state.errorMsg = ''
+  }
+
+  //name change handler to update state variable with the text entered by the user
+  lastNameChangeHandler = (e) => {
     this.state.name = e.target.value
     this.state.errorMsg = ''
   }
   //phoneNo change handler to update state variable with the text entered by the user
   phoneNoChangeHandler = (e) => {
-    this.state.phoneNo = e.target.value,
+    this.state.phone_number = e.target.value,
       this.state.errorMsg = ''
 
   }
   //aboutMe change handler to update state variable with the text entered by the user
   aboutMeChangeHandler = (e) => {
 
-    this.state.aboutMe = e.target.value,
+    this.state.about_me = e.target.value,
       this.state.errorMsg = ''
 
   }
@@ -119,87 +130,65 @@ export default class Account extends Component {
 
   saveProfile(e) {
     e.preventDefault()
-
-    if (this.fileInput.current.files[0] !== undefined) {
-      console.log(this.fileInput.current.files[0])
-      let filename = this.state.emailId + '.' + this.fileInput.current.files[0].name.split('.').pop();
-      console.log(filename)
-      let data = new FormData();
-      data.append('file', this.fileInput.current.files[0], filename)
-      console.log(data)
-      //adds the assignment based on information entered
-      axios.post('http://localhost:3001/account/img/' + encodeURI(this.state.emailId), data)
-        .then((response) => {
-          console.log(response);
-          if (response !== undefined)
-            if (response.status === 200) {
-              this.setState({ img: "http://localhost:3001/account/img/" + encodeURI(this.state.emailId) })
-            }
-        })
-    }
-
-    const accountUpd = {
-      name: this.state.name,
-      username: this.state.emailId,
-      phoneNo: this.state.phoneNo,
-      aboutMe: this.state.aboutMe,
-      city: this.state.city,
-      country: this.state.country,
-      company: this.state.company,
-      school: this.state.school,
-      hometown: this.state.hometown,
-      languages: this.state.languages,
-      gender: this.state.gender
-    }
-
-    //make a put request with the user data
-    axios.put('http://localhost:3001/account', accountUpd)
-      .then(response => {
-        console.log("Status Code : ", response.status);
-        if (response.status === 200) {
-          console.log("success");
-          window.location.reload();
-        } else {
-          this.setState({
-            errorMsg: 'Some problem updating account information!'
-          })
-        }
-      })
-      .catch(err => {
+    this.props.client.mutate({
+      mutation: updateProfile,
+      variables: {
+        username: this.state.email_id,
+        first_name: this.state.first_name,
+        last_name: this.state.last_name,
+        phone_number: this.state.phone_number,
+        about_me: this.state.about_me,
+        city: this.state.city,
+        country: this.state.country,
+        company: this.state.company,
+        school: this.state.school,
+        hometown: this.state.hometown,
+        languages: this.state.languages,
+        gender: this.state.gender
+      }
+    }).then((response) => {
+      console.log('Update profile', response.data);
+      console.log('Success', response.data.updateProfile.success);
+      let result = response.data.updateProfile.success;
+      if(result === 'true') {
         this.setState({
-          redirectVar: '',
-          errorMsg: '*Data not updated!'
+          isEditing: "false"
         })
+      }
+      window.location.reload();
+      console.log('state', this.state);
+    });
 
-      })
-
+    
   }
 
   componentDidMount() {
-    let user = cookies.get('cookieS') || cookies.get('cookieF');
-    console.log(user + "UserName")
+    console.log("UserName: " + localStorage.getItem("emailId"))
 
-    axios.get('http://localhost:3001/user/id/' + user)
-      .then((response) => {
-        console.log(response);
-        //update the state with the response data
-        response.data.map(data => {
-          this.setState({
-            name: data.name,
-            emailId: data.email_id,
-            phoneNo: data.phone_number,
-            aboutMe: data.about_me,
-            city: data.city,
-            country: data.country,
-            company: data.company,
-            school: data.school,
-            hometown: data.hometown,
-            languages: data.languages,
-            gender: data.gender,
-            img: "http://localhost:3001/account/img/" + encodeURI(data.email_id)
-          })
-        })
-      });
+    this.props.client.query({
+      query: profile,
+      variables: {
+        username: localStorage.getItem("emailId")
+      }
+    }).then((response) => {
+      console.log('Response profile', response.data);
+      let result = response.data.profile.userData;
+      var keyArray = Object.keys(response.data.profile.userData);
+
+      for (var i = 0; i < keyArray.length; i++) {
+        console.log('keyArr', keyArray[i]);
+        var name = keyArray[i];
+        console.log('result[i]', result[name])
+        this.setState({
+          [name]: result[name]
+        });
+      }
+      console.log('state', this.state);
+    });
+
+
+    console.log('data:', this.props.data);
+
   }
 
 
@@ -207,7 +196,7 @@ export default class Account extends Component {
   render() {
     let redirectVar = null;
     console.log(this.state.img)
-    if (cookie.load('cookieF') || (cookie.load('cookieS'))) {
+    if (localStorage.isAuthenticated && localStorage.isAuthenticated === 'true') {
       if (this.state.isEditing === "true") {
         return (
           <div>
@@ -220,7 +209,7 @@ export default class Account extends Component {
                 <div className="row">
                   <div className="col">
                     <br />
-                    <Heading theme={{ borderPadding: "1rem" }} border="bottom">{this.state.name}'s Profile
+                    <Heading theme={{ borderPadding: "1rem" }} border="bottom">{this.state.first_name}'s Profile
                   <span style={{ float: "right" }}><button type="button" class="btn btn-secondary btn mr-3" onClick={() => { this.setState({ isEditing: "false" }) }}><IconEditLine /> Cancel Edit</button>
                       </span>
                     </Heading>
@@ -239,12 +228,13 @@ export default class Account extends Component {
                     <br /><h4>
                       <table className="table-borderless"
                       ><tbody>
-                          <tr><td><label>Name: </label></td><td><input type="text" class="form-control" id="name" aria-describedby="emailHelp" onChange={this.nameChangeHandler} /></td></tr>
-                          <tr><td><label>Email: </label></td><td><fieldset disabled><input type="text" class="form-control" id="emailId" aria-describedby="emailHelp" value={this.state.emailId} /></fieldset></td></tr>
+                          <tr><td><label>First Name: </label></td><td><input type="text" class="form-control" id="name" aria-describedby="emailHelp" onChange={this.firstNameChangeHandler} /></td></tr>
+                          <tr><td><label>Last Name: </label></td><td><input type="text" class="form-control" id="name" aria-describedby="emailHelp" onChange={this.lastNameChangeHandler} /></td></tr>
+                          <tr><td><label>Email: </label></td><td><fieldset disabled><input type="text" class="form-control" id="email_id" aria-describedby="emailHelp" value={this.state.email_id} /></fieldset></td></tr>
                           <tr><td><label>Phone Number: </label></td><td><input type="text" class="form-control" id="inputName" aria-describedby="emailHelp" onChange={this.phoneNoChangeHandler} /></td></tr>
                           <tr><td><label>About Me: </label></td><td><input type="text" class="form-control" id="inputName" aria-describedby="emailHelp" onChange={this.aboutMeChangeHandler} /></td></tr>
                           <tr><td><label>City: </label></td><td><input type="text" class="form-control" id="inputName" aria-describedby="emailHelp" onChange={this.cityChangeHandler} /></td></tr>
-                          <tr><td><label>Country: </label></td><td><input type="text" class="form-control" id="inputName" aria-describedby="emailHelp" onChange={this.countryNoChangeHandler} /></td></tr>
+                          <tr><td><label>Country: </label></td><td><input type="text" class="form-control" id="inputName" aria-describedby="emailHelp" onChange={this.countryChangeHandler} /></td></tr>
                           <tr><td><label>Company: </label></td><td><input type="text" class="form-control" id="inputName" aria-describedby="emailHelp" onChange={this.companyChangeHandler} /></td></tr>
                           <tr><td><label>School: </label></td><td><input type="text" class="form-control" id="inputName" aria-describedby="emailHelp" onChange={this.schoolChangeHandler} /></td></tr>
                           <tr><td><label>Hometown: </label></td><td><input type="text" class="form-control" id="inputName" aria-describedby="emailHelp" onChange={this.hometownChangeHandler} /></td></tr>
@@ -273,7 +263,7 @@ export default class Account extends Component {
                 <div className="row">
                   <div className="col">
                     <br />
-                    <Heading theme={{ borderPadding: "1rem" }} border="bottom">{this.state.name}'s Profile
+                    <Heading theme={{ borderPadding: "1rem" }} border="bottom">{this.state.first_name}'s Profile
                   <span style={{ float: "right" }}><button type="button" class="btn btn-secondary btn" onClick={() => { this.setState({ isEditing: "true" }) }}><IconEditLine /> Edit Profile</button>
                       </span>
                     </Heading>
@@ -287,10 +277,11 @@ export default class Account extends Component {
                     <br /><h4>
                       <table className="table-borderless">
                         <tbody>
-                          <tr><td><label>Name: </label></td><td><input type="text" readonly class="form-control-plaintext" id="inputName" aria-describedby="emailHelp" value={this.state.name} /></td></tr>
-                          <tr><td><label>Email: </label></td><td><input type="text" readonly class="form-control-plaintext" id="inputName" aria-describedby="emailHelp" value={this.state.emailId} /></td></tr>
-                          <tr><td><label>Phone Number: </label></td><td><input type="text" readonly class="form-control-plaintext" id="inputName" aria-describedby="emailHelp" value={this.state.phoneNo} /></td></tr>
-                          <tr><td><label>About Me: </label></td><td><input type="text" readonly class="form-control-plaintext" id="inputName" aria-describedby="emailHelp" value={this.state.aboutMe} /></td></tr>
+                          <tr><td><label>First Name: </label></td><td><input type="text" readonly class="form-control-plaintext" id="inputName" aria-describedby="emailHelp" value={this.state.first_name} /></td></tr>
+                          <tr><td><label>Last Name: </label></td><td><input type="text" readonly class="form-control-plaintext" id="inputName" aria-describedby="emailHelp" value={this.state.last_name} /></td></tr>
+                          <tr><td><label>Email: </label></td><td><input type="text" readonly class="form-control-plaintext" id="inputName" aria-describedby="emailHelp" value={this.state.email_id} /></td></tr>
+                          <tr><td><label>Phone Number: </label></td><td><input type="text" readonly class="form-control-plaintext" id="inputName" aria-describedby="emailHelp" value={this.state.phone_number} /></td></tr>
+                          <tr><td><label>About Me: </label></td><td><input type="text" readonly class="form-control-plaintext" id="inputName" aria-describedby="emailHelp" value={this.state.about_me} /></td></tr>
                           <tr><td><label>City: </label></td><td><input type="text" readonly class="form-control-plaintext" id="inputName" aria-describedby="emailHelp" value={this.state.city} /></td></tr>
                           <tr><td><label>Country: </label></td><td><input type="text" readonly class="form-control-plaintext" id="inputName" aria-describedby="emailHelp" value={this.state.country} /></td></tr>
                           <tr><td><label>Company: </label></td><td><input type="text" readonly class="form-control-plaintext" id="inputName" aria-describedby="emailHelp" value={this.state.company} /></td></tr>
@@ -312,3 +303,5 @@ export default class Account extends Component {
     }
   }
 }
+
+export default withApollo(Account);

@@ -71,9 +71,7 @@ export default class CourseCard extends Component {
                                         <td>{course.course_instructor}</td>
                                         <td>{course.total_enrollment} out of {course.course_capacity}</td>
                                         <td>{course.total_waitlist} out of {course.waitlist_capacity}</td>
-                                        <td><div class="row input-group mb-3 justify-content-center">
-                                            <button type="button" class="btn btn-primary btn-lg mx-2" onClick={() => this.onAdd(course.course_uid, course.course_term, course.course_id, course.course_dept_code, course.course_name)} ><IconAddLine /> Add</button>
-                                        </ div></td>
+                                        
                                     </tr>
                                 )
                             })

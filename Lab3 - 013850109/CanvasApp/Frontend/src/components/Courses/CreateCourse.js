@@ -2,19 +2,18 @@ import React, { Component } from 'react';
 import Navbar from '../LandingPage/Navbar';
 import { Redirect } from 'react-router';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
-import axios from 'axios';
-import cookie from 'react-cookies';
-import Cookies from 'universal-cookie';
+import { createCourse } from '../mutations/mutations';
+import { graphql } from 'react-apollo';
 
-const cookies = new Cookies();
 
-export default class CreateCourse extends Component {
+
+class CreateCourse extends Component {
 
     constructor(props) {
         super(props);
         // Don't call this.setState() here!
         this.state = {
-            courseInstructor: '',
+            courseInstructor: localStorage.firstName + " " + localStorage.lastName,
             courseDeptCode: '',
             courseId: '',
             courseName: '',
@@ -148,16 +147,6 @@ export default class CreateCourse extends Component {
     }
 
     componentWillMount() {
-        var user = '';
-        if (cookie.load('cookieF')) {
-            user = cookies.get('cookieF')
-            axios.get('http://localhost:3001/user/id/' + encodeURI(user))
-                .then((response) => {
-                    console.log(response);
-                    if (response !== undefined)
-                        this.setState({ courseInstructor: response.data[0].name })
-                })
-        }
     }
 
     validate = () => {
@@ -227,136 +216,136 @@ export default class CreateCourse extends Component {
 
         this.setState({ errorMsg: '' })
 
-        if (cookie.load('cookieF')) {
-           var user = cookies.get('cookieF')
-            const courseData = {
-                user: user,
-                courseInstructor: this.state.courseInstructor,
-                courseDeptCode: this.state.courseDeptCode,
-                courseId: this.state.courseId,
-                courseName: this.state.courseName,
-                courseDept: this.state.courseDept,
-                courseDesc: this.state.courseDesc,
-                courseRoom: this.state.courseRoom,
-                courseCapacity: this.state.courseCapacity,
-                waitlistCapacity: this.state.waitlistCapacity,
-                courseTerm: this.state.courseTerm,
-                courseSyllabus: this.state.courseSyllabus,
-                courseDayAndTime: this.state.courseDayAndTime
-
-            }
-
-            //post information into the course table
-            axios.post('http://localhost:3001/UserCourse/course', courseData)
-                .then(response => {
-                    console.log("Status Code : ", response.status);
-                    if (response.status === 200) {
-                        this.setState({
-                            redirectVar: <Redirect to="/coursehome" />
-                        })
-                    } else {
-                        this.setState({
-                            errorMsg: 'Unable to create course! ' + response.data
-                        })
-                    }
-                });
+        if (localStorage.isStudent === "0") {
+            this.props.createCourse({
+                variables: {
+                    username: localStorage.emailId,
+                    course_instructor: this.state.courseInstructor,
+                    course_dept_code: this.state.courseDeptCode,
+                    course_id: parseInt(this.state.courseId, 10),
+                    course_name: this.state.courseName,
+                    course_dept: this.state.courseDept,
+                    course_desc: this.state.courseDesc,
+                    course_room: this.state.courseRoom,
+                    course_capacity: parseInt(this.state.courseCapacity, 10),
+                    waitlist_capacity: parseInt(this.state.waitlistCapacity, 10),
+                    course_term: this.state.courseTerm,
+                    course_syllabus: this.state.courseSyllabus,
+                    course_dayandtime: this.state.courseDayAndTime
+                }
+            }).then((response) => {
+                console.log('Response', response.data);
+                if (response.data.createCourse.success === true) {
+                    this.setState({
+                        errorMsg: '',
+                        redirectVar: <Redirect to="/coursehome" />
+                    });
+                } else {
+                    this.setState({
+                        errorMsg: 'Course Already exists'
+                    })
+                }
+            });
         }
+    
     }
 
-        render() {
+    render() {
 
-            return (
+        return (
 
-                <div className="container-fluid md-0 p-0">
-                    {this.state.redirectVar}
-                    <div className="row">
-                        <div className="col col-md-1">
-                            <Navbar selected="courses" />
-                        </ div>
-                        <div className="col">
-                            <div className="row">
-                                <div className="col">
-                                    <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">Create Course</ Heading></div>
-                            </div>
-                            <br /><br />
-                            <div className="row d-flex justify-content-center">
-                                <form>
-                                    <div class="row input-group mb-3 px-3">
-                                        <div class="input-group-prepend" >
-                                            <label class="input-group-text" for="inputGroupSelect05">Course Instructor</label>
-                                        </div>
-                                        <input type="text" class="form-control" value={this.state.courseInstructor} readOnly />
+            <div className="container-fluid md-0 p-0">
+                {this.state.redirectVar}
+                <div className="row">
+                    <div className="col col-md-1">
+                        <Navbar selected="courses" />
+                    </ div>
+                    <div className="col">
+                        <div className="row">
+                            <div className="col">
+                                <br /><Heading theme={{ borderPadding: "1rem" }} border="bottom">Create Course</ Heading></div>
+                        </div>
+                        <br /><br />
+                        <div className="row d-flex justify-content-center">
+                            <form>
+                                <div class="row input-group mb-3 px-3">
+                                    <div class="input-group-prepend" >
+                                        <label class="input-group-text" for="inputGroupSelect05">Course Instructor</label>
                                     </div>
-                                    <div class="row input-group mb-3 px-3">
-                                        <div class="input-group-prepend">
-                                            <label class="input-group-text" for="inputGroupSelect05">Course Department Code</label>
-                                        </div>
-                                        <input type="text" class="form-control" value={this.state.courseDeptCode} onChange={this.courseDeptCodeChangeHandler} />
-                                        <div class="input-group-prepend">
-                                            <label class="input-group-text" for="inputGroupSelect05">Course Id</label>
-                                        </div>
-                                        <input type="text" class="form-control" value={this.state.courseId} onChange={this.courseIdChangeHandler} />
+                                    <input type="text" class="form-control" value={this.state.courseInstructor} readOnly />
+                                </div>
+                                <div class="row input-group mb-3 px-3">
+                                    <div class="input-group-prepend">
+                                        <label class="input-group-text" for="inputGroupSelect05">Course Department Code</label>
                                     </div>
-                                    <div class="row input-group mb-3 px-3">
-                                        <div class="input-group-prepend">
-                                            <label class="input-group-text" for="inputGroupSelect05">Course Name</label>
-                                        </div>
-                                        <input type="text" class="form-control" value={this.state.courseName} onChange={this.courseNameChangeHandler} />
+                                    <input type="text" class="form-control" value={this.state.courseDeptCode} onChange={this.courseDeptCodeChangeHandler} />
+                                    <div class="input-group-prepend">
+                                        <label class="input-group-text" for="inputGroupSelect05">Course Id</label>
                                     </div>
-                                    <div class="row input-group mb-3 px-3">
-                                        <div class="input-group-prepend">
-                                            <label class="input-group-text" for="inputGroupSelect05">Course Department</label>
-                                        </div>
-                                        <input type="text" class="form-control" value={this.state.courseDept} onChange={this.courseDeptChangeHandler} />
+                                    <input type="text" class="form-control" value={this.state.courseId} onChange={this.courseIdChangeHandler} />
+                                </div>
+                                <div class="row input-group mb-3 px-3">
+                                    <div class="input-group-prepend">
+                                        <label class="input-group-text" for="inputGroupSelect05">Course Name</label>
                                     </div>
-                                    <div class="row input-group mb-3 px-3">
-                                        <label class="input-group-text" for="exampleFormControlTextarea1">Course Description</label>
-                                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" value={this.state.courseDesc} onChange={this.courseDescChangeHandler}></textarea>
+                                    <input type="text" class="form-control" value={this.state.courseName} onChange={this.courseNameChangeHandler} />
+                                </div>
+                                <div class="row input-group mb-3 px-3">
+                                    <div class="input-group-prepend">
+                                        <label class="input-group-text" for="inputGroupSelect05">Course Department</label>
                                     </div>
-                                    <div class="row input-group mb-3 px-3">
-                                        <div class="input-group-prepend">
-                                            <label class="input-group-text" for="inputGroupSelect05">Course Room</label>
-                                        </div>
-                                        <input type="text" class="form-control" value={this.state.courseRoom} onChange={this.courseRoomChangeHandler} />
+                                    <input type="text" class="form-control" value={this.state.courseDept} onChange={this.courseDeptChangeHandler} />
+                                </div>
+                                <div class="row input-group mb-3 px-3">
+                                    <label class="input-group-text" for="exampleFormControlTextarea1">Course Description</label>
+                                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" value={this.state.courseDesc} onChange={this.courseDescChangeHandler}></textarea>
+                                </div>
+                                <div class="row input-group mb-3 px-3">
+                                    <div class="input-group-prepend">
+                                        <label class="input-group-text" for="inputGroupSelect05">Course Room</label>
                                     </div>
-                                    <div class="row input-group mb-3 px-3">
-                                        <div class="input-group-prepend">
-                                            <label class="input-group-text" for="inputGroupSelect05">Course Day/Time</label>
-                                        </div>
-                                        <input type="text" class="form-control" value={this.state.courseDayAndTime} onChange={this.courseDayAndTimeChangeHandler} />
+                                    <input type="text" class="form-control" value={this.state.courseRoom} onChange={this.courseRoomChangeHandler} />
+                                </div>
+                                <div class="row input-group mb-3 px-3">
+                                    <div class="input-group-prepend">
+                                        <label class="input-group-text" for="inputGroupSelect05">Course Day/Time</label>
                                     </div>
-                                    <div class="row input-group mb-3 px-3">
-                                        <div class="input-group-prepend">
-                                            <label class="input-group-text" for="inputGroupSelect05">Course Capacity</label>
-                                        </div>
-                                        <input type="number" class="form-control" value={this.state.courseCapacity} onChange={this.courseCapacityChangeHandler} />
-                                        <div class="input-group-prepend">
-                                            <label class="input-group-text" for="inputGroupSelect05">Waitlist Capacity</label>
-                                        </div>
-                                        <input type="number" class="form-control" value={this.state.waitlistCapacity} onChange={this.waitlistCapacityChangeHandler} />
+                                    <input type="text" class="form-control" value={this.state.courseDayAndTime} onChange={this.courseDayAndTimeChangeHandler} />
+                                </div>
+                                <div class="row input-group mb-3 px-3">
+                                    <div class="input-group-prepend">
+                                        <label class="input-group-text" for="inputGroupSelect05">Course Capacity</label>
                                     </div>
-                                    <div class="row input-group mb-3 px-3">
-                                        <div class="input-group-prepend">
-                                            <label class="input-group-text" for="inputGroupSelect05">Course Term</label>
-                                        </div>
-                                        <input type="text" class="form-control" value={this.state.courseTerm} onChange={this.courseTermChangeHandler} />
+                                    <input type="number" class="form-control" value={this.state.courseCapacity} onChange={this.courseCapacityChangeHandler} />
+                                    <div class="input-group-prepend">
+                                        <label class="input-group-text" for="inputGroupSelect05">Waitlist Capacity</label>
                                     </div>
-                                    <div class="row input-group mb-3 px-3">
-                                        <label class="input-group-text" for="exampleFormControlTextarea1">Course Syllabus</label>
-                                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" value={this.state.courseSyllabus} onChange={this.courseSyllabusChangeHandler}></textarea>
+                                    <input type="number" class="form-control" value={this.state.waitlistCapacity} onChange={this.waitlistCapacityChangeHandler} />
+                                </div>
+                                <div class="row input-group mb-3 px-3">
+                                    <div class="input-group-prepend">
+                                        <label class="input-group-text" for="inputGroupSelect05">Course Term</label>
                                     </div>
-                                    <div>{this.state.errorMsg}</div><br />
-                                    <div class="row input-group mb-3 justify-content-center">
-                                        <button type="button" class="btn btn-secondary btn-md mx-2" onClick={() => this.clearForm()}>Cancel</button>
-                                        <button type="button" class="btn btn-primary btn-md mx-2" style={{ backgroundColor: '#0055a2' }} onClick={this.onCreate} >Create Course</button>
-                                    </ div>
-                                </form>
-                            </div>
+                                    <input type="text" class="form-control" value={this.state.courseTerm} onChange={this.courseTermChangeHandler} />
+                                </div>
+                                <div class="row input-group mb-3 px-3">
+                                    <label class="input-group-text" for="exampleFormControlTextarea1">Course Syllabus</label>
+                                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" value={this.state.courseSyllabus} onChange={this.courseSyllabusChangeHandler}></textarea>
+                                </div>
+                                <div>{this.state.errorMsg}</div><br />
+                                <div class="row input-group mb-3 justify-content-center">
+                                    <button type="button" class="btn btn-secondary btn-md mx-2" onClick={() => this.clearForm()}>Cancel</button>
+                                    <button type="button" class="btn btn-primary btn-md mx-2" style={{ backgroundColor: '#0055a2' }} onClick={this.onCreate} >Create Course</button>
+                                </ div>
+                            </form>
                         </div>
                     </div>
-
                 </div>
 
-            );
-        }
+            </div>
+
+        );
     }
+}
+
+export default graphql(createCourse, { name: "createCourse" })(CreateCourse);

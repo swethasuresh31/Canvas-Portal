@@ -153,30 +153,11 @@ class Signup extends Component {
                 });
             }
         });
-        // //set the with credentials to true
-        // axios.defaults.withCredentials = true;
-        // //make a post request with the user data
-        // axios.post('http://localhost:3001/signup', data)
-        //     .then(response => {
-        //         console.log("Status Code : ", response.status);
-        //         if (response.status === 200) {
-        //             this.setState({
-        //                 redirectVar: <Redirect to="/login" />
-        //             })
-        //         } else {
-        //             this.setState({
-        //                 errorMsg: 'Unable to signup! ' + response.data
-        //             })
-        //         }
-        //     });
+        
     }
 
     render() {
-        //redirect based on successful login
-        // let redirectVar = null;
-        // if (cookie.load('cookie')) {
-        //     redirectVar = <Redirect to="/home" />
-        // }
+       
         return (
             <div>
                 {this.state.redirectVar}

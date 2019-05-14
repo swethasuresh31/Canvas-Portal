@@ -13,8 +13,9 @@ export default class Card extends Component {
   }
 
   render() {
-    let coursePath= (this.props.course.isWaitlist === 1) ? '#' :"/coursedetails/"+this.props.course.course_uid+"/home"
-    let isWaitlist= (this.props.course.isWaitlist === 1) ? "(waitlist)" : ""
+    console.log("Waitlist status : " + this.props.course.is_waitlist)
+    let coursePath= (this.props.course.is_waitlist === true) ? '#' :"/coursedetails/"+this.props.course.course_uid+"/home"
+    let isWaitlist= (this.props.course.is_waitlist === true) ? "(waitlist)" : ""
 
     return (
       <div class={this.state.cardStyle}
@@ -25,7 +26,7 @@ export default class Card extends Component {
         <div class="card-header" style={{ height: "10rem", backgroundColor: "#0055a2" }}>
         </div>
         <div class="card-body">
-          <p class="card-title"><a href={coursePath} class="card-link font-weight-bold">{this.props.course.course_dept_code}-{this.props.course.course_id}</a> {isWaitlist}</p>
+          <p class="card-title">{this.props.course.course_dept_code}-{this.props.course.course_id} {isWaitlist}</p>
           <p class="card-subtitle"> {this.props.course.course_name}<br />{this.props.course.course_term}</p>
           <div class="d-flex justify-content-around pt-4" style={{ fontSize: "20px" }}>
             <a href="#" class="card-link text-dark"><IconAnnouncementLine /></a>

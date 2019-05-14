@@ -36,10 +36,10 @@ const UserType = new GraphQLObjectType({
         is_student: {
             type: GraphQLString,
         },
-        phoneNo: {
+        phone_number: {
             type: GraphQLString
         },
-        aboutMe: {
+        about_me: {
             type: GraphQLString
         },
         city: {
@@ -69,6 +69,27 @@ const UserType = new GraphQLObjectType({
     })
 });
 
+const Course = new GraphQLObjectType({
+    name: 'Course',
+    fields: () => ({
+        course_id: { type: GraphQLInt },
+        course_name: { type: GraphQLString },
+        course_dept: { type: GraphQLString },
+        course_dept_code: { type: GraphQLString },
+        course_desc: { type: GraphQLString },
+        course_room: { type: GraphQLString },
+        course_dayandtime: { type: GraphQLString },
+        course_syllabus: { type: GraphQLString },
+        course_term: { type: GraphQLString },
+        course_instructor: { type: GraphQLString },
+        total_enrollment: { type: GraphQLInt },
+        course_capacity: { type: GraphQLInt },
+        total_waitlist: { type: GraphQLInt },
+        waitlist_capacity: { type: GraphQLInt },
+        is_waitlist: { type: GraphQLBoolean }
+    })
+});
+
 const signupResult = new GraphQLObjectType({
     name: 'signupResult',
     fields: () => ({
@@ -85,61 +106,34 @@ const loginResult = new GraphQLObjectType({
     })
 });
 
-// connection.query('SELECT * FROM user WHERE email_id = ?', [parent.username], function (error, results, fields) {
-//     if (results.length == 0) {
-//         return(JSON.stringify({
-//             status: 404,
-//             message: "Username does not exist!"
-//         }))
-//     } else {
-//         bcrypt.compare(password, results[0].password, function (err, res) {
-//             if (res) {
-//                 if (results[0].is_student) {
-//                     response.cookie('cookieS', username, { maxAge: 900000, httpOnly: false, path: '/' });
-//                     req.session.user = username;
-//                     response.writeHead(200, {
-//                         'Content-Type': 'text/plain'
-//                     })
-//                     return(JSON.stringify({
-//                         status: 200,
-//                         message: "Student"
-//                     }))
-//                 } else {
-//                     response.cookie('cookieF', username, { maxAge: 900000, httpOnly: false, path: '/' });
-//                     req.session.user = username;
-//                     response.writeHead(200, {
-//                         'Content-Type': 'text/plain'
-//                     })
-//                     return(JSON.stringify({
-//                         status: 200,
-//                         message: "Faculty"
-//                     }))
-//                 }
-//             }
-//             else {
-//                 return(JSON.stringify({
-//                     status: 400,
-//                     message: "Incorrect Password"
-//                 }))
-//             }
-//         });
-//     }
+const profileResult = new GraphQLObjectType({
+    name: 'profileResult',
+    fields: () => ({
+        userData: { type: UserType }
+    })
+});
 
+const updateProfileResult = new GraphQLObjectType({
+    name: 'updateProfileResult',
+    fields: () => ({
+        success: { type: GraphQLBoolean }
+    })
+})
 
-// const AuthorType = new GraphQLObjectType({
-//     name: 'Author',
-//     fields: ( ) => ({
-//         id: { type: GraphQLID },
-//         name: { type: GraphQLString },
-//         age: { type: GraphQLInt },
-//         books: {
-//             type: new GraphQLList(BookType),
-//             resolve(parent, args){
-//                 return _.filter(books, { authorId: parent.id });
-//             }
-//         }
-//     })
-// });
+const coursesResult = new GraphQLObjectType({
+    name: 'coursesResult',
+    fields: () => ({
+        courses: { type: new GraphQLList(Course) }
+    })
+});
+
+const createCourseResult = new GraphQLObjectType({
+    name: 'createCourseResult',
+    fields: () => ({
+        success: { type: GraphQLBoolean }
+    })
+});
+
 
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
@@ -156,63 +150,110 @@ const RootQuery = new GraphQLObjectType({
             },
             resolve(parent, args) {
                 return new Promise(async (resolve, reject) => {
-                console.log("Resolve login: ", args)
-                connection.query('SELECT * FROM user WHERE email_id = ?', [args.username], function (error, results, fields) {
-                    console.log(JSON.stringify(results))
-                    if (results.length == 0) {
-                        var result = {
-                            result: false
+                    console.log("Resolve login: ", args)
+                    connection.query('SELECT * FROM user WHERE email_id = ?', [args.username], function (error, results, fields) {
+                        console.log(JSON.stringify(results))
+                        if (results.length == 0) {
+                            var result = {
+                                result: false
+                            }
+                            resolve(result)
+                        } else {
+                            bcrypt.compare(args.password, results[0].password, function (err, res) {
+                                if (res) {
+                                    var result = {
+                                        result: true,
+                                        userData: results[0]
+                                    }
+                                    console.log(JSON.stringify(result))
+                                    resolve(result)
+                                }
+                                else {
+                                    var result = {
+                                        result: false
+                                    }
+                                    resolve(result)
+                                }
+                            });
                         }
+                    })
+                })
+            }
+
+        },
+        profile: {
+            type: profileResult,
+            args: {
+                username: {
+                    type: GraphQLString
+                }
+            },
+            resolve(parent, args) {
+                return new Promise(async (resolve, reject) => {
+                    console.log("Resolve profile: ", args)
+                    connection.query('SELECT * FROM user WHERE email_id = ?', [args.username], function (error, results, fields) {
+                        console.log(JSON.stringify(results))
+                        var result = {
+                            result: true,
+                            userData: results[0]
+                        }
+                        console.log(JSON.stringify(result))
                         resolve(result)
+                    })
+                })
+            }
+
+        },
+        courses: {
+            type: coursesResult,
+            args: {
+                username: {
+                    type: GraphQLString
+                },
+                isStudent: {
+                    type: GraphQLInt
+                }
+            },
+            resolve(parent, args) {
+                return new Promise(async (resolve, reject) => {
+                    console.log("Resolve courses: ", args)
+                    console.log(args.isStudent);
+                    if (args.isStudent === 1) {
+                        var loggedInuser = args.username;
+                        console.log(loggedInuser);
+                        connection.query('select * from course join student_courses where course.course_uid = student_courses.course_uid ' +
+                            'and student_courses.email_id = ?;', [loggedInuser], function (error, results, fields) {
+                                console.log(JSON.stringify(results));
+                                var result = {
+                                    courses: results
+                                }
+                                resolve(result)
+
+                            });
                     } else {
-                        bcrypt.compare(args.password, results[0].password, function (err, res) {
-                            if (res) {
-                                var result = {
-                                    result: true,
-                                    userData: results[0]
-                                }
-                                console.log(JSON.stringify(result))
-                                resolve(result)
+                        var loggedInuser = args.username;
+                        console.log(loggedInuser);
+                        connection.query('select * from course where created_by = ?;', [loggedInuser], function (error, results, fields) {
+                            console.log(JSON.stringify(results));
+                            var result = {
+                                courses: results
                             }
-                            else {
-                                var result = {
-                                    result: false
-                                }
-                                resolve(result)
-                            }
+                            resolve(result)
                         });
                     }
+                    // connection.query('SELECT * FROM user WHERE email_id = ?', [args.username], function (error, results, fields) {
+                    //     console.log(JSON.stringify(results))
+                    //     var result = {
+                    //         result: true,
+                    //         userData: results[0]
+                    //     }
+                    //     console.log(JSON.stringify(result))
+                    //     resolve(result)
+                    // })
                 })
-            })
+            }
+
         }
-            
-        }
-        // book: {
-        //     type: BookType,
-        //     args: { id: { type: GraphQLID } },
-        //     resolve(parent, args){
-        //         return _.find(books, { id: args.id });
-        //     }
-        // },
-        // author: {
-        //     type: AuthorType,
-        //     args: { id: { type: GraphQLID } },
-        //     resolve(parent, args){
-        //         return _.find(authors, { id: args.id });
-        //     }
-        // },
-        // books: {
-        //     type: new GraphQLList(BookType),
-        //     resolve(parent, args){
-        //         return books;
-        //     }
-        // },
-        // authors: {
-        //     type: new GraphQLList(AuthorType),
-        //     resolve(parent, args){
-        //         return authors;
-        //     }
-        // }
     }
 });
 
@@ -220,45 +261,6 @@ var count = 10;
 const Mutation = new GraphQLObjectType({
     name: 'Mutation',
     fields: {
-        //     addAuthor: {
-        //         type: AuthorType,
-        //         args: {
-        //             name: { type: GraphQLString },
-        //             age: { type: GraphQLInt },
-        //             id:{ type: GraphQLID }
-        //         },
-        //         resolve(parent, args){
-        //             let author ={
-        //                 name: args.name,
-        //                 age: args.age,
-        //                 id: args.id
-        //             };
-        //             authors.push(author)
-        //             console.log("Authors",authors);
-        //             return author;
-        //         }
-        //     },
-
-        //     addBook: {
-        //         type: BookType,
-        //         args: {
-        //             name: { type: GraphQLString },
-        //             genre: { type: GraphQLString },
-        //             authorId: { type: GraphQLID },
-        //         },
-        //         resolve(parent, args){
-        //             let book = {
-        //                 name: args.name,
-        //                 genre: args.genre,
-        //                 authorId: args.authorId,
-        //                 id:count++
-        //             }
-        //             books.push(book);
-        //             return book;
-        //         }
-        //     }
-
-        // }
         signup: {
             type: signupResult,
             args: {
@@ -310,34 +312,87 @@ const Mutation = new GraphQLObjectType({
                 })
             }
         },
-        login: {
-            type: UserType,
+        updateProfile: {
+            type: updateProfileResult,
             args: {
                 username: { type: GraphQLString },
-                password: { type: GraphQLString },
+                first_name: { type: GraphQLString },
+                last_name: { type: GraphQLString },
+                phone_number: { type: GraphQLString },
+                about_me: { type: GraphQLString },
+                country: { type: GraphQLString },
+                city: { type: GraphQLString },
+                gender: { type: GraphQLString },
+                school: { type: GraphQLString },
+                hometown: { type: GraphQLString },
+                language: { type: GraphQLString },
+                company: { type: GraphQLString }
             },
             resolve(parent, args) {
-                connection.query('SELECT * FROM user WHERE email_id = ?', [args.username], function (error, results, fields) {
-                    if (results.length == 0) {
-                        return null;
-                    } else {
-                        bcrypt.compare(args.password, results[0].password, function (err, res) {
-                            if (res) {
-                                const us = {
-                                    emailId: "Swethasuresh@sjsu.edu"
+                console.log("Update profile resolve")
+                console.log(JSON.stringify(args))
+                return new Promise(async (resolve, reject) => {
+
+                    connection.query('UPDATE user SET first_name = ?, last_name = ?, phone_number = ?,about_me = ?, city = ?, country =?, company = ?, school =?, hometown =?, languages =?,gender =? WHERE email_id = ?;',
+                        [args.first_name, args.last_name, args.phone_number, args.about_me, args.city, args.country, args.company, args.school, args.hometown, args.languages, args.gender, args.username], function (error, results, fields) {
+                            if (error) {
+                                var resultData = {
+                                    success: false
                                 }
-                                console.log("Swethasuresh@sjsu.edu")
-                                return (us)
-                            }
-                            else {
-                                return null;
+                                resolve(resultData);
+                            } else {
+                                var resultData = {
+                                    success: true
+                                }
+                                resolve(resultData);
                             }
                         });
-                    }
+                })
+            }
+        },
+        createCourse: {
+            type: createCourseResult,
+            args: {
+                username: { type: GraphQLString },
+                course_id: { type: GraphQLInt },
+                course_name: { type: GraphQLString },
+                course_dept: { type: GraphQLString },
+                course_dept_code: { type: GraphQLString },
+                course_desc: { type: GraphQLString },
+                course_room: { type: GraphQLString },
+                course_dayandtime: { type: GraphQLString },
+                course_syllabus: { type: GraphQLString },
+                course_term: { type: GraphQLString },
+                course_instructor: { type: GraphQLString },
+                course_capacity: { type: GraphQLInt },
+                waitlist_capacity: { type: GraphQLInt },
+            },
+            resolve(parent, args) {
+                console.log("Create course resolve")
+                console.log(JSON.stringify(args))
+                return new Promise(async (resolve, reject) => {
+                    var loggedInuser = args.username;
+                    connection.query('INSERT INTO course(course_id,course_term,course_name,course_dept,course_dept_code, ' +
+                            'course_desc,course_room,course_capacity,waitlist_capacity,course_instructor,course_dayandtime,course_syllabus,created_by) ' +
+                            'VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);', [args.course_id, args.course_term, args.course_name, args.course_dept, args.course_dept_code, args.course_desc, args.course_room, args.course_capacity, args.waitlist_capacity, args.course_instructor, args.course_dayandtime, args.course_syllabus, loggedInuser], function (error, results, fields) {
+                                if (error) {
+                                    console.log(error)
+                                    var resultData = {
+                                        success: false
+                                    }
+                                    resolve(resultData);
+                                } else {
+                                    var resultData = {
+                                        success: true
+                                    }
+                                    resolve(resultData);
+                                }
+                            });
                 })
             }
         }
     }
+
 });
 
 module.exports = new GraphQLSchema({

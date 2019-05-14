@@ -1,13 +1,8 @@
 import React, { Component } from 'react';
-import { Grid, GridRow, GridCol } from '@instructure/ui-layout'
-import theme from '@instructure/ui-themes/lib/canvas/base'
 import Navbar from '../LandingPage/Navbar';
-import { Redirect } from 'react-router';
 import { Table } from '@instructure/ui-elements';
 import Heading from '@instructure/ui-elements/lib/components/Heading';
-import cookie from 'react-cookies';
 import Cookies from 'universal-cookie';
-import axios from 'axios';
 import { IconAddLine } from '@instructure/ui-icons'
 import { Link } from 'react-router-dom';
 
@@ -40,8 +35,7 @@ export default class FacultyCourseLanding extends Component {
                             <div className="row">
                                 <div className="col">
                                     <div class="float-right">
-                                        <br /><a href="/generatePermissionCode" class="btn btn-primary btn-md active  mx-3 px-2"  style={{backgroundColor:'#0055a2'}} role="button" aria-pressed="true">Generate Permission Code</a>
-                                        <a href="/createCourse" class="btn btn-primary btn-md active  mx-3 px-2"  style={{backgroundColor:'#0055a2'}} role="button" aria-pressed="true"><IconAddLine /> Create Course</a>
+                                        <br /><a href="/createCourse" class="btn btn-primary btn-md active  mx-3 px-2"  style={{backgroundColor:'#0055a2'}} role="button" aria-pressed="true"><IconAddLine /> Create Course</a>
                                         </div>
                                 </div>
                             </div>
@@ -64,7 +58,7 @@ export default class FacultyCourseLanding extends Component {
                                                 let linkpath = '/coursedetails/' + course.course_uid;
                                                 return (
                                                     <tr>
-                                                        <td><Link to={linkpath} >{course.course_dept_code}-{course.course_id} - {course.course_name}</Link></td>
+                                                        <td>{course.course_dept_code}-{course.course_id} - {course.course_name}</td>
                                                         <td>{course.course_term}</td>
                                                         <td>{course.total_enrollment} out of {course.course_capacity}</td>
                                                         <td>{course.total_waitlist} out of {course.waitlist_capacity}</td>

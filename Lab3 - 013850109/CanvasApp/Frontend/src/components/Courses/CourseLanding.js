@@ -1,19 +1,12 @@
 import React, { Component } from 'react';
-import { Grid, GridRow, GridCol } from '@instructure/ui-layout'
-import theme from '@instructure/ui-themes/lib/canvas/base'
-import Navbar from '../LandingPage/Navbar';
 import { Redirect } from 'react-router';
-import { Table } from '@instructure/ui-elements';
-import Heading from '@instructure/ui-elements/lib/components/Heading';
-import cookie from 'react-cookies';
-import Cookies from 'universal-cookie';
-import axios from 'axios';
 import StudentCourseLanding from './StudentCourseLanding';
 import FacultyCourseLanding from './FacultyCourseLanding';
+import { courses } from '../queries/queries';
+import { withApollo } from 'react-apollo';
 
-const cookies = new Cookies();
 
-export default class CourseDetails extends Component {
+class CourseDetails extends Component {
 
     constructor(props) {
         super(props);
@@ -27,22 +20,34 @@ export default class CourseDetails extends Component {
 
     componentDidMount() {
         let role = '';
-        let user = '';
-        if (cookie.load('cookieS')) {
+        if (localStorage.isStudent === "1") {
+            console.log("Role: Student")
             role = 'student';
-            user = cookies.get('cookieS')
-
-        } else if (cookie.load('cookieF')) {
+            
+        } else if (localStorage.isStudent === "0") {
+            console.log("Role: Faculty")
             role = 'faculty';
-            user = cookies.get('cookieF')
         }
         if (role !== '') {
-            axios.get('http://localhost:3001/usercourse/' + encodeURI(user) + '?role=' + role)
-                .then((response) => {
-                    console.log(response);
-                    if (response !== undefined)
-                        this.setState({ coursework: response.data })
+            this.props.client.query({
+                query: courses,
+                variables: {
+                  username: localStorage.getItem("emailId"),
+                  isStudent: parseInt(localStorage.isStudent,10)
+                }
+              }).then((response) => {
+                console.log('Response profile', response.data);
+                let result = response.data.courses;
+                if(result)
+                this.setState({
+                    coursework: result.courses
                 })
+          
+            });
+          
+          
+              console.log('data:', this.props.data);
+            
         }
     }
 
@@ -58,18 +63,22 @@ export default class CourseDetails extends Component {
     };
 
     render() {
-        if (cookie.load('cookieF')) {
+        console.log(localStorage.isStudent)
+        if (localStorage.isStudent === "0") {
             //Return faculty page
             return (
                 <FacultyCourseLanding coursework={this.state.coursework}></FacultyCourseLanding>
             );
-        } else if (cookie.load('cookieS')) {
+        } else if (localStorage.isStudent === "1") {
             //Return student page
             return (
                 <StudentCourseLanding coursework={this.state.coursework} removeCourseRow={this.removeCourseRow}></StudentCourseLanding>
             );
         } else {
+            console.log("Redirecting to login")
             return (<div><Redirect to="/login" /></div>);
         }
     }
 }
+
+export default withApollo(CourseDetails);

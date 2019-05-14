@@ -90,10 +90,11 @@ class Login extends Component {
             console.log('UserData', response.data.login.userData);
             if(response.data.login.result === true){
                 
-                localStorage.setItem("ProfileName",response.data.login.userData.first_name);
-                localStorage.setItem("role", response.data.login.userData.role);
+                localStorage.setItem("firstName",response.data.login.userData.first_name);
+                localStorage.setItem("lastName",response.data.login.userData.last_name);
+                localStorage.setItem("isStudent", response.data.login.userData.is_student);
                 localStorage.setItem("isAuthenticated", true);
-                localStorage.setItem("Email", response.data.login.userData.Email);
+                localStorage.setItem("emailId", response.data.login.userData.email_id);
 
                 this.setState({
                     authFlag:true,

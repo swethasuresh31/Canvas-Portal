@@ -24,8 +24,7 @@ export default class Card extends Component {
   }
 
   render() {
-    let user = cookies.get('cookieS') || cookies.get('cookieF');
-    let profileImg = "http://localhost:3001/account/img/" + encodeURI(user)
+    let profileImg = ''
     return (
       <div class="position-fixed" style={{ height: "100vh" }}>
         <Navigation
@@ -65,7 +64,7 @@ export default class Card extends Component {
             selected={this.props.selected === "dashboard"}
             icon={<IconDashboardLine />}
             label="Dashboard"
-            href="/"
+            href="/dashboard"
             theme={{
               backgroundColor: '#0055a2',
               hoverBackgroundColor: '#FFFFFF'
