@@ -12,7 +12,7 @@
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
     "kafka-node": "^3.0.1",
-    "mongoose": "^5.3.7",
+    "mongoose": "^5.7.5",
     "mongoose-auto-increment": "^5.0.1"
   }
 }
